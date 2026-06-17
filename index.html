@@ -303,13 +303,23 @@
       color: var(--color-accent-orange);
     }
 
-    .hero-image {
+    .background-logo-wrapper {
       position: absolute;
-      bottom: 5%;
-      left: 2%;
-      max-width: 300px;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 0; /* behind canvas */
+      pointer-events: none;
+      opacity: 0.15;
+    }
+
+    .background-logo-wrapper img {
+      width: 100vw;
       height: auto;
-      z-index: 5;
     }
 
     /* Section 3: Driver Cockpit (Steering Calibration View) */
@@ -489,6 +499,10 @@
       Stage 0%</div>
   </div>
 
+  <div class="background-logo-wrapper">
+    <img src="m4csr.png">
+  </div>
+
   <canvas id="webgl-canvas"></canvas>
 
   <nav>
@@ -519,7 +533,6 @@
         <div class="badge">Dynamic Showcase</div>
         <h1>BMW M4 CS</h1>
       </div>
-      <img class="hero-image" src="mcomp.png">
     </section>
 
     <section id="headlight">
@@ -603,7 +616,7 @@
     const canvas = document.querySelector('#webgl-canvas');
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2('#040506', 0.08); // Infinite back environment fill mix
-    scene.background = new THREE.Color(0x000508);
+    // Background removed to allow HTML transparent layers behind canvas
 
     const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 100);
 
