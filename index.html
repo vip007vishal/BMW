@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M4 WIDEBODY // Interactive Experience</title>
+  <style>
+    /* --- DESIGN TOKENS & SYSTEM CORE --- */
+    :root {
+      --color-bg: #040406;
+      --color-text: #ffffff;
+      --color-accent: #249EA0;
+      /* Unified Studio Teal */
+      --color-accent-orange: #F78104;
+      /* High-Octane Deep Orange */
+      --color-muted: #8e8e93;
+      --font-display: 'Arial Black', Impact, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body,
+    html {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* --- BACKGROUND FIXED 3D CANVAS --- */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* --- HEADER INTERFACE LAYER --- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      padding: 25px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: rgba(20, 20, 20, 0.195);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    nav .brand {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #fff, var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav .nav-links {
+      flex: 4;
+      text-align: center;
+    }
+
+    nav .nav-links a {
+      color: var(--color-text);
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    nav .nav-links a:hover {
+      color: var(--color-accent);
+    }
+
+    nav .nav-actions {
+      flex: 1;
+      text-align: right;
+    }
+
+    nav .nav-btn {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border: 1px solid var(--color-accent);
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    nav .nav-btn:hover {
+      background: var(--color-accent);
+      box-shadow: 0 0 15px rgba(36, 158, 160, 0.4);
+    }
+
+    /* --- GRAPHIC CONTENT SECTIONS --- */
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    section {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8%;
+    }
+
+    /* Section 1: Hero Overview */
+    #hero {
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 13vh;
+    }
+
+    .hero-panel {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-panel h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 6.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -3px;
+      margin-bottom: 25px;
+    }
+
+    .hero-panel p {
+      font-size: 1.1rem;
+      color: var(--color-muted);
+      max-width: 500px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      position: relative;
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(36, 158, 160, 0.15);
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    /* Section 2: Under Hood Mechanics */
+    #engineering {
+      position: relative;
+    }
+
+    .hud-callout {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      z-index: 10;
+    }
+
+    .hud-svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: block;
+      overflow: visible;
+    }
+
+    .hud-content {
+      position: absolute;
+      bottom: 110px;
+      left: 250px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      white-space: nowrap;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 8px 16px;
+      border-radius: 4px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .hud-title {
+      color: #FF3333;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .hud-sep {
+      color: var(--color-accent);
+      opacity: 0.6;
+    }
+
+    .hud-stat {
+      color: #e4e4e7;
+      font-size: 0.8rem;
+    }
+
+    .glass-card {
+      background: rgba(8, 8, 11, 0.4);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 45px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    .glass-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+    }
+
+    .stat-row {
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 15px;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .stat-row .label {
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .stat-row .value {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+    }
+
+    .value-teal {
+      color: var(--color-accent);
+    }
+
+    .value-orange {
+      color: var(--color-accent-orange);
+    }
+
+    .hero-image {
+      position: absolute;
+      bottom: 5%;
+      left: 2%;
+      max-width: 300px;
+      height: auto;
+      z-index: 5;
+    }
+
+    /* Section 3: Driver Cockpit (Steering Calibration View) */
+    #cockpit {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: 15vh;
+      padding-left: 4%;
+    }
+
+    #headlight {
+      justify-content: flex-end;
+    }
+
+    #tyres {
+      justify-content: flex-start;
+    }
+
+    #exhaust {
+      justify-content: flex-end;
+    }
+
+    #taillight {
+      justify-content: flex-start;
+    }
+
+    #brand {
+      justify-content: flex-end;
+    }
+
+    .cockpit-spec {
+      max-width: 460px;
+      text-align: left;
+    }
+
+    .cockpit-spec h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      color: #FF3333;
+    }
+
+    .cockpit-spec ul {
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    .cockpit-spec ul li {
+      position: relative;
+      padding-left: 25px;
+      margin-bottom: 15px;
+      color: #e4e4e7;
+      line-height: 1.6;
+    }
+
+    .cockpit-spec ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      border-radius: 50%;
+    }
+
+    /* Section 4: Exit & Outro Stance */
+    #cta {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .cta-panel h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      margin-bottom: 35px;
+    }
+
+    .action-btn {
+      display: inline-block;
+      padding: 18px 45px;
+      background: #ffffff;
+      color: #000000;
+      text-decoration: none;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .action-btn:hover {
+      background: var(--color-accent);
+      color: #ffffff;
+      box-shadow: 0 0 40px rgba(36, 158, 160, 0.6);
+      transform: translateY(-4px);
+    }
+
+    /* --- RESPONSIVE ADAPTATION --- */
+    @media (max-width: 968px) {
+      section {
+        justify-content: center !important;
+        text-align: center;
+      }
+
+      .hero-panel p,
+      .cockpit-spec p {
+        margin: 0 auto;
+      }
+
+      .cockpit-spec ul li {
+        text-align: left;
+      }
+
+      nav .nav-links {
+        display: none;
+      }
+    }
+
+    /* Loading Infrastructure overlay */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--color-bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.6s ease;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+      color: #000038;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+
+  <!-- Loader Modules for Graphic Engine -->
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- Loading Animation Rig Overlay -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div id="load-progress"
+      style="font-weight:700; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; color:#fff;">Calibrating
+      Stage 0%</div>
+  </div>
+
+  <canvas id="webgl-canvas"></canvas>
+
+  <nav>
+    <div class="nav-logo">
+      <img src="logo.png">
+    </div>
+    <div class="brand">BMW M4 CS</div>
+    <div class="nav-links">
+      <a href="#hero">Stance</a>
+      <a href="#headlight">Lights</a>
+      <a href="#cockpit">Cockpit</a>
+      <a href="#engineering">Engine</a>
+      <a href="#tyres">Dynamics</a>
+      <a href="#exhaust">Exaust</a>
+      <a href="#cta">Look</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#cta" class="nav-btn">Reserve</a>
+    </div>
+    <div class="nav-logo">
+      <img src="mcomp.png" style="margin-left: 30px;">
+    </div>
+  </nav>
+
+  <main>
+    <section id="hero">
+      <div class="hero-panel">
+        <div class="badge">Dynamic Showcase</div>
+        <h1>BMW M4 CS</h1>
+      </div>
+      <img class="hero-image" src="mcomp.png">
+    </section>
+
+    <section id="headlight">
+      <div class="glass-card">
+        <h2>Laser Illumination</h2>
+        <p>Adaptive front lighting matrix with piercing daytime running signatures.</p>
+      </div>
+    </section>
+
+    <section id="cockpit">
+      <div class="cockpit-spec">
+        <h2>Command Center</h2>
+        <p>Tactile telemetry interfacing through clear coat composite materials.</p>
+        <ul>
+          <li><strong>M-Mode Integration</strong></li>
+          <li><strong>Alcantara Racing Rim</strong></li>
+          <li><strong>Integrated Shift Array</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="engineering">
+      <div class="hud-callout">
+        <svg class="hud-svg" width="700" height="100">
+          <!-- Starts at center (0,100), 45deg up to (100,0), then horizontally right to (700,0) -->
+          <polyline points="0,100 100,0 700,0" fill="none" stroke="#249ea0" stroke-width="2" />
+          <circle cx="0" cy="100" r="4" fill="#249ea0" />
+          <circle cx="700" cy="0" r="3" fill="#249ea0" />
+        </svg>
+        <div class="hud-content">
+          <span class="hud-title">POWER ASSEMBLY</span>
+          <span class="hud-sep">//</span>
+          <span class="hud-stat">INLINE-6 TWINTURBO</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tyres">
+      <div class="glass-card">
+        <h2>Forged Dynamics</h2>
+        <p>Ultra-lightweight alloy wheels wrapped in track-spec compound rubber for maximum grip.</p>
+      </div>
+    </section>
+
+    <section id="exhaust">
+      <div class="glass-card">
+        <h2>Acoustic Dominance</h2>
+        <p>Quad-titanium exhaust system delivering a visceral, spine-tingling exhaust note.</p>
+      </div>
+    </section>
+
+    <section id="taillight">
+      <div class="glass-card">
+        <h2>OLED Signatures</h2>
+        <p>Three-dimensional organic LED taillight structures creating a hypnotic trailing aesthetic.</p>
+      </div>
+    </section>
+
+    <section id="brand">
+      <div class="glass-card">
+        <h2>The Brand BMW</h2>
+        <p>The M4 CS embodies the ultimate driving machine. Uncompromising track-focused performance meets striking,
+          aggressive aesthetics.</p>
+      </div>
+    </section>
+
+    <section id="cta">
+      <div class="cta-panel">
+        <h2>Acquire Stance.</h2>
+        <a href="#" class="action-btn">Configure Blueprint</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- --- GRAPHICS RENDERING PIPELINE --- -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    // 1. ENVIRONMENT STAGING CONFIGURATION
+    const canvas = document.querySelector('#webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2('#040506', 0.08); // Infinite back environment fill mix
+    scene.background = new THREE.Color(0x000508);
+
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 100);
+
+    // Initial Camera Target Arrays
+    let cameraPosition = new THREE.Vector3(0, 1.4, 7.8);
+    let cameraTarget = new THREE.Vector3(0, 0.2, 0);
+    camera.position.copy(cameraPosition);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Soft Cinematic Shading Optimizations
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.35;
+
+    // 2. SOFT FALL-OFF SPLIT-LIGHTING MATRIX RIG
+    const backgroundFill = new THREE.AmbientLight('#ffffff', 0.25);
+    scene.add(backgroundFill);
+
+    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.45);
+    zenithHighlight.position.set(0, 12, 0);
+    scene.add(zenithHighlight);
+
+    // Right Side Key: Soft Teal SpotLight (#249EA0) with maximum blur fallback edges
+    const tealSpotKey = new THREE.SpotLight('#249EA0', 8.5, 40, Math.PI / 4, 1.0, 1.1);
+    tealSpotKey.position.set(7, 7, 5);
+    tealSpotKey.castShadow = true;
+    tealSpotKey.shadow.mapSize.width = 2048;
+    tealSpotKey.shadow.mapSize.height = 2048;
+    tealSpotKey.shadow.bias = -0.00004;
+    scene.add(tealSpotKey);
+
+    // Left Side Rim: Soft High-Octane Orange SpotLight (#F78104) 
+    const orangeSpotRim = new THREE.SpotLight('#F78104', 7.5, 40, Math.PI / 4, 1.0, 1.1);
+    orangeSpotRim.position.set(-7, 6, -4);
+    orangeSpotRim.castShadow = true;
+    orangeSpotRim.shadow.bias = -0.00004;
+    scene.add(orangeSpotRim);
+
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects
+    const underTealFill = new THREE.PointLight('#249EA0', 2.5, 9, 1.4);
+    underTealFill.position.set(3, 0.2, 1);
+    scene.add(underTealFill);
+
+    const underOrangeFill = new THREE.PointLight('#F78104', 2.5, 9, 1.4);
+    underOrangeFill.position.set(-3, 0.2, -1);
+    scene.add(underOrangeFill);
+
+
+    // --- 2. Lighting & Environment ---
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    scene.add(hemiLight);
+
+    const topLight = new THREE.DirectionalLight(0xffffff, 1);
+    topLight.position.set(0, 5, 0);
+    scene.add(topLight);
+
+    const leftOrangeLight = new THREE.DirectionalLight(0xF78104, 4);
+    leftOrangeLight.position.set(-5, 2, 3);
+    scene.add(leftOrangeLight);
+
+    const rightTealLight = new THREE.DirectionalLight(0x249EA0, 4);
+    rightTealLight.position.set(5, 2.5, -4);
+    scene.add(rightTealLight);
+
+    // Interior Dome Light (Illuminates the dashboard when we go inside)
+    const interiorLight = new THREE.PointLight(0xBDFCFF, 20);
+    interiorLight.position.set(0, 0.9, -0.7);
+    scene.add(interiorLight);
+
+    // 3. TARGET COMPONENT SELECTION HANDLERS
+    const carContainerGroup = new THREE.Group();
+    scene.add(carContainerGroup);
+
+    // Part Node tracking assignments populated on file unpack traversal
+    let hoodMeshNodes = [];
+    let driverDoorMeshNodes = [];
+    let passengerDoorMeshNodes = [];
+    let steeringWheelMeshNodes = [];
+    let hoodGroup = null;
+    let driverDoorGroup = null;
+    let passengerDoorGroup = null;
+
+    // Automated Target Discovery Engine
+    const modelLoader = new GLTFLoader();
+    const loadPercentText = document.getElementById('load-progress');
+    const loadingScreenMask = document.getElementById('loader');
+
+    let carModel = null;
+    let boxLimits = { min: { y: -1.3 } };
+
+    modelLoader.load(
+      'bmw_m4_cs_main.glb', // Loaded direct verbatim user file[cite: 2]
+      (gltf) => {
+        carModel = gltf.scene;
+
+        // Measure structural geometry bounds directly
+        boxLimits = new THREE.Box3().setFromObject(carModel);
+        const dimensionVector = boxLimits.getSize(new THREE.Vector3());
+        const centerOffsetVector = boxLimits.getCenter(new THREE.Vector3());
+
+        // Maximize Hero Presence Scalar (Configured up to an optimized scale of 6.2)
+        const maximumBound = Math.max(dimensionVector.x, dimensionVector.y, dimensionVector.z);
+        const autoScaleFactor = 8 / maximumBound;
+        carModel.scale.set(autoScaleFactor, autoScaleFactor, autoScaleFactor);
+
+        // Adjust local pivot coordinates flush to center floor grids
+        boxLimits.setFromObject(carModel);
+        boxLimits.getCenter(centerOffsetVector);
+        carModel.position.x = -centerOffsetVector.x;
+        carModel.position.y = -boxLimits.min.y - 1.3;
+        carModel.position.z = -centerOffsetVector.z;
+
+        // Scan scene graph nodes to assign interactive components and lighting capabilities
+        carModel.traverse((childNode) => {
+          const nameString = childNode.name.toLowerCase();
+
+          // Wildcard structural tracking pattern matches
+          if (nameString.includes('hood_of_bmw')) {
+            hoodMeshNodes.push(childNode);
+          }
+          if (nameString.includes('left_door_of_bmw')) {
+            driverDoorMeshNodes.push(childNode);
+          }
+          if (nameString.includes('right_door_of_bmw')) {
+            passengerDoorMeshNodes.push(childNode);
+          }
+          if (nameString.includes('steering') || nameString.includes('wheel_m')) {
+            steeringWheelMeshNodes.push(childNode);
+          }
+
+          if (childNode.isMesh) {
+            childNode.castShadow = true;
+            childNode.receiveShadow = true;
+            if (childNode.material) {
+              childNode.material.envMapIntensity = 2.2;
+            }
+          }
+        });
+
+        // --- PIVOT CORRECTION ENGINE ---
+        // Dynamically fix the hood hinge since the raw GLB pivot is often at (0,0,0)
+        if (hoodMeshNodes.length > 0) {
+          hoodGroup = new THREE.Group();
+          carModel.add(hoodGroup);
+          const hoodBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          hoodMeshNodes.forEach(mesh => {
+            hoodBox.expandByObject(mesh);
+          });
+          const localBox = new THREE.Box3().copy(hoodBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.min.z;
+          const hingeY = localBox.max.y - 0.02;
+          hoodGroup.position.set(0, hingeY, hingeZ);
+          hoodMeshNodes.forEach(mesh => {
+            hoodGroup.attach(mesh);
+          });
+        }
+
+        // Dynamically fix the left door hinge (front-outer edge)
+        if (driverDoorMeshNodes.length > 0) {
+          driverDoorGroup = new THREE.Group();
+          carModel.add(driverDoorGroup);
+          const doorBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          driverDoorMeshNodes.forEach(mesh => doorBox.expandByObject(mesh));
+          const localBox = new THREE.Box3().copy(doorBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.max.z;
+          const hingeX = localBox.max.x;
+          driverDoorGroup.position.set(hingeX, 0, hingeZ);
+          driverDoorMeshNodes.forEach(mesh => driverDoorGroup.attach(mesh));
+        }
+
+        // Dynamically fix the right door hinge (front-outer edge)
+        if (passengerDoorMeshNodes.length > 0) {
+          passengerDoorGroup = new THREE.Group();
+          carModel.add(passengerDoorGroup);
+          const doorBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          passengerDoorMeshNodes.forEach(mesh => doorBox.expandByObject(mesh));
+          const localBox = new THREE.Box3().copy(doorBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.max.z;
+          const hingeX = localBox.min.x;
+          passengerDoorGroup.position.set(hingeX, 0, hingeZ);
+          passengerDoorMeshNodes.forEach(mesh => passengerDoorGroup.attach(mesh));
+        }
+
+        carContainerGroup.add(carModel);
+
+        // Wipe loader screen interface mask
+        loadingScreenMask.style.opacity = '0';
+        setTimeout(() => loadingScreenMask.style.display = 'none', 620);
+      },
+      (xhr) => {
+        if (xhr.total > 0) {
+          const calculationPercentage = Math.round((xhr.loaded / xhr.total) * 100);
+          loadPercentText.innerText = `Calibrating Stage ${calculationPercentage}%`;
+        }
+      },
+      (error) => {
+        console.error("Staging Error: Verify file name match precisely inside assets pathing setup.", error);
+        loadPercentText.innerText = "Error Packing Stage Model";
+      }
+    );
+
+    // Matte Shadows Ground Receiver Plane
+    /*const shadowFloorPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.MeshStandardMaterial({ color: 0x000000 })
+    );*/
+
+    // Matte Shadows Ground Receiver Plane
+    const shadowFloorPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.ShadowMaterial({ opacity: 0.5 })
+    );
+
+    shadowFloorPlane.position.y = -0.1;
+    shadowFloorPlane.rotation.x = -Math.PI / 2;
+    shadowFloorPlane.receiveShadow = true;
+    scene.add(shadowFloorPlane);
+
+    // Blueprint Cyber Grid Frame Map (Teal #249EA0 setup configuration)
+    const stageLayoutGrid = new THREE.GridHelper(50, 60, '#249EA0', '#0a0e14');
+    stageLayoutGrid.position.y = -0.005;
+    stageLayoutGrid.material.opacity = 0.16;
+    stageLayoutGrid.material.transparent = true;
+    //scene.add(stageLayoutGrid);
+
+    // 4. COORDINATED GLOBAL CONTINUOUS LERP TIMELINE CONFIGURATIONS
+    let globalScrollProgress = 0;
+    let targetScrollProgress = 0;
+
+    // Fluid interpolation variables
+    let liveCamPos = new THREE.Vector3(0, 1.6, 7.5);
+    let liveCamTarget = new THREE.Vector3(0, 0.2, 0);
+
+    let nextCamPos = new THREE.Vector3();
+    let nextCamTarget = new THREE.Vector3();
+
+    let nextHoodRotation = 0;
+    let nextDriverDoorRotation = 0;
+    let nextPassengerDoorRotation = 0;
+
+    window.addEventListener('scroll', () => {
+      const maximalLimit = document.documentElement.scrollHeight - window.innerHeight;
+      if (maximalLimit > 0) {
+        targetScrollProgress = window.scrollY / maximalLimit;
+      }
+    });
+
+    const animationClock = new THREE.Clock();
+
+    function cycleRenderFrame() {
+      const timeElapsed = animationClock.getElapsedTime();
+
+      // Damped Scroll Easing Pass
+      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.05;
+
+      // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
+      const timeline = [
+        // 1. HERO STOP: Initial full view of the front-left angle.
+        { progress: 0.000, camPos: [0, 1.4, 7.5], camTarget: [0.1, 2, 0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 1.A HERO STOP: Initial full view of the front-left angle.
+        { progress: 0.050, carY: -boxLimits.min.y - 2, camPos: [0, 1.4, 7.5], camTarget: [0.1, 0.2, 0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 2. HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
+        { progress: 0.145, carY: -boxLimits.min.y - 2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 2.25 HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
+        { progress: 0.165, carY: -boxLimits.min.y - 2, camPos: [1.7, 1, 3.5], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 2.5 HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
+        { progress: 0.210, carY: -boxLimits.min.y - 2, camPos: [5, 5, -2], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 2.75 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
+        { progress: 0.235, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+
+        // 3. COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
+        { progress: 0.252, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+
+        // 3.125 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
+        { progress: 0.270, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+
+        // 3.25 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
+        { progress: 0.300, carY: -boxLimits.min.y - 2, camPos: [5, 5, -2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+
+        // 3.5 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
+        { progress: 0.340, carY: -boxLimits.min.y - 2, camPos: [0, 1.1, 8], camTarget: [0.4, 0.9, 0.7], hood: 0, doorL: 0.75, doorR: 0 },
+
+        // 4. POWER ASSEMBLY STOP: Fly out above the car, looking down into the open hood (-0.65 rad).
+        { progress: 0.380, carY: -boxLimits.min.y - 2, camPos: [0, 3.0, 5.0], camTarget: [0, 0.5, 1.5], hood: -0.95, doorL: 0, doorR: 0 },
+
+        // 4.5 POWER ASSEMBLY STOP: Fly out above the car, looking down into the open hood (-0.65 rad).
+        { progress: 0.450, carY: -boxLimits.min.y - 2, camPos: [3, 2.75, -1], camTarget: [1, 0.3, 1.5], hood: -1, doorL: 0, doorR: 0 },
+
+        // 5. TYRES STOP: Drop down to inspect the front-left forged dynamic wheel.
+        { progress: 0.535, carY: -boxLimits.min.y - 2, camPos: [4, 2, -6.5], camTarget: [1.0, 0.3, 1.5], hood: 0, doorL: 0, doorR: 0 },
+
+        // 6. EXHAUST STOP: Swing around to the rear to view the quad exhaust pipes.
+        { progress: 0.680, carY: -boxLimits.min.y - 2, camPos: [-2, 0.5, -6], camTarget: [0, 0.3, -2.5], hood: 0, doorL: 0, doorR: 0 },
+
+        // 7. TAILLIGHT STOP: Rise up slightly to focus on the 3D OLED tail light.
+        { progress: 0.800, carY: -boxLimits.min.y - 2, camPos: [3, 2, -5], camTarget: [0.8, 0.7, -2.0], hood: 0, doorL: 0, doorR: 0 },
+
+        // 7. TAILLIGHT STOP: Rise up slightly to focus on the 3D OLED tail light.
+        { progress: 0.895, carY: -boxLimits.min.y - 2, camPos: [-2, 1.9, -6], camTarget: [0, 0, 0], hood: 0, doorL: -0.75, doorR: -0.75 },
+
+        // 8. CTA / LEFT SIDE STOP: Zoom back out to show the complete left profile.
+        { progress: 1.000, carY: -boxLimits.min.y - 2, camPos: [-9.0, 1.5, 0.0], camTarget: [5, 0.5, 0], hood: 0, doorL: 0, doorR: 0 }
+      ];
+
+
+      // Find which segment we are in
+      let currentSeg = 0;
+      for (let i = 0; i < timeline.length - 1; i++) {
+        if (globalScrollProgress >= timeline[i].progress && globalScrollProgress <= timeline[i + 1].progress) {
+          currentSeg = i;
+          break;
+        }
+      }
+      if (globalScrollProgress >= 1.0) currentSeg = timeline.length - 2;
+
+      const segStart = timeline[currentSeg];
+      const segEnd = timeline[currentSeg + 1];
+
+      const stepProgress = (globalScrollProgress - segStart.progress) / (segEnd.progress - segStart.progress);
+
+      const startY = segStart.carY !== undefined ? segStart.carY : (-boxLimits.min.y - 1.3);
+      const endY = segEnd.carY !== undefined ? segEnd.carY : (-boxLimits.min.y - 1.3);
+      const nextCarY = THREE.MathUtils.lerp(
+        startY,
+        endY,
+        stepProgress
+      );
+
+      if (carModel) {
+        carModel.position.y = nextCarY;
+      }
+
+      nextCamPos.set(
+        THREE.MathUtils.lerp(segStart.camPos[0], segEnd.camPos[0], stepProgress),
+        THREE.MathUtils.lerp(segStart.camPos[1], segEnd.camPos[1], stepProgress),
+        THREE.MathUtils.lerp(segStart.camPos[2], segEnd.camPos[2], stepProgress)
+      );
+
+      nextCamTarget.set(
+        THREE.MathUtils.lerp(segStart.camTarget[0], segEnd.camTarget[0], stepProgress),
+        THREE.MathUtils.lerp(segStart.camTarget[1], segEnd.camTarget[1], stepProgress),
+        THREE.MathUtils.lerp(segStart.camTarget[2], segEnd.camTarget[2], stepProgress)
+      );
+
+      nextHoodRotation = THREE.MathUtils.lerp(segStart.hood, segEnd.hood, stepProgress);
+      nextDriverDoorRotation = THREE.MathUtils.lerp(segStart.doorL, segEnd.doorL, stepProgress);
+      nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
+
+      // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
+      // Damps every single dynamic spatial and node translation velocity continuously
+      liveCamPos.lerp(nextCamPos, 0.06);
+      liveCamTarget.lerp(nextCamTarget, 0.06);
+
+      camera.position.copy(liveCamPos);
+      camera.lookAt(liveCamTarget);
+
+      // Interpolate mesh components if discovered successfully in glTF graph traversal
+      if (hoodGroup) {
+        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.06);
+      }
+
+      if (driverDoorGroup) {
+        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.06);
+      } else {
+        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.06); });
+      }
+
+      if (passengerDoorGroup) {
+        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.06);
+      } else {
+        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.06); });
+      }
+      steeringWheelMeshNodes.forEach(node => {
+        // Rotate steering wheel subtly with time during cockpit stop phase to emphasize reality accents
+        if (globalScrollProgress > 0.66 && globalScrollProgress <= 0.88) {
+          node.rotation.z = Math.sin(timeElapsed * 1.5) * 0.25;
+        } else {
+          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.06);
+        }
+      });
+
+
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(cycleRenderFrame);
+    }
+
+    // 5. VIEWPORT TRANSLATOR ADJUSTMENT LISTENER
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Start engine loops
+    cycleRenderFrame();
+  </script>
+</body>
+
+</html>
