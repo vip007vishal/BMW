@@ -12,7 +12,7 @@
       --color-text: #ffffff;
       --color-accent: #249EA0;
       /* Unified Studio Teal */
-      --color-accent-orange: #F78104;
+      --color-accent-orange: #C44536;
       /* High-Octane Deep Orange */
       --color-muted: #8e8e93;
       --font-display: 'Arial Black', Impact, sans-serif;
@@ -312,7 +312,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 0; /* behind canvas */
+      z-index: 0;
+      /* behind canvas */
       pointer-events: none;
       opacity: 0.15;
     }
@@ -652,8 +653,8 @@
     tealSpotKey.shadow.bias = -0.00004;
     scene.add(tealSpotKey);
 
-    // Left Side Rim: Soft High-Octane Orange SpotLight (#F78104) 
-    const orangeSpotRim = new THREE.SpotLight('#F78104', 7.5, 40, Math.PI / 4, 1.0, 1.1);
+    // Left Side Rim: Soft High-Octane Orange SpotLight (#C44536) 
+    const orangeSpotRim = new THREE.SpotLight('#C44536', 7.5, 40, Math.PI / 4, 1.0, 1.1);
     orangeSpotRim.position.set(-7, 6, -4);
     orangeSpotRim.castShadow = true;
     orangeSpotRim.shadow.bias = -0.00004;
@@ -664,10 +665,17 @@
     underTealFill.position.set(3, 0.2, 1);
     scene.add(underTealFill);
 
-    const underOrangeFill = new THREE.PointLight('#F78104', 2.5, 9, 1.4);
+    const underOrangeFill = new THREE.PointLight('#C44536', 2.5, 9, 1.4);
     underOrangeFill.position.set(-3, 0.2, -1);
     scene.add(underOrangeFill);
 
+
+    // Front Spotlight for direct grille and hood illumination
+    const frontSpotLight = new THREE.SpotLight(0xffffff, 6.0, 10, Math.PI / 5, 0.8, 1.2);
+    frontSpotLight.position.set(0, 2, 10);
+    frontSpotLight.castShadow = true;
+    frontSpotLight.shadow.bias = -0.00004;
+    scene.add(frontSpotLight);
 
     // --- 2. Lighting & Environment ---
 
@@ -678,13 +686,34 @@
     topLight.position.set(0, 5, 0);
     scene.add(topLight);
 
-    const leftOrangeLight = new THREE.DirectionalLight(0xF78104, 4);
+    const leftOrangeLight = new THREE.DirectionalLight(0xC44536, 4);
     leftOrangeLight.position.set(-5, 2, 3);
     scene.add(leftOrangeLight);
 
     const rightTealLight = new THREE.DirectionalLight(0x249EA0, 4);
     rightTealLight.position.set(5, 2.5, -4);
     scene.add(rightTealLight);
+
+    // Top-down Red Spot Light
+    /*const topRedSpot = new THREE.SpotLight(0xC44536, 40.0, 50, Math.PI / 4, 1.0, 1.1);
+    topRedSpot.position.set(-4, 12, 0);
+    topRedSpot.castShadow = true;
+    topRedSpot.shadow.bias = -0.00004;
+    scene.add(topRedSpot);
+
+    // Top-down Teal Spot Light
+    const topTealSpot = new THREE.SpotLight(0x249EA0, 40.0, 50, Math.PI / 4, 1.0, 1.1);
+    topTealSpot.position.set(4, 12, 0);
+    topTealSpot.castShadow = true;
+    topTealSpot.shadow.bias = -0.00004;
+    scene.add(topTealSpot);
+
+    // Top-down Teal Spot Light
+    const topTealSpot = new THREE.SpotLight(0xffffff, 10.0, 20, Math.PI / 4, 1.0, 1.1);
+    topTealSpot.position.set(4, 12, 0);
+    topTealSpot.castShadow = true;
+    topTealSpot.shadow.bias = -0.00004;
+    scene.add(topTealSpot);*/
 
     // Interior Dome Light (Illuminates the dashboard when we go inside)
     const interiorLight = new THREE.PointLight(0xBDFCFF, 20);
