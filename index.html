@@ -874,66 +874,33 @@
 
     const animationClock = new THREE.Clock();
 
+    // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
+    // Defined globally to prevent massive garbage collection on every frame
+    const timeline = [
+      { progress: 0.000, camPos: [0, 1.4, 7.5], camTarget: [0.1, 2, 0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.050, carYOffset: -2, camPos: [0, 1.4, 7.5], camTarget: [0.1, 0.2, 0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.145, carYOffset: -2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.165, carYOffset: -2, camPos: [1.7, 1, 3.5], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.210, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.235, carYOffset: -2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      { progress: 0.252, carYOffset: -2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      { progress: 0.270, carYOffset: -2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      { progress: 0.300, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      { progress: 0.340, carYOffset: -2, camPos: [0, 1.1, 8], camTarget: [0.4, 0.9, 0.7], hood: 0, doorL: 0.75, doorR: 0 },
+      { progress: 0.380, carYOffset: -2, camPos: [0, 3.0, 5.0], camTarget: [0, 0.5, 1.5], hood: -0.95, doorL: 0, doorR: 0 },
+      { progress: 0.450, carYOffset: -2, camPos: [3, 2.75, -1], camTarget: [1, 0.3, 1.5], hood: -1, doorL: 0, doorR: 0 },
+      { progress: 0.535, carYOffset: -2, camPos: [4, 2, -6.5], camTarget: [1.0, 0.3, 1.5], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.680, carYOffset: -2, camPos: [-2, 0.5, -6], camTarget: [0, 0.3, -2.5], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.800, carYOffset: -2, camPos: [3, 2, -5], camTarget: [0.8, 0.7, -2.0], hood: 0, doorL: 0, doorR: 0 },
+      { progress: 0.895, carYOffset: -2, camPos: [-2, 1.9, -6], camTarget: [0, 0, 0], hood: 0, doorL: -0.75, doorR: -0.75 },
+      { progress: 1.000, carYOffset: -2, camPos: [-9.0, 1.5, 0.0], camTarget: [5, 0.5, 0], hood: 0, doorL: 0, doorR: 0 }
+    ];
+
     function cycleRenderFrame() {
       const timeElapsed = animationClock.getElapsedTime();
 
-      // Damped Scroll Easing Pass
-      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.05;
-
-      // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
-      const timeline = [
-        // 1. HERO STOP: Initial full view of the front-left angle.
-        { progress: 0.000, camPos: [0, 1.4, 7.5], camTarget: [0.1, 2, 0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 1.A HERO STOP: Initial full view of the front-left angle.
-        { progress: 0.050, carY: -boxLimits.min.y - 2, camPos: [0, 1.4, 7.5], camTarget: [0.1, 0.2, 0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 2. HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
-        { progress: 0.145, carY: -boxLimits.min.y - 2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 2.25 HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
-        { progress: 0.165, carY: -boxLimits.min.y - 2, camPos: [1.7, 1, 3.5], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 2.5 HEADLIGHT STOP: Dolly camera tightly to the front-left laser headlight.
-        { progress: 0.210, carY: -boxLimits.min.y - 2, camPos: [5, 5, -2], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 2.75 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
-        { progress: 0.235, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-
-        // 3. COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
-        { progress: 0.252, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-
-        // 3.125 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
-        { progress: 0.270, carY: -boxLimits.min.y - 2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-
-        // 3.25 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
-        { progress: 0.300, carY: -boxLimits.min.y - 2, camPos: [5, 5, -2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-
-        // 3.5 COCKPIT STOP: Move through the window to view the steering wheel (Left door opens 0.75 rad).
-        { progress: 0.340, carY: -boxLimits.min.y - 2, camPos: [0, 1.1, 8], camTarget: [0.4, 0.9, 0.7], hood: 0, doorL: 0.75, doorR: 0 },
-
-        // 4. POWER ASSEMBLY STOP: Fly out above the car, looking down into the open hood (-0.65 rad).
-        { progress: 0.380, carY: -boxLimits.min.y - 2, camPos: [0, 3.0, 5.0], camTarget: [0, 0.5, 1.5], hood: -0.95, doorL: 0, doorR: 0 },
-
-        // 4.5 POWER ASSEMBLY STOP: Fly out above the car, looking down into the open hood (-0.65 rad).
-        { progress: 0.450, carY: -boxLimits.min.y - 2, camPos: [3, 2.75, -1], camTarget: [1, 0.3, 1.5], hood: -1, doorL: 0, doorR: 0 },
-
-        // 5. TYRES STOP: Drop down to inspect the front-left forged dynamic wheel.
-        { progress: 0.535, carY: -boxLimits.min.y - 2, camPos: [4, 2, -6.5], camTarget: [1.0, 0.3, 1.5], hood: 0, doorL: 0, doorR: 0 },
-
-        // 6. EXHAUST STOP: Swing around to the rear to view the quad exhaust pipes.
-        { progress: 0.680, carY: -boxLimits.min.y - 2, camPos: [-2, 0.5, -6], camTarget: [0, 0.3, -2.5], hood: 0, doorL: 0, doorR: 0 },
-
-        // 7. TAILLIGHT STOP: Rise up slightly to focus on the 3D OLED tail light.
-        { progress: 0.800, carY: -boxLimits.min.y - 2, camPos: [3, 2, -5], camTarget: [0.8, 0.7, -2.0], hood: 0, doorL: 0, doorR: 0 },
-
-        // 7. TAILLIGHT STOP: Rise up slightly to focus on the 3D OLED tail light.
-        { progress: 0.895, carY: -boxLimits.min.y - 2, camPos: [-2, 1.9, -6], camTarget: [0, 0, 0], hood: 0, doorL: -0.75, doorR: -0.75 },
-
-        // 8. CTA / LEFT SIDE STOP: Zoom back out to show the complete left profile.
-        { progress: 1.000, carY: -boxLimits.min.y - 2, camPos: [-9.0, 1.5, 0.0], camTarget: [5, 0.5, 0], hood: 0, doorL: 0, doorR: 0 }
-      ];
-
+      // Damped Scroll Easing Pass - lowered factor for significantly smoother continuous tracking
+      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.025;
 
       // Find which segment we are in
       let currentSeg = 0;
@@ -950,8 +917,8 @@
 
       const stepProgress = (globalScrollProgress - segStart.progress) / (segEnd.progress - segStart.progress);
 
-      const startY = segStart.carY !== undefined ? segStart.carY : (-boxLimits.min.y - 1.3);
-      const endY = segEnd.carY !== undefined ? segEnd.carY : (-boxLimits.min.y - 1.3);
+      const startY = -boxLimits.min.y + (segStart.carYOffset !== undefined ? segStart.carYOffset : -1.3);
+      const endY = -boxLimits.min.y + (segEnd.carYOffset !== undefined ? segEnd.carYOffset : -1.3);
       const nextCarY = THREE.MathUtils.lerp(
         startY,
         endY,
@@ -979,35 +946,35 @@
       nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
 
       // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
-      // Damps every single dynamic spatial and node translation velocity continuously
-      liveCamPos.lerp(nextCamPos, 0.06);
-      liveCamTarget.lerp(nextCamTarget, 0.06);
+      // Lowered alpha multiplier (0.035) for much smoother, buttery gliding motions.
+      liveCamPos.lerp(nextCamPos, 0.035);
+      liveCamTarget.lerp(nextCamTarget, 0.035);
 
       camera.position.copy(liveCamPos);
       camera.lookAt(liveCamTarget);
 
       // Interpolate mesh components if discovered successfully in glTF graph traversal
       if (hoodGroup) {
-        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.06);
+        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.035);
       }
 
       if (driverDoorGroup) {
-        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.06);
+        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.035);
       } else {
-        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.06); });
+        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.035); });
       }
 
       if (passengerDoorGroup) {
-        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.06);
+        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.035);
       } else {
-        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.06); });
+        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.035); });
       }
       steeringWheelMeshNodes.forEach(node => {
         // Rotate steering wheel subtly with time during cockpit stop phase to emphasize reality accents
         if (globalScrollProgress > 0.66 && globalScrollProgress <= 0.88) {
           node.rotation.z = Math.sin(timeElapsed * 1.5) * 0.25;
         } else {
-          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.06);
+          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.035);
         }
       });
 
