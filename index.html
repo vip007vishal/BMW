@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Experience the high-performance BMW M4 CS in an interactive 3D studio, exploring its engineering, laser headlights, OLED signatures, and track-focused dynamics.">
   <title>BMW M4 CS</title>
   <style>
     /* --- DESIGN TOKENS & SYSTEM CORE --- */
@@ -941,6 +942,49 @@
         }
 
         carContainerGroup.add(carModel);
+
+        // --- ADD OVERHEAD SPOTLIGHTS FOR THE WINGS ---
+        try {
+          let wingNode = null;
+          carModel.traverse((node) => {
+            if (node.name.includes('Wing0a_Coloured_Geo_lodA')) {
+              wingNode = node;
+            }
+          });
+          if (wingNode) {
+            const wingBox = new THREE.Box3().setFromObject(wingNode);
+            
+            // Left wingtip position coordinates
+            const leftLightWorld = new THREE.Vector3(wingBox.min.x + 0.08, wingBox.max.y - 0.015, (wingBox.min.z + wingBox.max.z) / 2);
+            const leftLightLocal = leftLightWorld.clone();
+            carModel.worldToLocal(leftLightLocal);
+
+            // Left overhead spotlight facing the left wing tip
+            const leftOverheadSpot = new THREE.SpotLight(0xC44536, 60.0, 8, Math.PI / 5, 0.5, 1.2);
+            leftOverheadSpot.position.set(leftLightLocal.x - 0.2, leftLightLocal.y + 1.8, leftLightLocal.z + 0.3);
+            leftOverheadSpot.target.position.copy(leftLightLocal);
+            leftOverheadSpot.castShadow = true;
+            leftOverheadSpot.shadow.bias = -0.00004;
+            carModel.add(leftOverheadSpot);
+            carModel.add(leftOverheadSpot.target);
+
+            // Right wingtip position coordinates
+            const rightLightWorld = new THREE.Vector3(wingBox.max.x - 0.08, wingBox.max.y - 0.015, (wingBox.min.z + wingBox.max.z) / 2);
+            const rightLightLocal = rightLightWorld.clone();
+            carModel.worldToLocal(rightLightLocal);
+
+            // Right overhead spotlight facing the right wing tip
+            const rightOverheadSpot = new THREE.SpotLight(0x249EA0, 60.0, 8, Math.PI / 5, 0.5, 1.2);
+            rightOverheadSpot.position.set(rightLightLocal.x + 0.2, rightLightLocal.y + 1.8, rightLightLocal.z + 0.3);
+            rightOverheadSpot.target.position.copy(rightLightLocal);
+            rightOverheadSpot.castShadow = true;
+            rightOverheadSpot.shadow.bias = -0.00004;
+            carModel.add(rightOverheadSpot);
+            carModel.add(rightOverheadSpot.target);
+          }
+        } catch (e) {
+          console.error("Error setting up overhead spotlights:", e);
+        }
 
         // Wipe loader screen interface mask
         loadingScreenMask.style.opacity = '0';
