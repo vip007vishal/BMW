@@ -12,7 +12,7 @@
       --color-text: #ffffff;
       --color-accent: #249EA0;
       /* Unified Studio Teal */
-      --color-accent-orange: #C44536;
+      --color-accent-orange: #6b0c0c;
       /* High-Octane Deep Orange */
       --color-muted: #8e8e93;
       --font-display: 'Arial Black', Impact, sans-serif;
@@ -508,7 +508,7 @@
 
   <nav>
     <div class="nav-logo">
-      <img src="logo.png">
+      <img src="logo.png" style="margin-right: 30px;">
     </div>
     <div class="brand">BMW M4 CS</div>
     <div class="nav-links">
@@ -634,65 +634,166 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
+    renderer.toneMappingExposure = 1.05;
 
     // 2. SOFT FALL-OFF SPLIT-LIGHTING MATRIX RIG
     const backgroundFill = new THREE.AmbientLight('#ffffff', 0.25);
     scene.add(backgroundFill);
 
-    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.45);
+    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.25);
     zenithHighlight.position.set(0, 12, 0);
     scene.add(zenithHighlight);
 
+    const zenithHighlight1 = new THREE.DirectionalLight('#249EA0', 0.5);
+    zenithHighlight1.position.set(3, 12, 0);
+    scene.add(zenithHighlight1);
+
+    const zenithHighlight2 = new THREE.DirectionalLight('#C44536', 0.5);
+    zenithHighlight2.position.set(-3, 12, 0);
+    scene.add(zenithHighlight2);
+
+    // Back side zenith highlights
+    const zenithHighlightBack = new THREE.DirectionalLight('#ffffff', 0);
+    zenithHighlightBack.position.set(0, 2, 4);
+    scene.add(zenithHighlightBack);
+
+    const zenithHighlight1Back = new THREE.DirectionalLight('#249EA0', 0.5);
+    zenithHighlight1Back.position.set(3, 2, 4);
+    scene.add(zenithHighlight1Back);
+
+    const zenithHighlight2Back = new THREE.DirectionalLight('#C44536', 0.5);
+    zenithHighlight2Back.position.set(-3, 2, 4);
+    scene.add(zenithHighlight2Back);
+
     // Right Side Key: Soft Teal SpotLight (#249EA0) with maximum blur fallback edges
-    const tealSpotKey = new THREE.SpotLight('#249EA0', 8.5, 40, Math.PI / 4, 1.0, 1.1);
-    tealSpotKey.position.set(7, 7, 5);
+    const tealSpotKey = new THREE.SpotLight('#249EA0', 8.0, 40, Math.PI / 4, 1.0, 1.1);
+    tealSpotKey.position.set(7, 6, 4);
     tealSpotKey.castShadow = true;
     tealSpotKey.shadow.mapSize.width = 2048;
     tealSpotKey.shadow.mapSize.height = 2048;
     tealSpotKey.shadow.bias = -0.00004;
     scene.add(tealSpotKey);
 
-    // Left Side Rim: Soft High-Octane Orange SpotLight (#C44536) 
-    const orangeSpotRim = new THREE.SpotLight('#C44536', 7.5, 40, Math.PI / 4, 1.0, 1.1);
-    orangeSpotRim.position.set(-7, 6, -4);
+    // Left Side Key: Soft Orange SpotLight (#C44536) with maximum blur fallback edges
+    const orangeSpotKey = new THREE.SpotLight('#C44536', 8.0, 40, Math.PI / 4, 1.0, 1.1);
+    orangeSpotKey.position.set(-7, 6, 4);
+    orangeSpotKey.castShadow = true;
+    orangeSpotKey.shadow.mapSize.width = 2048;
+    orangeSpotKey.shadow.mapSize.height = 2048;
+    orangeSpotKey.shadow.bias = -0.00004;
+    scene.add(orangeSpotKey);
+
+    // Right Side Rim: Soft Teal SpotLight (#249EA0)
+    const tealSpotRim = new THREE.SpotLight('#249EA0', 8.0, 40, Math.PI / 4, 1.0, 1.1);
+    tealSpotRim.position.set(7, 7, -5);
+    tealSpotRim.castShadow = true;
+    tealSpotRim.shadow.bias = -0.00004;
+    scene.add(tealSpotRim);
+
+    // Left Side Rim: Soft High-Octane Orange SpotLight (#C44536)
+    const orangeSpotRim = new THREE.SpotLight('#C44536', 8.0, 40, Math.PI / 4, 1.0, 1.1);
+    orangeSpotRim.position.set(-7, 7, -5);
     orangeSpotRim.castShadow = true;
     orangeSpotRim.shadow.bias = -0.00004;
     scene.add(orangeSpotRim);
 
     // Under-chassis volumetric highlight clusters for surface ground bounce effects
-    const underTealFill = new THREE.PointLight('#249EA0', 2.5, 9, 1.4);
-    underTealFill.position.set(3, 0.2, 1);
+    const underTealFill = new THREE.PointLight('#249EA0', 10.5, 9, 1.8);
+    underTealFill.position.set(3.5, 0.5, 1);
     scene.add(underTealFill);
 
-    const underOrangeFill = new THREE.PointLight('#C44536', 2.5, 9, 1.4);
-    underOrangeFill.position.set(-3, 0.2, -1);
+    const underOrangeFill = new THREE.PointLight('#C44536', 10.5, 9, 1.8);
+    underOrangeFill.position.set(-3.5, 0.5, 1);
+    scene.add(underOrangeFill);
+
+    // Top-Front volumetric highlight clusters for surface ground bounce effects
+    const topFrontTealFill = new THREE.PointLight('#249EA0', 10.5, 9, 1.8);
+    topFrontTealFill.position.set(1, 5.5, 1);
+    scene.add(topFrontTealFill);
+
+    const topFrontOrangeFill = new THREE.PointLight('#C44536', 10.5, 9, 1.8);
+    topFrontOrangeFill.position.set(-1, 5.5, 1);
     scene.add(underOrangeFill);
 
 
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects
+    const underTealFillback = new THREE.PointLight('#249EA0', 10.5, 9, 1.8);
+    underTealFillback.position.set(3.5, 0.5, -4);
+    scene.add(underTealFillback);
+
+    const underOrangeFillback = new THREE.PointLight('#C44536', 10.5, 9, 1.8);
+    underOrangeFillback.position.set(-3.5, 0.5, -4);
+    scene.add(underOrangeFillback);
+
+
     // Front Spotlight for direct grille and hood illumination
-    const frontSpotLight = new THREE.SpotLight(0xffffff, 6.0, 10, Math.PI / 5, 0.8, 1.2);
+    const frontSpotLight = new THREE.SpotLight(0x249EA0, 20.0, 10, Math.PI / 5, 0.8, 1.2);
     frontSpotLight.position.set(0, 2, 10);
     frontSpotLight.castShadow = true;
     frontSpotLight.shadow.bias = -0.00004;
     scene.add(frontSpotLight);
 
+    const rearSpotLight = new THREE.SpotLight(0xffffff, 1.0, 10, Math.PI / 5, 0.5, 1.2);
+    rearSpotLight.position.set(0, 1, -5);
+    rearSpotLight.castShadow = true;
+    rearSpotLight.shadow.bias = -0.00004;
+    scene.add(rearSpotLight);
+    scene.add(rearSpotLight.target);
+
+    const rearSpotLight1 = new THREE.SpotLight(0x249EA0, 50.0, 5, Math.PI / 5, 0.8, 1.2);
+    rearSpotLight1.position.set(1, 2, -5);
+    rearSpotLight1.castShadow = true;
+    rearSpotLight1.shadow.bias = -0.00004;
+    scene.add(rearSpotLight1);
+    scene.add(rearSpotLight1.target);
+
+    const rearSpotLight2 = new THREE.SpotLight(0xC44536, 50.0, 5, Math.PI / 5, 0.8, 1.2);
+    rearSpotLight2.position.set(-1, 2, -5);
+    rearSpotLight2.castShadow = true;
+    rearSpotLight2.shadow.bias = -0.00004;
+    scene.add(rearSpotLight2);
+    scene.add(rearSpotLight2.target);
+
+    const rearSpotLightbottom1 = new THREE.SpotLight(0x249EA0, 10.0, 5, Math.PI / 2, 0.5, 0.5);
+    rearSpotLightbottom1.position.set(1, 0.1, -3.8);
+    rearSpotLightbottom1.target.position.set(0, 1.5, -2);
+    rearSpotLightbottom1.castShadow = false;
+    rearSpotLightbottom1.shadow.bias = -0.00004;
+    rearSpotLightbottom1.target.updateMatrixWorld();
+    scene.add(rearSpotLightbottom1);
+
+    const rearSpotLightbottom2 = new THREE.SpotLight(0xC44536, 10.0, 5, Math.PI / 2, 0.5, 0.5);
+    rearSpotLightbottom2.position.set(-1, 0.1, -3.8);
+    rearSpotLightbottom2.target.position.set(0, 1.5, -2);
+    rearSpotLightbottom2.castShadow = false;
+    rearSpotLightbottom2.shadow.bias = -0.00004;
+    rearSpotLightbottom2.target.updateMatrixWorld();
+    scene.add(rearSpotLightbottom2);
+
     // --- 2. Lighting & Environment ---
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.8);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0);
     scene.add(hemiLight);
 
-    const topLight = new THREE.DirectionalLight(0xffffff, 1);
+    const topLight = new THREE.DirectionalLight(0x249EA0, 0.75);
     topLight.position.set(0, 5, 0);
     scene.add(topLight);
 
     const leftOrangeLight = new THREE.DirectionalLight(0xC44536, 4);
-    leftOrangeLight.position.set(-5, 2, 3);
+    leftOrangeLight.position.set(-5, 2.5, 4);
     scene.add(leftOrangeLight);
 
     const rightTealLight = new THREE.DirectionalLight(0x249EA0, 4);
-    rightTealLight.position.set(5, 2.5, -4);
+    rightTealLight.position.set(5, 2.5, 4);
     scene.add(rightTealLight);
+
+    const leftOrangeLightback = new THREE.DirectionalLight(0xC44536, 1);
+    leftOrangeLightback.position.set(-5, 2.5, 8);
+    scene.add(leftOrangeLightback);
+
+    const rightTealLightback = new THREE.DirectionalLight(0x249EA0, 1);
+    rightTealLightback.position.set(5, 2.5, 8);
+    scene.add(rightTealLightback);
 
     // Top-down Red Spot Light
     /*const topRedSpot = new THREE.SpotLight(0xC44536, 40.0, 50, Math.PI / 4, 1.0, 1.1);
@@ -715,10 +816,12 @@
     topTealSpot.shadow.bias = -0.00004;
     scene.add(topTealSpot);*/
 
-    // Interior Dome Light (Illuminates the dashboard when we go inside)
-    const interiorLight = new THREE.PointLight(0xBDFCFF, 20);
-    interiorLight.position.set(0, 0.9, -0.7);
+    // Interior Spotlight (Illuminates the dashboard/steering wheel section)
+    const interiorLight = new THREE.SpotLight(0xBDFCFF, 20, 1, Math.PI / 4, 0.8, 1);
+    interiorLight.position.set(0, 0.9, 0);
+    interiorLight.target.position.set(1, 3, 7.5);
     scene.add(interiorLight);
+    scene.add(interiorLight.target);
 
     // 3. TARGET COMPONENT SELECTION HANDLERS
     const carContainerGroup = new THREE.Group();
@@ -742,7 +845,7 @@
     let boxLimits = { min: { y: -1.3 } };
 
     modelLoader.load(
-      'bmw_m4_cs_main.glb', // Loaded direct verbatim user file[cite: 2]
+      'bmw_m4_cs_main4.glb', // Loaded direct verbatim user file[cite: 2]
       (gltf) => {
         carModel = gltf.scene;
 
@@ -753,7 +856,7 @@
 
         // Maximize Hero Presence Scalar (Configured up to an optimized scale of 6.2)
         const maximumBound = Math.max(dimensionVector.x, dimensionVector.y, dimensionVector.z);
-        const autoScaleFactor = 8 / maximumBound;
+        const autoScaleFactor = 27.5 / maximumBound;
         carModel.scale.set(autoScaleFactor, autoScaleFactor, autoScaleFactor);
 
         // Adjust local pivot coordinates flush to center floor grids
@@ -906,22 +1009,39 @@
     // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
     // Defined globally to prevent massive garbage collection on every frame
     const timeline = [
-      { progress: 0.000, camPos: [0, 1.4, 7.5], camTarget: [0.1, 2, 0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.000: Hero Stance - Initial Front-Quarter View
+      { progress: 0.000, carYOffset: -2, camPos: [0, 0.7, 7.5], camTarget: [0, 1, 0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.050: Hero Stance - Slow Zoom & Alignment
       { progress: 0.050, carYOffset: -2, camPos: [0, 1.4, 7.5], camTarget: [0.1, 0.2, 0], hood: 0, doorL: 0, doorR: 0 },
-      { progress: 0.145, carYOffset: -2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.145: Headlight Section - Approaching Right Laser Headlight
+      { progress: 0.135, carYOffset: -2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.165: Headlight Section - Close-Up on Headlight Matrix
       { progress: 0.165, carYOffset: -2, camPos: [1.7, 1, 3.5], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.210: Cockpit Section - Approaching Left Driver Side Door
       { progress: 0.210, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
-      { progress: 0.235, carYOffset: -2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-      { progress: 0.252, carYOffset: -2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
-      { progress: 0.270, carYOffset: -2, camPos: [0.9, 1.2, -0.5], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.225: Cockpit Section - Left Door Opens, Displaying Interior
+      { progress: 0.225, carYOffset: -2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.240: Cockpit Section - Close-Up Steering Calibration View
+      { progress: 0.240, carYOffset: -2, camPos: [0.9, 1.2, -0.3], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.270: Cockpit Section - Hold Steering Calibration View
+      { progress: 0.270, carYOffset: -2, camPos: [0.9, 1.2, -0.4], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.300: Cockpit Section - Transitioning Out of Cockpit
       { progress: 0.300, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.340: Engine Section - Front View, Preparing to Open Hood
       { progress: 0.340, carYOffset: -2, camPos: [0, 1.1, 8], camTarget: [0.4, 0.9, 0.7], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.380: Engine Section - Hood Opens, Exposing TwinPower Turbo
       { progress: 0.380, carYOffset: -2, camPos: [0, 3.0, 5.0], camTarget: [0, 0.5, 1.5], hood: -0.95, doorL: 0, doorR: 0 },
+      // Progress 0.450: Engine Section - Close-Up on the Engine Compartment
       { progress: 0.450, carYOffset: -2, camPos: [3, 2.75, -1], camTarget: [1, 0.3, 1.5], hood: -1, doorL: 0, doorR: 0 },
+      // Progress 0.535: Dynamics Section - Hood Closes, Rotating to Side Profile
       { progress: 0.535, carYOffset: -2, camPos: [4, 2, -6.5], camTarget: [1.0, 0.3, 1.5], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.680: Dynamics Section - Low-Angle Focus on Forged Alloys & Tyres
       { progress: 0.680, carYOffset: -2, camPos: [-2, 0.5, -6], camTarget: [0, 0.3, -2.5], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.800: Exhaust Section - Rear-Quarter View Focusing on Quad Titanium Exhaust
       { progress: 0.800, carYOffset: -2, camPos: [3, 2, -5], camTarget: [0.8, 0.7, -2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.895: Taillight / Brand Section - OLED Rear Signature View
       { progress: 0.895, carYOffset: -2, camPos: [-2, 1.9, -6], camTarget: [0, 0, 0], hood: 0, doorL: -0, doorR: -0 },
+      // Progress 1.000: Outro / CTA Stance - Cinematic Wide Side Profile
       { progress: 1.000, carYOffset: -2, camPos: [-9.0, 1.5, 0.0], camTarget: [5, 0.5, 0], hood: 0, doorL: 0, doorR: 0 }
     ];
 
@@ -929,7 +1049,7 @@
       const timeElapsed = animationClock.getElapsedTime();
 
       // Damped Scroll Easing Pass - lowered factor for significantly smoother continuous tracking
-      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.025;
+      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.012;
 
       // Find which segment we are in
       let currentSeg = 0;
@@ -975,35 +1095,35 @@
       nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
 
       // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
-      // Lowered alpha multiplier (0.035) for much smoother, buttery gliding motions.
-      liveCamPos.lerp(nextCamPos, 0.035);
-      liveCamTarget.lerp(nextCamTarget, 0.035);
+      // Lowered alpha multiplier (0.015) for much smoother, buttery gliding motions.
+      liveCamPos.lerp(nextCamPos, 0.015);
+      liveCamTarget.lerp(nextCamTarget, 0.015);
 
       camera.position.copy(liveCamPos);
       camera.lookAt(liveCamTarget);
 
       // Interpolate mesh components if discovered successfully in glTF graph traversal
       if (hoodGroup) {
-        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.035);
+        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.015);
       }
 
       if (driverDoorGroup) {
-        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.035);
+        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.015);
       } else {
-        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.035); });
+        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.015); });
       }
 
       if (passengerDoorGroup) {
-        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.035);
+        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.015);
       } else {
-        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.035); });
+        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.015); });
       }
       steeringWheelMeshNodes.forEach(node => {
         // Rotate steering wheel subtly with time during cockpit stop phase to emphasize reality accents
         if (globalScrollProgress > 0.66 && globalScrollProgress <= 0.88) {
           node.rotation.z = Math.sin(timeElapsed * 1.5) * 0.25;
         } else {
-          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.035);
+          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.015);
         }
       });
 
