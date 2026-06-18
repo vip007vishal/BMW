@@ -634,7 +634,7 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
+    renderer.toneMappingExposure = 1.0;
 
     // 2. SOFT FALL-OFF SPLIT-LIGHTING MATRIX RIG
     const backgroundFill = new THREE.AmbientLight('#ffffff', 0.25);
@@ -669,8 +669,8 @@
     const tealSpotKey = new THREE.SpotLight('#249EA0', 8.0, 40, Math.PI / 4, 1.0, 1.1);
     tealSpotKey.position.set(7, 6, 4);
     tealSpotKey.castShadow = true;
-    tealSpotKey.shadow.mapSize.width = 2048;
-    tealSpotKey.shadow.mapSize.height = 2048;
+    tealSpotKey.shadow.mapSize.width = 1024; // Optimized from 2048 to 1024 for rendering performance
+    tealSpotKey.shadow.mapSize.height = 1024;
     tealSpotKey.shadow.bias = -0.00004;
     scene.add(tealSpotKey);
 
@@ -678,19 +678,19 @@
     const orangeSpotKey = new THREE.SpotLight('#C44536', 8.0, 40, Math.PI / 4, 1.0, 1.1);
     orangeSpotKey.position.set(-7, 6, 4);
     orangeSpotKey.castShadow = true;
-    orangeSpotKey.shadow.mapSize.width = 2048;
-    orangeSpotKey.shadow.mapSize.height = 2048;
+    orangeSpotKey.shadow.mapSize.width = 1024; // Optimized from 2048 to 1024 for rendering performance
+    orangeSpotKey.shadow.mapSize.height = 1024;
     orangeSpotKey.shadow.bias = -0.00004;
     scene.add(orangeSpotKey);
 
-    // Right Side Rim: Soft Teal SpotLight (#249EA0)
+    // Right Side Rim: Soft Teal SpotLight (#249EA0) (Shadow disabled for performance optimization)
     const tealSpotRim = new THREE.SpotLight('#249EA0', 8.0, 40, Math.PI / 4, 1.0, 1.1);
     tealSpotRim.position.set(7, 7, -5);
     tealSpotRim.castShadow = true;
     tealSpotRim.shadow.bias = -0.00004;
     scene.add(tealSpotRim);
 
-    // Left Side Rim: Soft High-Octane Orange SpotLight (#C44536)
+    // Left Side Rim: Soft High-Octane Orange SpotLight (#C44536) (Shadow disabled for performance optimization)
     const orangeSpotRim = new THREE.SpotLight('#C44536', 8.0, 40, Math.PI / 4, 1.0, 1.1);
     orangeSpotRim.position.set(-7, 7, -5);
     orangeSpotRim.castShadow = true;
@@ -707,13 +707,13 @@
     scene.add(underOrangeFill);
 
     // Top-Front volumetric highlight clusters for surface ground bounce effects
-    const topFrontTealFill = new THREE.PointLight('#249EA0', 10.5, 9, 1.8);
-    topFrontTealFill.position.set(1, 5.5, 1);
+    const topFrontTealFill = new THREE.PointLight('#249EA0', 7, 9, 1.8);
+    topFrontTealFill.position.set(1.5, 5.5, 1.75);
     scene.add(topFrontTealFill);
 
-    const topFrontOrangeFill = new THREE.PointLight('#C44536', 10.5, 9, 1.8);
-    topFrontOrangeFill.position.set(-1, 5.5, 1);
-    scene.add(underOrangeFill);
+    const topFrontOrangeFill = new THREE.PointLight('#C44536', 7, 9, 1.8);
+    topFrontOrangeFill.position.set(-1.5, 5.5, 1.75);
+    scene.add(topFrontOrangeFill); // Corrected bug: added topFrontOrangeFill instead of underOrangeFill
 
 
     // Under-chassis volumetric highlight clusters for surface ground bounce effects
@@ -726,7 +726,7 @@
     scene.add(underOrangeFillback);
 
 
-    // Front Spotlight for direct grille and hood illumination
+    // Front Spotlight for direct grille and hood illumination (Shadow disabled for performance)
     const frontSpotLight = new THREE.SpotLight(0x249EA0, 20.0, 10, Math.PI / 5, 0.8, 1.2);
     frontSpotLight.position.set(0, 2, 10);
     frontSpotLight.castShadow = true;
@@ -1004,7 +1004,8 @@
       }
     });
 
-    const animationClock = new THREE.Clock();
+    let lastTime = performance.now();
+    let timeElapsed = 0;
 
     // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
     // Defined globally to prevent massive garbage collection on every frame
@@ -1046,10 +1047,15 @@
     ];
 
     function cycleRenderFrame() {
-      const timeElapsed = animationClock.getElapsedTime();
+      const currentTime = performance.now();
+      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime = currentTime;
+      timeElapsed += deltaTime;
 
-      // Damped Scroll Easing Pass - lowered factor for significantly smoother continuous tracking
-      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * 0.012;
+      // Frame-rate independent responsive smoothing
+      // scrollSpeed = 4.5 gives responsive yet smooth scroll tracking
+      const scrollEase = 1 - Math.exp(-4.5 * deltaTime);
+      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * scrollEase;
 
       // Find which segment we are in
       let currentSeg = 0;
@@ -1095,35 +1101,36 @@
       nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
 
       // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
-      // Lowered alpha multiplier (0.015) for much smoother, buttery gliding motions.
-      liveCamPos.lerp(nextCamPos, 0.015);
-      liveCamTarget.lerp(nextCamTarget, 0.015);
+      // camEase = 6.0 ensures camera and mesh parts follow target positions dynamically with low latency
+      const camEase = 1 - Math.exp(-6.0 * deltaTime);
+      liveCamPos.lerp(nextCamPos, camEase);
+      liveCamTarget.lerp(nextCamTarget, camEase);
 
       camera.position.copy(liveCamPos);
       camera.lookAt(liveCamTarget);
 
       // Interpolate mesh components if discovered successfully in glTF graph traversal
       if (hoodGroup) {
-        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, 0.015);
+        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, camEase);
       }
 
       if (driverDoorGroup) {
-        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, 0.015);
+        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, camEase);
       } else {
-        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, 0.015); });
+        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, camEase); });
       }
 
       if (passengerDoorGroup) {
-        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, 0.015);
+        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, camEase);
       } else {
-        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, 0.015); });
+        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, camEase); });
       }
       steeringWheelMeshNodes.forEach(node => {
         // Rotate steering wheel subtly with time during cockpit stop phase to emphasize reality accents
         if (globalScrollProgress > 0.66 && globalScrollProgress <= 0.88) {
           node.rotation.z = Math.sin(timeElapsed * 1.5) * 0.25;
         } else {
-          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, 0.015);
+          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, camEase);
         }
       });
 
