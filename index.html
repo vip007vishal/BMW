@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Experience the high-performance BMW M4 CS in an interactive 3D studio, exploring its engineering, laser headlights, OLED signatures, and track-focused dynamics.">
+  <meta name="description"
+    content="Experience the high-performance BMW M4 CS in an interactive 3D studio, exploring its engineering, laser headlights, OLED signatures, and track-focused dynamics.">
   <title>BMW M4 CS</title>
   <style>
     /* --- DESIGN TOKENS & SYSTEM CORE --- */
@@ -158,6 +159,31 @@
       padding-top: 13vh;
     }
 
+    .hero-image-bottom {
+      position: absolute;
+      bottom: 3vh;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100px;
+      width: auto;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      opacity: calc(0.2 * var(--scroll-opacity, 1));
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .hero-image-bottom img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .hero-image-bottom:hover {
+      opacity: var(--scroll-opacity, 1);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
     .hero-panel {
       text-align: center;
       display: flex;
@@ -172,6 +198,11 @@
       text-transform: uppercase;
       letter-spacing: -3px;
       margin-bottom: 25px;
+      background: linear-gradient(to right, #b72211 0%, #18b6b9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1.0) 0%, rgba(0, 0, 0, 0.0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1.0) 0%, rgba(0, 0, 0, 0.0) 100%);
     }
 
     .hero-panel p {
@@ -236,18 +267,29 @@
     }
 
     .hud-title {
-      color: #FF3333;
+      color: rgba(255, 51, 51, 0.08);
+      -webkit-text-stroke: 0.8px rgba(255, 51, 51, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(255, 51, 51, 0.25);
       font-weight: 700;
       font-size: 0.95rem;
     }
 
     .hud-sep {
-      color: var(--color-accent);
-      opacity: 0.6;
+      color: rgba(36, 158, 160, 0.08);
+      -webkit-text-stroke: 0.8px rgba(36, 158, 160, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(36, 158, 160, 0.25);
     }
 
     .hud-stat {
-      color: #e4e4e7;
+      color: rgba(228, 228, 231, 0.08);
+      -webkit-text-stroke: 0.8px rgba(228, 228, 231, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(228, 228, 231, 0.25);
       font-size: 0.8rem;
     }
 
@@ -269,6 +311,21 @@
       text-transform: uppercase;
       margin-bottom: 30px;
       letter-spacing: 1px;
+      color: rgba(36, 158, 160, 0.08);
+      -webkit-text-stroke: 1px rgba(36, 158, 160, 0.35);
+      text-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 4px rgba(36, 158, 160, 0.3),
+        0 0 1px rgba(36, 158, 160, 0.5);
+    }
+
+    .glass-card p,
+    .cockpit-spec p {
+      font-size: 0.95rem;
+      color: rgba(228, 228, 231, 0.75);
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      font-weight: 400;
     }
 
     .stat-row {
@@ -362,7 +419,11 @@
       font-size: 2.5rem;
       text-transform: uppercase;
       margin-bottom: 20px;
-      color: #FF3333;
+      color: rgba(255, 51, 51, 0.08);
+      -webkit-text-stroke: 1px rgba(255, 51, 51, 0.35);
+      text-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 1px rgba(255, 51, 51, 0.2);
     }
 
     .cockpit-spec ul {
@@ -374,8 +435,10 @@
       position: relative;
       padding-left: 25px;
       margin-bottom: 15px;
-      color: #e4e4e7;
+      color: rgba(228, 228, 231, 0.75);
+      font-size: 0.95rem;
       line-height: 1.6;
+      letter-spacing: 0.5px;
     }
 
     .cockpit-spec ul li::before {
@@ -395,32 +458,51 @@
       text-align: center;
     }
 
+    .cta-panel {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
     .cta-panel h2 {
       font-family: var(--font-display);
       font-size: clamp(2.5rem, 5vw, 4.5rem);
       text-transform: uppercase;
       letter-spacing: -2px;
-      margin-bottom: 35px;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.08);
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+      text-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 1px rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
     }
 
     .action-btn {
       display: inline-block;
-      padding: 18px 45px;
-      background: #ffffff;
-      color: #000000;
+      padding: 12px 32px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       text-decoration: none;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       border-radius: 50px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .action-btn:hover {
       background: var(--color-accent);
       color: #ffffff;
-      box-shadow: 0 0 40px rgba(36, 158, 160, 0.6);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 30px rgba(36, 158, 160, 0.5);
       transform: translateY(-4px);
     }
 
@@ -535,23 +617,28 @@
         <div class="badge">Dynamic Showcase</div>
         <h1>BMW M4 CS</h1>
       </div>
+      <div class="hero-image-bottom">
+        <img onclick="location.href='#engineering'" src="mcomp.png" alt="BMW M4 CS Logo">
+      </div>
     </section>
 
     <section id="headlight">
       <div class="glass-card">
         <h2>Laser Illumination</h2>
-        <p>Adaptive front lighting matrix with piercing daytime running signatures.</p>
+        <p>High-definition adaptive laser matrix projector array, projecting a piercing signature silhouette with
+          dynamic roadway pathfinder mapping.</p>
       </div>
     </section>
 
     <section id="cockpit">
       <div class="cockpit-spec">
         <h2>Command Center</h2>
-        <p>Tactile telemetry interfacing through clear coat composite materials.</p>
+        <p>Aerospace-grade autoclave carbon composite structures, housing tactile high-frequency telemetry matrices and
+          racing telemetry interfaces.</p>
         <ul>
-          <li><strong>M-Mode Integration</strong></li>
-          <li><strong>Alcantara Racing Rim</strong></li>
-          <li><strong>Integrated Shift Array</strong></li>
+          <li>M-Mode Integration</li>
+          <li>Alcantara Racing Rim</li>
+          <li>Integrated Shift Array</li>
         </ul>
       </div>
     </section>
@@ -575,36 +662,39 @@
     <section id="tyres">
       <div class="glass-card">
         <h2>Forged Dynamics</h2>
-        <p>Ultra-lightweight alloy wheels wrapped in track-spec compound rubber for maximum grip.</p>
+        <p>Monoblock forged competition wheels, wrapped in high-hysteresis sticky racing slick compound for extreme
+          lateral acceleration indices.</p>
       </div>
     </section>
 
     <section id="exhaust">
       <div class="glass-card">
         <h2>Acoustic Dominance</h2>
-        <p>Quad-titanium exhaust system delivering a visceral, spine-tingling exhaust note.</p>
+        <p>Active valve-controlled quad-titanium exhaust array, tuning raw engine combustion pulses into a symphonic,
+          spine-tingling acoustic roar.</p>
       </div>
     </section>
 
     <section id="taillight">
       <div class="glass-card">
         <h2>OLED Signatures</h2>
-        <p>Three-dimensional organic LED taillight structures creating a hypnotic trailing aesthetic.</p>
+        <p>Hyper-detailed three-dimensional organic light emitting diode (OLED) signatures, forming a high-contrast
+          trailing light aesthetic.</p>
       </div>
     </section>
 
     <section id="brand">
       <div class="glass-card">
         <h2>The Brand BMW</h2>
-        <p>The M4 CS embodies the ultimate driving machine. Uncompromising track-focused performance meets striking,
-          aggressive aesthetics.</p>
+        <p>The M4 Competition Sport represents the absolute pinnacle of motorsport breeding. A brutal track-focused
+          weapon engineered with uncompromising dynamics.</p>
       </div>
     </section>
 
     <section id="cta">
       <div class="cta-panel">
         <h2>Acquire Stance.</h2>
-        <a href="#" class="action-btn">Configure Blueprint</a>
+        <a href="#" class="action-btn">Configure</a>
       </div>
     </section>
   </main>
@@ -953,7 +1043,7 @@
           });
           if (wingNode) {
             const wingBox = new THREE.Box3().setFromObject(wingNode);
-            
+
             // Left wingtip position coordinates
             const leftLightWorld = new THREE.Vector3(wingBox.min.x + 0.08, wingBox.max.y - 0.015, (wingBox.min.z + wingBox.max.z) / 2);
             const leftLightLocal = leftLightWorld.clone();
@@ -1178,7 +1268,17 @@
         }
       });
 
-
+      // Smoothly hide hero bottom image based on scroll progress (reaches 0 by progress 0.050)
+      const heroImageElement = document.querySelector('.hero-image-bottom');
+      if (heroImageElement) {
+        const scrollOpacity = Math.max(0, 1 - (globalScrollProgress / 0.050));
+        heroImageElement.style.setProperty('--scroll-opacity', scrollOpacity);
+        if (scrollOpacity <= 0) {
+          heroImageElement.style.pointerEvents = 'none';
+        } else {
+          heroImageElement.style.pointerEvents = 'auto';
+        }
+      }
 
       renderer.render(scene, camera);
       window.requestAnimationFrame(cycleRenderFrame);
