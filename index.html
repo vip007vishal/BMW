@@ -106,11 +106,13 @@
       font-weight: 600;
       letter-spacing: 3px;
       text-transform: uppercase;
-      transition: color 0.3s ease;
+      transition: 0.3s ease;
     }
 
     nav .nav-links a:hover {
-      color: var(--color-accent);
+      background: linear-gradient(to right, #b72211 0%, #18b6b9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     nav .nav-actions {
@@ -313,7 +315,7 @@
       letter-spacing: 1px;
       color: rgba(36, 158, 160, 0.08);
       -webkit-text-stroke: 1px rgba(36, 158, 160, 0.35);
-      text-shadow: 
+      text-shadow:
         0 4px 12px rgba(0, 0, 0, 0.6),
         0 0 4px rgba(36, 158, 160, 0.3),
         0 0 1px rgba(36, 158, 160, 0.5);
