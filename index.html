@@ -128,14 +128,20 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       padding: 8px 20px;
-      border: 1px solid var(--color-accent);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 30px;
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     nav .nav-btn:hover {
-      background: var(--color-accent);
-      box-shadow: 0 0 15px rgba(36, 158, 160, 0.4);
+      background: rgba(36, 158, 160, 0.2);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 25px rgba(36, 158, 160, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
     }
 
     /* --- GRAPHIC CONTENT SECTIONS --- */
