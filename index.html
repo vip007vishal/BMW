@@ -69,7 +69,6 @@
       width: 40px;
       height: 40px;
       flex-shrink: 0;
-
       display: flex;
       align-items: center;
       justify-content: center;
@@ -78,8 +77,14 @@
     .nav-logo img {
       width: 100%;
       height: 100%;
+      opacity: 0.95;
       object-fit: contain;
       display: block;
+    }
+
+    .nav-logo:hover img {
+      opacity: 1;
+      cursor: pointer;
     }
 
     nav .brand {
@@ -134,13 +139,13 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 30px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s ease-in-out;
     }
 
     nav .nav-btn:hover {
-      background: rgba(36, 158, 160, 0.2);
-      border-color: var(--color-accent);
-      box-shadow: 0 0 25px rgba(36, 158, 160, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      background: rgba(242, 242, 242, 0.395);
+      border-color: rgba(215, 215, 215, 0.329);
+      box-shadow: 0 0 25px rgba(160, 160, 160, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
       transform: translateY(-2px);
     }
 
@@ -406,7 +411,7 @@
     }
 
     #exhaust {
-      justify-content: flex-end;
+      justify-content: space-between;
     }
 
     #taillight {
@@ -514,6 +519,290 @@
       transform: translateY(-4px);
     }
 
+    /* Glass Audio Player components */
+    .glass-audio-player {
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.5), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      pointer-events: auto;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-audio-player:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.15);
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(12, 12, 18, 0.45);
+    }
+
+    @keyframes enginePulse {
+      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
+      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(36, 158, 160, 0.3); }
+      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
+    }
+
+    @keyframes exhaustPulse {
+      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
+      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(196, 69, 54, 0.3); }
+      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
+    }
+
+    .glass-audio-player.playing#engine-player {
+      animation: enginePulse 3s infinite ease-in-out;
+      border-color: rgba(36, 158, 160, 0.35);
+    }
+
+    .glass-audio-player.playing#exhaust-player {
+      animation: exhaustPulse 3s infinite ease-in-out;
+      border-color: rgba(196, 69, 54, 0.35);
+    }
+
+    .glass-audio-player .play-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .glass-audio-player .play-btn:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 15px rgba(36, 158, 160, 0.6);
+      transform: scale(1.08);
+    }
+
+    #exhaust-player .play-btn:hover {
+      background: #c44536;
+      border-color: #c44536;
+      box-shadow: 0 0 15px rgba(196, 69, 54, 0.6);
+    }
+
+    .glass-audio-player .play-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .glass-audio-player .player-info {
+      display: flex;
+      flex-direction: column;
+      text-transform: uppercase;
+      font-family: var(--font-body);
+      letter-spacing: 1.5px;
+      min-width: 110px;
+    }
+
+    .glass-audio-player .player-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .glass-audio-player .player-subtitle {
+      font-size: 0.48rem;
+      color: var(--color-muted);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    .glass-audio-player .wave-visualizer {
+      display: block;
+      width: 160px;
+      height: 40px;
+      background: transparent;
+      border-radius: 4px;
+    }
+
+    /* Section placement: placed exactly opposite (horizontally aligned) to the power assembly callout card */
+    #engineering .audio-player-wrapper {
+      position: absolute;
+      right: calc(50% + 250px);
+      bottom: calc(50% + 110px);
+    }
+
+    /* Showroom Background Music Toggle */
+    .bg-music-toggle {
+      position: fixed;
+      top: 110px;
+      right: 30px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      z-index: 15;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      padding: 0;
+    }
+
+    .bg-music-toggle:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(12, 12, 18, 0.45);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .bg-music-toggle:active {
+      transform: translateY(0px) scale(0.98);
+    }
+
+    .bg-music-toggle svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    @keyframes spinTyre {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .bg-music-toggle svg.tyre-icon {
+      animation: spinTyre 6s infinite linear;
+      animation-play-state: paused;
+      transition: color 0.4s ease;
+    }
+
+    .bg-music-toggle.playing svg.tyre-icon {
+      animation-play-state: running;
+      color: var(--color-accent);
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      padding: 2px;
+      align-items: center;
+      justify-content: center;
+      z-index: 11;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .mobile-nav-toggle svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-nav-toggle:hover {
+      color: var(--color-accent);
+      transform: scale(1.05);
+    }
+
+    .mobile-nav-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* Mobile Overlay Menu Drawer */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 80px; /* Directly below fixed navbar */
+      left: 0;
+      width: 100%;
+      height: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(8, 8, 12, 0.98) 0%, rgba(4, 4, 6, 0.99) 100%);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      overflow: hidden;
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      border-bottom: 0px solid rgba(255, 255, 255, 0.0);
+    }
+
+    .mobile-menu-overlay.active {
+      height: calc(100vh - 80px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+    }
+
+    .mobile-menu-overlay.active .mobile-menu-links {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-menu-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-links a:hover {
+      color: var(--color-accent);
+      text-shadow: 0 0 10px rgba(36, 158, 160, 0.4);
+    }
+
+    .mobile-menu-actions {
+      margin-top: 50px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    }
+
+    .mobile-menu-overlay.active .mobile-menu-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* --- RESPONSIVE ADAPTATION --- */
     @media (max-width: 968px) {
       section {
@@ -530,8 +819,35 @@
         text-align: left;
       }
 
-      nav .nav-links {
-        display: none;
+      #engineering .audio-player-wrapper {
+        position: relative;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+      }
+
+      nav {
+        padding: 20px 6%;
+      }
+
+      nav .brand {
+        flex: 1;
+        font-size: 1.2rem;
+        text-align: left;
+        margin-left: 15px;
+      }
+
+      nav .nav-links,
+      nav .nav-actions,
+      nav .nav-logo:last-of-type {
+        display: none !important;
+      }
+
+      .mobile-nav-toggle {
+        display: flex !important;
       }
     }
 
@@ -599,7 +915,7 @@
 
   <nav>
     <div class="nav-logo">
-      <img src="logo.png" style="margin-right: 30px;">
+      <img onclick="location.href='#hero'" src="logo.png" style="margin-right: 30px;">
     </div>
     <div class="brand">BMW M4 CS</div>
     <div class="nav-links">
@@ -615,12 +931,128 @@
       <a href="#cta" class="nav-btn">Reserve</a>
     </div>
     <div class="nav-logo">
-      <img src="mcomp.png" style="margin-left: 30px;">
+      <img onclick="location.href='#engineering'" src="mcomp.png" style="margin-left: 30px;">
     </div>
+    
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-nav-toggle" aria-label="Toggle Menu" id="mobile-nav-toggle-btn">
+      <!-- Front View SVG (Closed State) -->
+      <svg class="car-front-icon" viewBox="0 0 100 100">
+        <!-- Roof and Windshield outline -->
+        <path d="M35 32 L65 32 L72 45 L28 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Car Body Front Hood & Grille outline -->
+        <path d="M22 45 L78 45 C83 45, 85 47, 85 52 L83 68 C83 72, 80 74, 76 74 L24 74 C20 74, 17 72, 17 68 L15 52 C15 47, 17 45, 22 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Headlights Left -->
+        <path d="M19 53 L29 51 L31 56 L20 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M22 54 L27 53" stroke="currentColor" stroke-width="1.2" />
+        <!-- Headlights Right -->
+        <path d="M81 53 L71 51 L69 56 L80 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M78 54 L73 53" stroke="currentColor" stroke-width="1.2" />
+        <!-- Kidney Grilles (Left & Right) -->
+        <rect x="38" y="52" width="10" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <rect x="52" y="52" width="10" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <!-- Mirrors -->
+        <path d="M28 38 L20 38 L19 41 L27 40" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <path d="M72 38 L80 38 L81 41 L73 40" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <!-- Lower intake details -->
+        <path d="M25 68 L35 68 L36 64 L26 64 Z" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <path d="M75 68 L65 68 L64 64 L74 64 Z" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <!-- Wheels outline bottom -->
+        <line x1="22" y1="74" x2="22" y2="78" stroke="currentColor" stroke-width="2.5" />
+        <line x1="78" y1="74" x2="78" y2="78" stroke="currentColor" stroke-width="2.5" />
+      </svg>
+      <!-- Side View SVG (Open State) -->
+      <svg class="car-side-icon" viewBox="0 0 100 100" style="display:none;">
+        <!-- Ground Line -->
+        <line x1="10" y1="72" x2="90" y2="72" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2" opacity="0.3" />
+        <!-- Car Silhouette Profile -->
+        <path d="M12 60 C12 56, 25 54, 30 50 C35 45, 40 33, 50 33 C62 33, 73 34, 78 48 C80 50, 84 50, 87 52 C88 53, 89 56, 88 60 C87 63, 85 64, 83 64 L78 64 C78 57, 68 57, 68 64 L34 64 C34 57, 24 57, 24 64 L15 64 C13 64, 12 62, 12 60 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Rear spoiler/tail detail -->
+        <path d="M85 51 C86 49, 87 49, 88 50" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <!-- Cabin Window Outline -->
+        <path d="M36 49 L48 37 C54 37, 64 37, 72 49 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+        <line x1="56" y1="37" x2="58" y2="49" stroke="currentColor" stroke-width="1.5" />
+        <!-- Front Wheel (hub + spokes) -->
+        <circle cx="29" cy="64" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="29" cy="64" r="2.5" fill="currentColor" />
+        <!-- Rear Wheel (hub + spokes) -->
+        <circle cx="73" cy="64" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="73" cy="64" r="2.5" fill="currentColor" />
+        <!-- Character line detail -->
+        <path d="M32 55 L75 55" stroke="currentColor" stroke-width="1" opacity="0.7" />
+        <!-- Door seam detail -->
+        <path d="M56 49 L54 62" stroke="currentColor" stroke-width="1" opacity="0.7" />
+      </svg>
+    </button>
   </nav>
+
+  <!-- Mobile Overlay Menu -->
+  <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+    <div class="mobile-menu-links">
+      <a href="#hero">Stance</a>
+      <a href="#headlight">Lights</a>
+      <a href="#cockpit">Cockpit</a>
+      <a href="#engineering">Engine</a>
+      <a href="#tyres">Dynamics</a>
+      <a href="#exhaust">Exaust</a>
+      <a href="#cta">Look</a>
+    </div>
+    <div class="mobile-menu-actions">
+      <a href="#cta" class="nav-btn">Reserve</a>
+    </div>
+  </div>
 
   <main>
     <section id="hero">
+      <!-- Showroom Background Music Toggle -->
+      <button class="bg-music-toggle" aria-label="Toggle Background Music" id="music-toggle-btn">
+        <svg class="tyre-icon" viewBox="0 0 100 100">
+          <defs>
+            <g id="m4cs-rim-spoke">
+              <!-- Y-Spoke Base -->
+              <line x1="59.5" y1="50" x2="64.5" y2="50" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+              <!-- Y-Spoke Left Branch -->
+              <line x1="64.5" y1="50" x2="87.5" y2="47.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+              <!-- Y-Spoke Right Branch -->
+              <line x1="64.5" y1="50" x2="87.5" y2="52.9" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+            </g>
+          </defs>
+          
+          <!-- Outer Tyre Wall (Deep matte black rim border) -->
+          <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.3" />
+          <!-- Tread Ribs details -->
+          <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.8" fill="none" stroke-dasharray="3,3" opacity="0.2" />
+          <!-- Wheel Rim Outer Edge Lip -->
+          <circle cx="50" cy="50" r="39" stroke="currentColor" stroke-width="1.4" fill="none" />
+          <!-- Inner Rim Spoke Ring -->
+          <circle cx="50" cy="50" r="37.5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.8" />
+          
+          <!-- 10 Spoke Groups Rotated Symmetrically (Style 827M Mesh) -->
+          <use href="#m4cs-rim-spoke" transform="rotate(0, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(36, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(72, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(108, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(144, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(180, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(216, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(252, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(288, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(324, 50, 50)" />
+
+          <!-- Center Cap Center (Black with silver ring) -->
+          <circle cx="50" cy="50" r="9.5" fill="#040406" stroke="currentColor" stroke-width="1.0" />
+          <!-- Inner Center Cap Detail -->
+          <circle cx="50" cy="50" r="7.5" fill="#040406" stroke="currentColor" stroke-width="0.4" opacity="0.5" />
+          
+          <!-- Bolt Holes Nestled inside Y splits (5 holes at 72 deg intervals on radius 16.5) -->
+          <circle cx="66.5" cy="50" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="34.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="40.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="59.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="65.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+        </svg>
+      </button>
+
       <div class="hero-panel">
         <div class="badge">Dynamic Showcase</div>
         <h1>BMW M4 CS</h1>
@@ -652,6 +1084,21 @@
     </section>
 
     <section id="engineering">
+      <!-- Interactive Engine Audio Player -->
+      <div class="audio-player-wrapper">
+        <div class="glass-audio-player" id="engine-player">
+          <button class="play-btn" aria-label="Play Engine Sound">
+            <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <div class="player-info">
+            <span class="player-title">Engine sound</span>
+            <span class="player-subtitle">revs on hover</span>
+          </div>
+          <canvas class="wave-visualizer" id="engine-canvas" width="160" height="40" data-accent="#249ea0" data-color1="rgba(36, 158, 160, 0.95)" data-color2="rgba(30, 200, 203, 0.70)" data-color3="rgba(36, 158, 160, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(36, 158, 160, 0.15)"></canvas>
+        </div>
+      </div>
+
       <div class="hud-callout">
         <svg class="hud-svg" width="700" height="100">
           <!-- Starts at center (0,100), 45deg up to (100,0), then horizontally right to (700,0) -->
@@ -676,6 +1123,19 @@
     </section>
 
     <section id="exhaust">
+      <!-- Interactive Exhaust Audio Player -->
+      <div class="glass-audio-player" id="exhaust-player">
+        <button class="play-btn" aria-label="Play Exhaust Sound">
+          <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="player-info">
+          <span class="player-title">Exhaust sound</span>
+          <span class="player-subtitle">revs on hover</span>
+        </div>
+        <canvas class="wave-visualizer" id="exhaust-canvas" width="160" height="40" data-accent="#c44536" data-color1="rgba(196, 69, 54, 0.95)" data-color2="rgba(235, 94, 40, 0.70)" data-color3="rgba(196, 69, 54, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(196, 69, 54, 0.15)"></canvas>
+      </div>
+
       <div class="glass-card">
         <h2>Acoustic Dominance</h2>
         <p>Active valve-controlled quad-titanium exhaust array, tuning raw engine combustion pulses into a symphonic,
@@ -1298,6 +1758,601 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // --- 6. INTERACTIVE AUDIO SYNTHESIS & WAVE VISUALIZER ---
+    class EngineSoundGenerator {
+      constructor(type = 'engine') {
+        this.type = type;
+        this.audioCtx = null;
+        this.analyser = null;
+        this.isPlaying = false;
+        this.oscillators = [];
+        this.gainNode = null;
+        this.filterNode = null;
+        this.noiseNode = null;
+        this.noiseFilter = null;
+        this.lfo = null;
+        this.lfoGain = null;
+      }
+
+      init() {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 64;
+        
+        this.gainNode = this.audioCtx.createGain();
+        this.gainNode.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+
+        this.filterNode = this.audioCtx.createBiquadFilter();
+        this.filterNode.type = 'lowpass';
+        this.filterNode.frequency.setValueAtTime(this.type === 'engine' ? 180 : 320, this.audioCtx.currentTime);
+        this.filterNode.Q.setValueAtTime(1.5, this.audioCtx.currentTime);
+
+        const baseFreq = this.type === 'engine' ? 28 : 22;
+        const numOscs = this.type === 'engine' ? 4 : 5;
+        
+        for (let i = 0; i < numOscs; i++) {
+          const osc = this.audioCtx.createOscillator();
+          osc.type = i % 2 === 0 ? 'sawtooth' : 'triangle';
+          
+          const multiplier = i === 0 ? 1 : (i === 1 ? 1.5 : (i === 2 ? 2.0 : 3.5));
+          osc.frequency.setValueAtTime(baseFreq * multiplier, this.audioCtx.currentTime);
+          osc.detune.setValueAtTime((Math.random() - 0.5) * 15, this.audioCtx.currentTime);
+          
+          const oscGain = this.audioCtx.createGain();
+          oscGain.gain.setValueAtTime(i === 0 ? 0.35 : 0.15, this.audioCtx.currentTime);
+          
+          osc.connect(oscGain);
+          oscGain.connect(this.filterNode);
+          this.oscillators.push(osc);
+        }
+
+        const bufferSize = this.audioCtx.sampleRate * 2;
+        const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        
+        this.noiseNode = this.audioCtx.createBufferSource();
+        this.noiseNode.buffer = noiseBuffer;
+        this.noiseNode.loop = true;
+
+        this.noiseFilter = this.audioCtx.createBiquadFilter();
+        this.noiseFilter.type = 'bandpass';
+        this.noiseFilter.frequency.setValueAtTime(this.type === 'engine' ? 120 : 160, this.audioCtx.currentTime);
+        this.noiseFilter.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
+        
+        const noiseGain = this.audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(this.type === 'engine' ? 0.04 : 0.16, this.audioCtx.currentTime);
+
+        this.noiseNode.connect(this.noiseFilter);
+        this.noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.gainNode);
+
+        this.lfo = this.audioCtx.createOscillator();
+        this.lfo.type = 'sine';
+        this.lfo.frequency.setValueAtTime(this.type === 'engine' ? 14 : 9, this.audioCtx.currentTime);
+
+        this.lfoGain = this.audioCtx.createGain();
+        this.lfoGain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+
+        this.lfo.connect(this.lfoGain);
+        this.lfoGain.connect(this.gainNode.gain);
+
+        this.filterNode.connect(this.gainNode);
+        this.gainNode.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
+      }
+
+      play() {
+        if (this.isPlaying) return;
+        if (!this.audioCtx) this.init();
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+        this.oscillators.forEach(osc => osc.start());
+        this.noiseNode.start();
+        this.lfo.start();
+
+        this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.gainNode.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        this.gainNode.gain.linearRampToValueAtTime(this.type === 'engine' ? 0.70 : 0.80, this.audioCtx.currentTime + 0.15);
+
+        this.isPlaying = true;
+      }
+
+      stop() {
+        if (!this.isPlaying) return;
+        
+        this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.gainNode.gain.linearRampToValueAtTime(0.0, this.audioCtx.currentTime + 0.2);
+        
+        const oscsToStop = this.oscillators;
+        const noiseToStop = this.noiseNode;
+        const lfoToStop = this.lfo;
+        
+        setTimeout(() => {
+          oscsToStop.forEach(osc => { try { osc.stop(); } catch(e) {} });
+          try { noiseToStop.stop(); } catch(e) {}
+          try { lfoToStop.stop(); } catch(e) {}
+        }, 250);
+
+        this.oscillators = [];
+        this.noiseNode = null;
+        this.lfo = null;
+        this.audioCtx = null;
+        this.isPlaying = false;
+      }
+    }
+
+    const engineSound = new EngineSoundGenerator('engine');
+    const exhaustSound = new EngineSoundGenerator('exhaust');
+
+    function setupAudioPlayer(playerId, generator) {
+      const playerEl = document.getElementById(playerId);
+      if (!playerEl) return;
+
+      const playBtn = playerEl.querySelector('.play-btn');
+      const playIcon = playBtn.querySelector('.play-icon');
+      const pauseIcon = playBtn.querySelector('.pause-icon');
+      const canvas = playerEl.querySelector('.wave-visualizer');
+      const ctx = canvas.getContext('2d');
+
+      let phase = 0;
+      let isHovered = false;
+      let smoothHover = 0;
+      let lastFrameTime = performance.now();
+
+      function renderWave() {
+        requestAnimationFrame(renderWave);
+
+        const now = performance.now();
+        const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+        lastFrameTime = now;
+
+        // Smooth hover transition with exponential decay
+        const hoverEase = 1 - Math.exp(-8 * dt);
+        smoothHover += ((isHovered ? 1.0 : 0.0) - smoothHover) * hoverEase;
+
+        let amplitude = 1.5; // Idle ambient amplitude
+        let phaseSpeed = 0.04; // Idle speed
+
+        const colors = [
+          canvas.dataset.color1 || 'rgba(36, 158, 160, 0.95)',
+          canvas.dataset.color2 || 'rgba(30, 200, 203, 0.70)',
+          canvas.dataset.color3 || 'rgba(36, 158, 160, 0.45)',
+          canvas.dataset.color4 || 'rgba(255, 255, 255, 0.25)',
+          canvas.dataset.color5 || 'rgba(36, 158, 160, 0.12)'
+        ];
+
+        if (generator.isPlaying && generator.analyser) {
+          const bufferLength = generator.analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          generator.analyser.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            sum += dataArray[i];
+          }
+          const average = sum / bufferLength;
+          
+          // Compute amplitude: scale with audio data (range 2.5px to 12.5px)
+          amplitude = (average / 255) * 10 + 2.5;
+          amplitude *= (1.0 + smoothHover * 0.28); // Maximum amplitude capped at ~16px to prevent clipping
+          
+          // Phase speed matches LFO frequency (accelerates on rev hover)
+          phaseSpeed = generator.lfo ? (generator.lfo.frequency.value * 0.012) : 0.15;
+        } else {
+          // Subtle breathing when paused, speeds up slightly on hover to acknowledge pointer
+          amplitude = 1.6 + smoothHover * 0.9;
+          phaseSpeed = 0.03 + smoothHover * 0.03;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        phase += phaseSpeed;
+
+        const numWaves = 5;
+        for (let l = 0; l < numWaves; l++) {
+          ctx.beginPath();
+          
+          // Apply a glowing neon filter when active
+          if (generator.isPlaying) {
+            ctx.shadowBlur = (12 - l * 2) * (1.0 + smoothHover * 0.4);
+            ctx.shadowColor = canvas.dataset.accent || '#249EA0';
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          
+          // Foreground lines are thicker, background are thinner
+          ctx.lineWidth = l === 0 ? 2.2 : (l === 1 ? 1.4 : (l === 2 ? 0.9 : 0.5));
+          ctx.strokeStyle = colors[l % colors.length];
+          
+          // Offset the phase of each wave layer to create a sliding 3D effect
+          const wavePhase = phase + l * (Math.PI / 2.2);
+          
+          // Frequencies adjust based on layer and hover state (making them look tighter and more aggressive on hover)
+          const baseFreq = (0.038 - l * 0.006) * (1.0 + smoothHover * 0.25);
+
+          for (let x = 0; x < canvas.width; x++) {
+            // Taper waves at left and right edges with a sine envelope
+            const envelope = Math.sin((x / canvas.width) * Math.PI);
+            
+            // Normalized compound wave components (coefficients sum to 1.0, ensuring no boundary clipping)
+            const primarySine = Math.sin(x * baseFreq + wavePhase) * 0.65;
+            const secondaryHarmonic = Math.sin(x * (baseFreq * 2.2) - wavePhase * 1.3) * (0.22 + smoothHover * 0.08);
+            const tertiaryJitter = Math.sin(x * (baseFreq * 4.6) + wavePhase * 2.5) * (0.05 + smoothHover * 0.05);
+            
+            const waveY = (primarySine + secondaryHarmonic + tertiaryJitter) * amplitude * envelope;
+            const y = canvas.height / 2 + waveY;
+            
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+        }
+      }
+      
+      // Initialize the rendering loop
+      renderWave();
+
+      playBtn.addEventListener('click', () => {
+        if (generator.isPlaying) {
+          generator.stop();
+          playerEl.classList.remove('playing');
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          
+          // Smoothly restore background music volume if playing
+          if (window.ambientMusic && window.ambientMusic.isPlaying) {
+            window.ambientMusic.fadeTo(0.32, 1.0);
+          }
+        } else {
+          if (generator === engineSound && exhaustSound.isPlaying) {
+            document.getElementById('exhaust-player').querySelector('.play-btn').click();
+          } else if (generator === exhaustSound && engineSound.isPlaying) {
+            document.getElementById('engine-player').querySelector('.play-btn').click();
+          }
+
+          generator.play();
+          playerEl.classList.add('playing');
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+
+          // Duck background music volume during active engine sound previews to prevent mud
+          if (window.ambientMusic && window.ambientMusic.isPlaying) {
+            window.ambientMusic.fadeTo(0.04, 0.8);
+          }
+        }
+      });
+
+      playerEl.addEventListener('mouseenter', () => {
+        isHovered = true;
+        if (generator.isPlaying && generator.audioCtx) {
+          const time = generator.audioCtx.currentTime;
+          const baseFreq = generator.type === 'engine' ? 28 : 22;
+          generator.oscillators.forEach((osc, idx) => {
+            const multiplier = idx === 0 ? 1 : (idx === 1 ? 1.5 : (idx === 2 ? 2.0 : 3.5));
+            osc.frequency.setValueAtTime(osc.frequency.value, time);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * multiplier * 2.2, time + 0.5);
+          });
+          generator.lfo.frequency.setValueAtTime(generator.lfo.frequency.value, time);
+          generator.lfo.frequency.linearRampToValueAtTime(generator.type === 'engine' ? 32 : 22, time + 0.5);
+        }
+      });
+
+      playerEl.addEventListener('mouseleave', () => {
+        isHovered = false;
+        if (generator.isPlaying && generator.audioCtx) {
+          const time = generator.audioCtx.currentTime;
+          const baseFreq = generator.type === 'engine' ? 28 : 22;
+          generator.oscillators.forEach((osc, idx) => {
+            const multiplier = idx === 0 ? 1 : (idx === 1 ? 1.5 : (idx === 2 ? 2.0 : 3.5));
+            osc.frequency.setValueAtTime(osc.frequency.value, time);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * multiplier, time + 0.7);
+          });
+          generator.lfo.frequency.setValueAtTime(generator.lfo.frequency.value, time);
+          generator.lfo.frequency.linearRampToValueAtTime(generator.type === 'engine' ? 14 : 9, time + 0.7);
+        }
+      });
+    }
+
+    // --- 7. AMBIENT BACKGROUND MUSIC GENERATOR (SHOWROOM ENVIRONMENT) ---
+    class AmbientMusicGenerator {
+      constructor() {
+        this.audioCtx = null;
+        this.isPlaying = false;
+        this.filterNode = null;
+        this.padFilterNode = null;
+        this.delayL = null;
+        this.delayR = null;
+        this.feedbackL = null;
+        this.feedbackR = null;
+        this.panDelayL = null;
+        this.panDelayR = null;
+        this.mainGain = null;
+        this.chordTimeout = null;
+        this.currentChordIdx = 0;
+        
+        // Peaceful, blissful showroom chord progression with root drone configurations (Fmaj9, Cmaj9, G6/9, Am11)
+        this.chords = [
+          { root: 87.31, notes: [174.61, 261.63, 329.63, 392.00, 523.25, 659.25] }, // F2 root, F3 C4 E4 G4 C5 E5 (Fmaj9)
+          { root: 130.81, notes: [261.63, 329.63, 392.00, 493.88, 587.33, 783.99] }, // C3 root, C4 E4 G4 B4 D5 G5 (Cmaj9)
+          { root: 98.00, notes: [196.00, 293.66, 392.00, 440.00, 587.33, 739.99] }, // G2 root, G3 D4 G4 A4 D5 F#5 (G6/9)
+          { root: 110.00, notes: [220.00, 329.63, 392.00, 523.25, 587.33, 659.25] }  // A2 root, A3 E4 G4 C5 D5 E5 (Am11)
+        ];
+      }
+
+      init() {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // High-cut warm filter at 1000Hz to preserve sparkling chime tones while keeping them soft
+        this.filterNode = this.audioCtx.createBiquadFilter();
+        this.filterNode.type = 'lowpass';
+        this.filterNode.frequency.setValueAtTime(1000, this.audioCtx.currentTime);
+        this.filterNode.Q.setValueAtTime(0.7, this.audioCtx.currentTime);
+
+        // Low-pass warm pad filter for the drone to keep the low-end deep and clean (150Hz)
+        this.padFilterNode = this.audioCtx.createBiquadFilter();
+        this.padFilterNode.type = 'lowpass';
+        this.padFilterNode.frequency.setValueAtTime(150, this.audioCtx.currentTime);
+        this.padFilterNode.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
+        
+        // Dual-channel delay lines for spacious ping-pong echo loops
+        this.delayL = this.audioCtx.createDelay(2.0);
+        this.delayL.delayTime.setValueAtTime(0.60, this.audioCtx.currentTime);
+        
+        this.delayR = this.audioCtx.createDelay(2.0);
+        this.delayR.delayTime.setValueAtTime(0.90, this.audioCtx.currentTime);
+        
+        // Feedback gain nodes for cross feedback
+        this.feedbackL = this.audioCtx.createGain();
+        this.feedbackL.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
+        
+        this.feedbackR = this.audioCtx.createGain();
+        this.feedbackR.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
+        
+        // Cross-feedback connection: L delay connects to feedback -> R delay, and vice-versa
+        this.delayL.connect(this.feedbackL);
+        this.feedbackL.connect(this.delayR);
+        
+        this.delayR.connect(this.feedbackR);
+        this.feedbackR.connect(this.delayL);
+
+        // Stereo panners for delay lines
+        this.panDelayL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        this.panDelayR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        
+        if (this.panDelayL) this.panDelayL.pan.setValueAtTime(-0.85, this.audioCtx.currentTime);
+        if (this.panDelayR) this.panDelayR.pan.setValueAtTime(0.85, this.audioCtx.currentTime);
+        
+        // Master volume control
+        this.mainGain = this.audioCtx.createGain();
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        
+        // Routing graph
+        this.filterNode.connect(this.mainGain);
+        this.filterNode.connect(this.delayL);
+        this.filterNode.connect(this.delayR);
+        
+        if (this.panDelayL && this.panDelayR) {
+          this.delayL.connect(this.panDelayL);
+          this.panDelayL.connect(this.mainGain);
+          this.delayR.connect(this.panDelayR);
+          this.panDelayR.connect(this.mainGain);
+        } else {
+          this.delayL.connect(this.mainGain);
+          this.delayR.connect(this.mainGain);
+        }
+
+        this.padFilterNode.connect(this.mainGain);
+        this.mainGain.connect(this.audioCtx.destination);
+      }
+
+      start() {
+        if (this.isPlaying) return;
+        if (!this.audioCtx) this.init();
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        
+        this.isPlaying = true;
+        this.mainGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        
+        // Slow swell fade-in of background music over 2.5s for maximum elegance
+        const targetGain = (engineSound.isPlaying || exhaustSound.isPlaying) ? 0.03 : 0.28;
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, this.audioCtx.currentTime + 2.5);
+        
+        this.playNextChord();
+      }
+
+      fadeTo(targetGain, duration = 1.0) {
+        if (!this.isPlaying || !this.audioCtx || !this.mainGain) return;
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, now + duration);
+      }
+
+      playNextChord() {
+        if (!this.isPlaying) return;
+        
+        const now = this.audioCtx.currentTime;
+        const chord = this.chords[this.currentChordIdx];
+        const duration = 6.0; // Seconds per chord
+        
+        const chordOscillators = [];
+        const chordGains = [];
+
+        // 1. Synthesize soft background drone pad for warmth and bliss
+        const padOsc = this.audioCtx.createOscillator();
+        padOsc.type = 'triangle';
+        padOsc.frequency.setValueAtTime(chord.root, now);
+
+        // Add slow LFO pitch vibrato to drone for luxury movement
+        const vibratoLfo = this.audioCtx.createOscillator();
+        vibratoLfo.type = 'sine';
+        vibratoLfo.frequency.setValueAtTime(0.25, now);
+        const vibratoGain = this.audioCtx.createGain();
+        vibratoGain.gain.setValueAtTime(1.5, now);
+        
+        vibratoLfo.connect(vibratoGain);
+        vibratoGain.connect(padOsc.frequency);
+
+        const padGain = this.audioCtx.createGain();
+        padGain.gain.setValueAtTime(0.0, now);
+        // Slower attack for the background pad
+        padGain.gain.linearRampToValueAtTime(0.035, now + 2.0);
+        // Hold, then decay release
+        padGain.gain.setValueAtTime(0.035, now + duration - 2.5);
+        padGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        padOsc.connect(padGain);
+        padGain.connect(this.padFilterNode);
+
+        vibratoLfo.start(now);
+        padOsc.start(now);
+
+        chordOscillators.push(padOsc, vibratoLfo);
+        chordGains.push(padGain, vibratoGain);
+        
+        // 2. Synthesize arpeggiated surround chimes
+        chord.notes.forEach((freq, idx) => {
+          // Cascade chimes spaced out to create movement
+          const noteDelay = idx * 0.35;
+          const playTime = now + noteDelay;
+          
+          // Shimmering chorus effect using twin-detuned oscillators per chime
+          const osc1 = this.audioCtx.createOscillator();
+          const osc2 = this.audioCtx.createOscillator();
+          
+          osc1.type = 'sine';
+          osc2.type = 'sine';
+          
+          osc1.frequency.setValueAtTime(freq, playTime);
+          osc2.frequency.setValueAtTime(freq, playTime);
+          
+          osc1.detune.setValueAtTime(-4, playTime);
+          osc2.detune.setValueAtTime(4, playTime);
+          
+          const voiceGain = this.audioCtx.createGain();
+          voiceGain.gain.setValueAtTime(0.0, playTime);
+          
+          // Soft attack envelope for chime ring-in
+          const targetVol = idx === 0 ? 0.06 : 0.03;
+          voiceGain.gain.linearRampToValueAtTime(targetVol, playTime + 1.2);
+          
+          // Hold, then release
+          voiceGain.gain.setValueAtTime(targetVol, playTime + duration - 2.5 - noteDelay);
+          voiceGain.gain.exponentialRampToValueAtTime(0.001, playTime + duration - noteDelay);
+          
+          // Stereo panning for note spatial separation
+          const notePan = ((idx % 2 === 0 ? -1 : 1) * (0.3 + (idx * 0.08))).toFixed(2);
+          const voicePanner = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+          
+          osc1.connect(voiceGain);
+          osc2.connect(voiceGain);
+          
+          if (voicePanner) {
+            voicePanner.pan.setValueAtTime(parseFloat(notePan), playTime);
+            voiceGain.connect(voicePanner);
+            voicePanner.connect(this.filterNode);
+          } else {
+            voiceGain.connect(this.filterNode);
+          }
+          
+          osc1.start(playTime);
+          osc2.start(playTime);
+          
+          chordOscillators.push(osc1, osc2);
+          chordGains.push(voiceGain);
+          if (voicePanner) chordGains.push(voicePanner);
+        });
+        
+        this.currentChordIdx = (this.currentChordIdx + 1) % this.chords.length;
+        
+        // Clean up sound nodes after decay completes
+        setTimeout(() => {
+          chordOscillators.forEach(osc => {
+            try { osc.stop(); } catch(e) {}
+            try { osc.disconnect(); } catch(e) {}
+          });
+          chordGains.forEach(g => {
+            try { g.disconnect(); } catch(e) {}
+          });
+        }, duration * 1000 + 2000);
+
+        this.chordTimeout = setTimeout(() => this.playNextChord(), (duration - 1.5) * 1000); // 1.5s crossfade overlap
+      }
+
+      stop() {
+        if (!this.isPlaying) return;
+        this.isPlaying = false;
+        
+        if (this.chordTimeout) clearTimeout(this.chordTimeout);
+        
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(0.0, now + 1.5); // Fade out music
+        
+        setTimeout(() => {
+          if (!this.isPlaying && this.audioCtx) {
+            this.audioCtx.close();
+            this.audioCtx = null;
+          }
+        }, 1600);
+      }
+    }
+
+    const ambientMusic = new AmbientMusicGenerator();
+    window.ambientMusic = ambientMusic; // Attach to window for global coordination
+
+    const musicBtn = document.getElementById('music-toggle-btn');
+    if (musicBtn) {
+      musicBtn.addEventListener('click', () => {
+        if (ambientMusic.isPlaying) {
+          ambientMusic.stop();
+          musicBtn.classList.remove('playing');
+        } else {
+          ambientMusic.start();
+          musicBtn.classList.add('playing');
+        }
+      });
+    }
+
+    // --- Mobile Menu Toggle logic ---
+    const mobileToggleBtn = document.getElementById('mobile-nav-toggle-btn');
+    const mobileOverlay = document.getElementById('mobile-menu-overlay');
+    const frontIcon = mobileToggleBtn ? mobileToggleBtn.querySelector('.car-front-icon') : null;
+    const sideIcon = mobileToggleBtn ? mobileToggleBtn.querySelector('.car-side-icon') : null;
+
+    if (mobileToggleBtn && mobileOverlay) {
+      const mobileOverlayLinks = mobileOverlay.querySelectorAll('.mobile-menu-links a, .mobile-menu-actions a');
+      
+      mobileToggleBtn.addEventListener('click', () => {
+        const isActive = mobileOverlay.classList.toggle('active');
+        if (isActive) {
+          if (frontIcon) frontIcon.style.display = 'none';
+          if (sideIcon) sideIcon.style.display = 'block';
+        } else {
+          if (frontIcon) frontIcon.style.display = 'block';
+          if (sideIcon) sideIcon.style.display = 'none';
+        }
+      });
+      
+      mobileOverlayLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileOverlay.classList.remove('active');
+          if (frontIcon) frontIcon.style.display = 'block';
+          if (sideIcon) sideIcon.style.display = 'none';
+        });
+      });
+    }
+
+    setupAudioPlayer('engine-player', engineSound);
+    setupAudioPlayer('exhaust-player', exhaustSound);
 
     // Start engine loops
     cycleRenderFrame();
