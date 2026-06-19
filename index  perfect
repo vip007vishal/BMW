@@ -1,0 +1,4215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Experience the high-performance BMW M4 CS in an interactive 3D studio, exploring its engineering, laser headlights, OLED signatures, and track-focused dynamics.">
+  <title>BMW M4 CS</title>
+  <style>
+    /* --- DESIGN TOKENS & SYSTEM CORE --- */
+    :root {
+      --color-bg: #040406;
+      --color-text: #ffffff;
+      --color-accent: #249EA0;
+      /* Unified Studio Teal */
+      --color-accent-orange: #6b0c0c;
+      /* High-Octane Deep Orange */
+      --color-muted: #8e8e93;
+      --font-display: 'Arial Black', Impact, sans-serif;
+      --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body,
+    html {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* --- BACKGROUND FIXED 3D CANVAS --- */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* --- HEADER INTERFACE LAYER --- */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      padding: 25px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.195);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo img {
+      width: 100%;
+      height: 100%;
+      opacity: 0.95;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-logo:hover img {
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    nav .brand {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #fff, var(--color-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav .nav-links {
+      flex: 4;
+      text-align: center;
+    }
+
+    nav .nav-links a {
+      color: var(--color-text);
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: 0.3s ease;
+    }
+
+    nav .nav-links a:hover {
+      background: linear-gradient(to right, #b72211 0%, #18b6b9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav .nav-actions {
+      flex: 1;
+      text-align: right;
+    }
+
+    nav .nav-btn {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease-in-out;
+    }
+
+    nav .nav-btn:hover {
+      background: rgba(242, 242, 242, 0.395);
+      border-color: rgba(215, 215, 215, 0.329);
+      box-shadow: 0 0 25px rgba(160, 160, 160, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* --- GRAPHIC CONTENT SECTIONS --- */
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    section {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 8%;
+    }
+
+    /* Section 1: Hero Overview */
+    #hero {
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 13vh;
+    }
+
+    .hero-image-bottom {
+      position: absolute;
+      bottom: 3vh;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100px;
+      width: auto;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      opacity: calc(0.2 * var(--scroll-opacity, 1));
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .hero-image-bottom img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .hero-image-bottom:hover {
+      opacity: var(--scroll-opacity, 1);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .hero-panel {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-panel h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 6.5rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: -3px;
+      margin-bottom: 25px;
+      background: linear-gradient(to right, #b72211 0%, #18b6b9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1.0) 0%, rgba(0, 0, 0, 0.0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1.0) 0%, rgba(0, 0, 0, 0.0) 100%);
+    }
+
+    .hero-panel p {
+      font-size: 1.1rem;
+      color: var(--color-muted);
+      max-width: 500px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      position: relative;
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(36, 158, 160, 0.15);
+      border: 1px solid var(--color-accent);
+      color: var(--color-accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    /* Section 2: Under Hood Mechanics */
+    #engineering {
+      position: relative;
+    }
+
+    .hud-callout {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      z-index: 10;
+    }
+
+    .hud-svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: block;
+      overflow: visible;
+    }
+
+    .hud-content {
+      position: absolute;
+      bottom: 110px;
+      left: 250px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      white-space: nowrap;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 8px 16px;
+      border-radius: 4px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .hud-title {
+      color: rgba(255, 51, 51, 0.08);
+      -webkit-text-stroke: 0.8px rgba(255, 51, 51, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(255, 51, 51, 0.25);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .hud-sep {
+      color: rgba(36, 158, 160, 0.08);
+      -webkit-text-stroke: 0.8px rgba(36, 158, 160, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(36, 158, 160, 0.25);
+    }
+
+    .hud-stat {
+      color: rgba(228, 228, 231, 0.08);
+      -webkit-text-stroke: 0.8px rgba(228, 228, 231, 0.45);
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.5),
+        0 0 1px rgba(228, 228, 231, 0.25);
+      font-size: 0.8rem;
+    }
+
+    .glass-card {
+      background: rgba(8, 8, 11, 0.4);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 45px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    .glass-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+      letter-spacing: 1px;
+      color: rgba(36, 158, 160, 0.08);
+      -webkit-text-stroke: 1px rgba(36, 158, 160, 0.35);
+      text-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 4px rgba(36, 158, 160, 0.3),
+        0 0 1px rgba(36, 158, 160, 0.5);
+    }
+
+    .glass-card p,
+    .cockpit-spec p {
+      font-size: 0.95rem;
+      color: rgba(228, 228, 231, 0.75);
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+      font-weight: 400;
+    }
+
+    .stat-row {
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 15px;
+    }
+
+    .stat-row:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .stat-row .label {
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .stat-row .value {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+    }
+
+    .value-teal {
+      color: var(--color-accent);
+    }
+
+    .value-orange {
+      color: var(--color-accent-orange);
+    }
+
+    .background-logo-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 0;
+      /* behind canvas */
+      pointer-events: none;
+      opacity: 0.15;
+    }
+
+    .background-logo-wrapper img {
+      width: 100vw;
+      height: auto;
+    }
+
+    /* Section 3: Driver Cockpit (Steering Calibration View) */
+    #cockpit {
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-top: 15vh;
+      padding-left: 4%;
+    }
+
+    #headlight {
+      justify-content: flex-end;
+    }
+
+    #tyres {
+      justify-content: flex-start;
+    }
+
+    #exhaust {
+      justify-content: space-between;
+    }
+
+    #taillight {
+      justify-content: flex-start;
+    }
+
+    #brand {
+      justify-content: flex-end;
+    }
+
+    .cockpit-spec {
+      max-width: 460px;
+      text-align: left;
+    }
+
+    .cockpit-spec h2 {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      color: rgba(255, 51, 51, 0.08);
+      -webkit-text-stroke: 1px rgba(255, 51, 51, 0.35);
+      text-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 1px rgba(255, 51, 51, 0.2);
+    }
+
+    .cockpit-spec ul {
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    .cockpit-spec ul li {
+      position: relative;
+      padding-left: 25px;
+      margin-bottom: 15px;
+      color: rgba(228, 228, 231, 0.75);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      letter-spacing: 0.5px;
+    }
+
+    .cockpit-spec ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      border-radius: 50%;
+    }
+
+    /* Section 4: Exit & Outro Stance */
+    #cta {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .cta-panel {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cta-panel h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.08);
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+      text-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.6),
+        0 0 1px rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+
+    .action-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .action-btn:hover {
+      background: var(--color-accent);
+      color: #ffffff;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 30px rgba(36, 158, 160, 0.5);
+      transform: translateY(-4px);
+    }
+
+    /* Glass Audio Player components */
+    .glass-audio-player {
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.5), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      pointer-events: auto;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-audio-player:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.15);
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(12, 12, 18, 0.45);
+    }
+
+    @keyframes enginePulse {
+      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
+      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(36, 158, 160, 0.3); }
+      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
+    }
+
+    @keyframes exhaustPulse {
+      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
+      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(196, 69, 54, 0.3); }
+      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
+    }
+
+    .glass-audio-player.playing#engine-player {
+      animation: enginePulse 3s infinite ease-in-out;
+      border-color: rgba(36, 158, 160, 0.35);
+    }
+
+    .glass-audio-player.playing#exhaust-player {
+      animation: exhaustPulse 3s infinite ease-in-out;
+      border-color: rgba(196, 69, 54, 0.35);
+    }
+
+    .glass-audio-player .play-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .glass-audio-player .play-btn:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 15px rgba(36, 158, 160, 0.6);
+      transform: scale(1.08);
+    }
+
+    #exhaust-player .play-btn:hover {
+      background: #c44536;
+      border-color: #c44536;
+      box-shadow: 0 0 15px rgba(196, 69, 54, 0.6);
+    }
+
+    .glass-audio-player .play-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .glass-audio-player .player-info {
+      display: flex;
+      flex-direction: column;
+      text-transform: uppercase;
+      font-family: var(--font-body);
+      letter-spacing: 1.5px;
+      min-width: 110px;
+    }
+
+    .glass-audio-player .player-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .glass-audio-player .player-subtitle {
+      font-size: 0.48rem;
+      color: var(--color-muted);
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    .glass-audio-player .wave-visualizer {
+      display: block;
+      width: 160px;
+      height: 40px;
+      background: transparent;
+      border-radius: 4px;
+    }
+
+    /* Section placement: placed exactly opposite (horizontally aligned) to the power assembly callout card */
+    #engineering .audio-player-wrapper {
+      position: absolute;
+      right: calc(50% + 250px);
+      bottom: calc(50% + 110px);
+    }
+
+    /* Showroom Background Music Toggle */
+    .bg-music-toggle {
+      position: fixed;
+      top: 110px;
+      right: 30px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      z-index: 15;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      padding: 0;
+    }
+
+    .bg-music-toggle:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(12, 12, 18, 0.45);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .bg-music-toggle:active {
+      transform: translateY(0px) scale(0.98);
+    }
+
+    .bg-music-toggle svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    @keyframes spinTyre {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .bg-music-toggle svg.tyre-icon {
+      animation: spinTyre 6s infinite linear;
+      animation-play-state: paused;
+      transition: color 0.4s ease;
+    }
+
+    .bg-music-toggle.playing svg.tyre-icon {
+      animation-play-state: running;
+      color: var(--color-accent);
+    }
+
+    /* Mobile Toggle Button */
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      padding: 2px;
+      align-items: center;
+      justify-content: center;
+      z-index: 11;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .mobile-nav-toggle svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-nav-toggle:hover {
+      color: var(--color-accent);
+      transform: scale(1.05);
+    }
+
+    .mobile-nav-toggle:active {
+      transform: scale(0.95);
+    }
+
+    /* Mobile Overlay Menu Drawer */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 80px; /* Directly below fixed navbar */
+      left: 0;
+      width: 100%;
+      height: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(8, 8, 12, 0.98) 0%, rgba(4, 4, 6, 0.99) 100%);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      overflow: hidden;
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      border-bottom: 0px solid rgba(255, 255, 255, 0.0);
+    }
+
+    .mobile-menu-overlay.active {
+      height: calc(100vh - 80px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mobile-menu-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+    }
+
+    .mobile-menu-overlay.active .mobile-menu-links {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-menu-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-links a:hover {
+      color: var(--color-accent);
+      text-shadow: 0 0 10px rgba(36, 158, 160, 0.4);
+    }
+
+    .mobile-menu-actions {
+      margin-top: 50px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    }
+
+    .mobile-menu-overlay.active .mobile-menu-actions {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- RESPONSIVE ADAPTATION --- */
+    @media (max-width: 968px) {
+      section {
+        justify-content: center !important;
+        text-align: center;
+      }
+
+      .hero-panel p,
+      .cockpit-spec p {
+        margin: 0 auto;
+      }
+
+      .cockpit-spec ul li {
+        text-align: left;
+      }
+
+      #engineering .audio-player-wrapper {
+        position: relative;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+      }
+
+      nav {
+        padding: 20px 6%;
+      }
+
+      nav .brand {
+        flex: 1;
+        font-size: 1.2rem;
+        text-align: left;
+        margin-left: 15px;
+      }
+
+      nav .nav-links,
+      nav .nav-actions,
+      nav .nav-logo:last-of-type {
+        display: none !important;
+      }
+
+      .mobile-nav-toggle {
+        display: flex !important;
+      }
+    }
+
+    /* Loading Infrastructure overlay */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--color-bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.6s ease;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+      color: #000038;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* --- FREE ROAM CAM VIEW & BLENDER CONTROLS --- */
+    body.free-roam-active {
+      overflow: hidden !important;
+      height: 100vh;
+    }
+    body.free-roam-active #webgl-canvas {
+      pointer-events: auto;
+      cursor: grab;
+    }
+    body.free-roam-active #webgl-canvas:active {
+      cursor: grabbing;
+    }
+
+    main, nav, .bg-music-toggle {
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    body.free-roam-active main,
+    body.free-roam-active nav,
+    body.free-roam-active .bg-music-toggle {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      visibility: hidden;
+    }
+
+    .free-roam-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 99;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(8, 8, 12, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 24px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .free-roam-btn:hover {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 30px rgba(36, 158, 160, 0.6);
+      transform: translateY(-4px);
+    }
+    .free-roam-btn:active {
+      transform: translateY(-1px);
+    }
+    .free-roam-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+    body.free-roam-active .free-roam-btn {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+    }
+
+    /* --- SCENE MODE TOGGLE (Cinematic / Studio) --- */
+    .scene-mode-toggle {
+      position: fixed;
+      top: 96px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.free-roam-active .scene-mode-toggle {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .scene-mode-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 80%), rgba(8, 8, 12, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-top: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 40px;
+      padding: 5px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      gap: 2px;
+    }
+    /* Sliding active indicator */
+    .scene-mode-inner::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      width: calc(50% - 5px);
+      height: calc(100% - 10px);
+      border-radius: 35px;
+      background: linear-gradient(135deg, var(--color-accent) 0%, rgba(36,158,160,0.75) 100%);
+      box-shadow: 0 0 18px rgba(36,158,160,0.55), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 0;
+    }
+    .scene-mode-inner.studio-active::before {
+      left: calc(50% + 0px);
+    }
+    .scene-mode-btn {
+      position: relative;
+      z-index: 1;
+      padding: 8px 22px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      outline: none;
+      border-radius: 35px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: color 0.3s ease;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+    }
+    .scene-mode-btn.active {
+      color: #fff;
+    }
+    .scene-mode-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: filter 0.3s ease;
+    }
+    .scene-mode-btn.active svg {
+      filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+    }
+
+
+    .free-roam-hud {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      z-index: 110;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.6);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 24px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    body.free-roam-active .free-roam-hud {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .free-roam-hud h3 {
+      display: none;
+    }
+    .free-roam-hud-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+    .free-roam-hud-label {
+      color: var(--color-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .free-roam-hud-key {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 3px 6px;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #fff;
+      font-family: monospace;
+    }
+
+    @media (max-width: 1200px) {
+      .free-roam-hud {
+        gap: 12px;
+        padding: 8px 18px;
+      }
+      .free-roam-hud-item {
+        font-size: 0.7rem;
+        gap: 6px;
+      }
+      .free-roam-exit-btn {
+        padding: 6px 12px;
+        font-size: 0.65rem;
+      }
+    }
+    .free-roam-exit-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(196, 69, 54, 0.15);
+      border: 1px solid #c44536;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+      outline: none;
+    }
+    .free-roam-exit-btn:hover {
+      background: #c44536;
+      box-shadow: 0 0 20px rgba(196, 69, 54, 0.6);
+      transform: translateY(-2px);
+    }
+    .free-roam-exit-btn svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* Light target switcher */
+    .light-target-selector {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+    .light-target-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 5px 1px;
+      border-radius: 12px;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+    .light-target-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .light-target-btn.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(36, 158, 160, 0.4);
+    }
+
+    /* --- COLOR CUSTOMIZATION SELECTION PILL --- */
+    .color-pill-container {
+      position: fixed;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%) translateX(120px);
+      z-index: 100;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.55);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-radius: 15px;
+      padding: 24px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      pointer-events: none;
+    }
+    body.free-roam-active .color-pill-container {
+      transform: translateY(-50%) translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .color-target-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+    .target-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      width: 72px;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+    .target-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .target-btn.active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(36, 158, 160, 0.4);
+    }
+    .color-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .color-options-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      justify-items: center;
+    }
+    .color-opt-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      padding: 0;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .color-opt-btn:hover {
+      transform: scale(1.2);
+    }
+    .color-opt-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+      transform: scale(1.1);
+    }
+    .color-opt-btn.default-opt {
+      grid-column: span 2;
+      width: 100%;
+      height: 28px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.7);
+      box-shadow: none;
+    }
+    .color-opt-btn.default-opt:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #fff;
+    }
+    .color-opt-btn.default-opt.active {
+      border: 2px solid #fff;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .color-opt-btn.default-opt svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+    }
+
+    /* --- CUSTOM PANEL COLLAPSIBLE TOGGLES --- */
+    .pill-toggle-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 52px;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(8, 8, 12, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+      z-index: 10;
+    }
+    
+    #color-pill-toggle {
+      left: -20px;
+      border-radius: 10px 0 0 10px;
+      border-right: none;
+    }
+    #color-pill-toggle:hover {
+      color: #fff;
+      background: rgba(8, 8, 12, 0.9);
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
+    }
+    
+    #light-pill-toggle {
+      right: -20px;
+      border-radius: 0 10px 10px 0;
+      border-left: none;
+    }
+    #light-pill-toggle:hover {
+      color: #fff;
+      background: rgba(8, 8, 12, 0.9);
+      box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
+    }
+    
+    .toggle-icon {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Collapse animation modifiers */
+    .color-pill-container.collapsed {
+      transform: translateY(-50%) translateX(calc(100% + 40px)) !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .light-pill-container.collapsed {
+      transform: translateY(-50%) translateX(calc(-100% - 40px)) !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* --- SLEEK COLLAPSED FLOATING CIRCLE TRIGGERS --- */
+    .collapsed-pill-trigger {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%) scale(0);
+      opacity: 0;
+      pointer-events: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(8, 8, 12, 0.55);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.22);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-accent);
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      z-index: 100;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 0;
+      outline: none;
+    }
+    #light-pill-collapsed-trigger {
+      left: 30px;
+    }
+    #color-pill-collapsed-trigger {
+      right: 30px;
+    }
+    .collapsed-pill-trigger:hover {
+      color: #fff;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 80%), rgba(8, 8, 12, 0.7);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 15px rgba(36, 158, 160, 0.5);
+      transform: translateY(-50%) scale(1.08);
+    }
+    .collapsed-pill-trigger:active {
+      transform: translateY(-50%) scale(0.98);
+    }
+    .collapsed-pill-trigger svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    body.free-roam-active #light-pill-collapsed-trigger.visible,
+    body.free-roam-active #color-pill-collapsed-trigger.visible {
+      transform: translateY(-50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* --- LIGHT CONTROL PANEL (LEFT SIDE) --- */
+    .light-pill-container {
+      position: fixed;
+      left: 30px;
+      top: 50%;
+      transform: translateY(-50%) translateX(-380px);
+      z-index: 100;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.55);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-left: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-radius: 15px;
+      padding: 24px 18px;
+      width: 315px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    body.free-roam-active .light-pill-container {
+      transform: translateY(-50%) translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .light-pill-container h3, .color-pill-container h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #ffffff 30%, var(--color-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      margin-bottom: 2px;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .light-color-selector, .light-intensity-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .customizer-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .light-schemes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .scheme-btn {
+      width: 100%;
+      height: 32px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      outline: none;
+    }
+    
+    .scheme-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    }
+    
+    .scheme-btn.active {
+      border-color: #fff;
+      box-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
+      transform: scale(1.04);
+    }
+    
+    .intensity-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    
+    .intensity-value {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      font-family: monospace;
+      background: rgba(36, 158, 160, 0.12);
+      border: 1px solid rgba(36, 158, 160, 0.25);
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Generic range slider shared by both light-slider and paint-slider */
+    .light-slider, .paint-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) var(--pct, 100%), rgba(255,255,255,0.1) var(--pct, 100%));
+      outline: none;
+      cursor: pointer;
+    }
+    .light-slider::-webkit-slider-thumb, .paint-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(36, 158, 160, 0.7), 0 2px 4px rgba(0,0,0,0.5);
+      border: 2px solid var(--color-accent);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .light-slider::-webkit-slider-thumb:hover, .paint-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 14px rgba(36, 158, 160, 0.9);
+    }
+
+    /* Light custom pickers row */
+    .light-custom-colors {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .light-pickers-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .light-picker-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 7px 10px;
+      border-radius: 10px;
+      gap: 6px;
+      transition: border-color 0.3s;
+    }
+    .light-picker-item:hover {
+      border-color: rgba(255,255,255,0.18);
+    }
+    .light-picker-item span {
+      font-size: 0.58rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    /* Premium Color Picker Input Override */
+    input[type="color"] {
+      -webkit-appearance: none;
+      appearance: none;
+      border: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      outline: none;
+      flex-shrink: 0;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border-radius: 50%;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    input[type="color"]:hover::-webkit-color-swatch {
+      border-color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Paint Finish metallic slider section */
+    .paint-finish-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      padding-top: 2px;
+    }
+
+    /* Premium custom color picker button (replaces rainbow circle) */
+    .custom-color-trigger {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      outline: none;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    }
+    .custom-color-trigger input[type="color"] {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+  </style>
+
+  <!-- Loader Modules for Graphic Engine -->
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- Loading Animation Rig Overlay -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <div id="load-progress"
+      style="font-weight:700; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; color:#fff;">Calibrating
+      Stage 0%</div>
+  </div>
+
+  <div class="background-logo-wrapper">
+    <img src="m4csr.png">
+  </div>
+
+  <canvas id="webgl-canvas"></canvas>
+
+  <nav>
+    <div class="nav-logo">
+      <img onclick="location.href='#hero'" src="logo.png" style="margin-right: 30px;">
+    </div>
+    <div class="brand">BMW M4 CS</div>
+    <div class="nav-links">
+      <a href="#hero">Stance</a>
+      <a href="#headlight">Lights</a>
+      <a href="#cockpit">Cockpit</a>
+      <a href="#engineering">Engine</a>
+      <a href="#tyres">Dynamics</a>
+      <a href="#exhaust">Exaust</a>
+      <a href="#cta">Look</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#cta" class="nav-btn">Reserve</a>
+    </div>
+    <div class="nav-logo">
+      <img onclick="location.href='#engineering'" src="mcomp.png" style="margin-left: 30px;">
+    </div>
+    
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-nav-toggle" aria-label="Toggle Menu" id="mobile-nav-toggle-btn">
+      <!-- Front View SVG (Closed State) -->
+      <svg class="car-front-icon" viewBox="0 0 100 100">
+        <!-- Roof and Windshield outline -->
+        <path d="M35 32 L65 32 L72 45 L28 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Car Body Front Hood & Grille outline -->
+        <path d="M22 45 L78 45 C83 45, 85 47, 85 52 L83 68 C83 72, 80 74, 76 74 L24 74 C20 74, 17 72, 17 68 L15 52 C15 47, 17 45, 22 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Headlights Left -->
+        <path d="M19 53 L29 51 L31 56 L20 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M22 54 L27 53" stroke="currentColor" stroke-width="1.2" />
+        <!-- Headlights Right -->
+        <path d="M81 53 L71 51 L69 56 L80 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M78 54 L73 53" stroke="currentColor" stroke-width="1.2" />
+        <!-- Kidney Grilles (Left & Right) -->
+        <rect x="38" y="52" width="10" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <rect x="52" y="52" width="10" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <!-- Mirrors -->
+        <path d="M28 38 L20 38 L19 41 L27 40" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <path d="M72 38 L80 38 L81 41 L73 40" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <!-- Lower intake details -->
+        <path d="M25 68 L35 68 L36 64 L26 64 Z" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <path d="M75 68 L65 68 L64 64 L74 64 Z" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <!-- Wheels outline bottom -->
+        <line x1="22" y1="74" x2="22" y2="78" stroke="currentColor" stroke-width="2.5" />
+        <line x1="78" y1="74" x2="78" y2="78" stroke="currentColor" stroke-width="2.5" />
+      </svg>
+      <!-- Side View SVG (Open State) -->
+      <svg class="car-side-icon" viewBox="0 0 100 100" style="display:none;">
+        <!-- Ground Line -->
+        <line x1="10" y1="72" x2="90" y2="72" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2" opacity="0.3" />
+        <!-- Car Silhouette Profile -->
+        <path d="M12 60 C12 56, 25 54, 30 50 C35 45, 40 33, 50 33 C62 33, 73 34, 78 48 C80 50, 84 50, 87 52 C88 53, 89 56, 88 60 C87 63, 85 64, 83 64 L78 64 C78 57, 68 57, 68 64 L34 64 C34 57, 24 57, 24 64 L15 64 C13 64, 12 62, 12 60 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <!-- Rear spoiler/tail detail -->
+        <path d="M85 51 C86 49, 87 49, 88 50" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <!-- Cabin Window Outline -->
+        <path d="M36 49 L48 37 C54 37, 64 37, 72 49 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+        <line x1="56" y1="37" x2="58" y2="49" stroke="currentColor" stroke-width="1.5" />
+        <!-- Front Wheel (hub + spokes) -->
+        <circle cx="29" cy="64" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="29" cy="64" r="2.5" fill="currentColor" />
+        <!-- Rear Wheel (hub + spokes) -->
+        <circle cx="73" cy="64" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="73" cy="64" r="2.5" fill="currentColor" />
+        <!-- Character line detail -->
+        <path d="M32 55 L75 55" stroke="currentColor" stroke-width="1" opacity="0.7" />
+        <!-- Door seam detail -->
+        <path d="M56 49 L54 62" stroke="currentColor" stroke-width="1" opacity="0.7" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Mobile Overlay Menu -->
+  <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+    <div class="mobile-menu-links">
+      <a href="#hero">Stance</a>
+      <a href="#headlight">Lights</a>
+      <a href="#cockpit">Cockpit</a>
+      <a href="#engineering">Engine</a>
+      <a href="#tyres">Dynamics</a>
+      <a href="#exhaust">Exaust</a>
+      <a href="#cta">Look</a>
+    </div>
+    <div class="mobile-menu-actions">
+      <a href="#cta" class="nav-btn">Reserve</a>
+    </div>
+  </div>
+
+  <main>
+    <section id="hero">
+      <!-- Showroom Background Music Toggle -->
+      <button class="bg-music-toggle" aria-label="Toggle Background Music" id="music-toggle-btn">
+        <svg class="tyre-icon" viewBox="0 0 100 100">
+          <defs>
+            <g id="m4cs-rim-spoke">
+              <!-- Y-Spoke Base -->
+              <line x1="59.5" y1="50" x2="64.5" y2="50" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+              <!-- Y-Spoke Left Branch -->
+              <line x1="64.5" y1="50" x2="87.5" y2="47.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+              <!-- Y-Spoke Right Branch -->
+              <line x1="64.5" y1="50" x2="87.5" y2="52.9" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+            </g>
+          </defs>
+          
+          <!-- Outer Tyre Wall (Deep matte black rim border) -->
+          <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.3" />
+          <!-- Tread Ribs details -->
+          <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.8" fill="none" stroke-dasharray="3,3" opacity="0.2" />
+          <!-- Wheel Rim Outer Edge Lip -->
+          <circle cx="50" cy="50" r="39" stroke="currentColor" stroke-width="1.4" fill="none" />
+          <!-- Inner Rim Spoke Ring -->
+          <circle cx="50" cy="50" r="37.5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.8" />
+          
+          <!-- 10 Spoke Groups Rotated Symmetrically (Style 827M Mesh) -->
+          <use href="#m4cs-rim-spoke" transform="rotate(0, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(36, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(72, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(108, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(144, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(180, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(216, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(252, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(288, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(324, 50, 50)" />
+
+          <!-- Center Cap Center (Black with silver ring) -->
+          <circle cx="50" cy="50" r="9.5" fill="#040406" stroke="currentColor" stroke-width="1.0" />
+          <!-- Inner Center Cap Detail -->
+          <circle cx="50" cy="50" r="7.5" fill="#040406" stroke="currentColor" stroke-width="0.4" opacity="0.5" />
+          
+          <!-- Bolt Holes Nestled inside Y splits (5 holes at 72 deg intervals on radius 16.5) -->
+          <circle cx="66.5" cy="50" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="34.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="40.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="59.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="65.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+        </svg>
+      </button>
+
+      <div class="hero-panel">
+        <div class="badge">Dynamic Showcase</div>
+        <h1>BMW M4 CS</h1>
+      </div>
+      <div class="hero-image-bottom">
+        <img onclick="location.href='#engineering'" src="mcomp.png" alt="BMW M4 CS Logo">
+      </div>
+    </section>
+
+    <section id="headlight">
+      <div class="glass-card">
+        <h2>Laser Illumination</h2>
+        <p>High-definition adaptive laser matrix projector array, projecting a piercing signature silhouette with
+          dynamic roadway pathfinder mapping.</p>
+      </div>
+    </section>
+
+    <section id="cockpit">
+      <div class="cockpit-spec">
+        <h2>Command Center</h2>
+        <p>Aerospace-grade autoclave carbon composite structures, housing tactile high-frequency telemetry matrices and
+          racing telemetry interfaces.</p>
+        <ul>
+          <li>M-Mode Integration</li>
+          <li>Alcantara Racing Rim</li>
+          <li>Integrated Shift Array</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="engineering">
+      <!-- Interactive Engine Audio Player -->
+      <div class="audio-player-wrapper">
+        <div class="glass-audio-player" id="engine-player">
+          <button class="play-btn" aria-label="Play Engine Sound">
+            <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <div class="player-info">
+            <span class="player-title">Engine sound</span>
+            <span class="player-subtitle">revs on hover</span>
+          </div>
+          <canvas class="wave-visualizer" id="engine-canvas" width="160" height="40" data-accent="#249ea0" data-color1="rgba(36, 158, 160, 0.95)" data-color2="rgba(30, 200, 203, 0.70)" data-color3="rgba(36, 158, 160, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(36, 158, 160, 0.15)"></canvas>
+        </div>
+      </div>
+
+      <div class="hud-callout">
+        <svg class="hud-svg" width="700" height="100">
+          <!-- Starts at center (0,100), 45deg up to (100,0), then horizontally right to (700,0) -->
+          <polyline points="0,100 100,0 700,0" fill="none" stroke="#249ea0" stroke-width="2" />
+          <circle cx="0" cy="100" r="4" fill="#249ea0" />
+          <circle cx="700" cy="0" r="3" fill="#249ea0" />
+        </svg>
+        <div class="hud-content">
+          <span class="hud-title">POWER ASSEMBLY</span>
+          <span class="hud-sep">//</span>
+          <span class="hud-stat">INLINE-6 TWINTURBO</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tyres">
+      <div class="glass-card">
+        <h2>Forged Dynamics</h2>
+        <p>Monoblock forged competition wheels, wrapped in high-hysteresis sticky racing slick compound for extreme
+          lateral acceleration indices.</p>
+      </div>
+    </section>
+
+    <section id="exhaust">
+      <!-- Interactive Exhaust Audio Player -->
+      <div class="glass-audio-player" id="exhaust-player">
+        <button class="play-btn" aria-label="Play Exhaust Sound">
+          <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="player-info">
+          <span class="player-title">Exhaust sound</span>
+          <span class="player-subtitle">revs on hover</span>
+        </div>
+        <canvas class="wave-visualizer" id="exhaust-canvas" width="160" height="40" data-accent="#c44536" data-color1="rgba(196, 69, 54, 0.95)" data-color2="rgba(235, 94, 40, 0.70)" data-color3="rgba(196, 69, 54, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(196, 69, 54, 0.15)"></canvas>
+      </div>
+
+      <div class="glass-card">
+        <h2>Acoustic Dominance</h2>
+        <p>Active valve-controlled quad-titanium exhaust array, tuning raw engine combustion pulses into a symphonic,
+          spine-tingling acoustic roar.</p>
+      </div>
+    </section>
+
+    <section id="taillight">
+      <div class="glass-card">
+        <h2>OLED Signatures</h2>
+        <p>Hyper-detailed three-dimensional organic light emitting diode (OLED) signatures, forming a high-contrast
+          trailing light aesthetic.</p>
+      </div>
+    </section>
+
+    <section id="brand">
+      <div class="glass-card">
+        <h2>The Brand BMW</h2>
+        <p>The M4 Competition Sport represents the absolute pinnacle of motorsport breeding. A brutal track-focused
+          weapon engineered with uncompromising dynamics.</p>
+      </div>
+    </section>
+
+    <section id="cta">
+      <div class="cta-panel">
+        <h2>Acquire Stance.</h2>
+        <a href="#" class="action-btn">Configure</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Free Roam 3D Button -->
+  <button class="free-roam-btn" id="free-roam-btn" aria-label="Enter Free Roam 3D View">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Free Roam 3D</span>
+  </button>
+
+  <!-- Scene Mode Toggle: Cinematic / Studio -->
+  <div class="scene-mode-toggle" id="scene-mode-toggle">
+    <div class="scene-mode-inner" id="scene-mode-inner">
+      <button class="scene-mode-btn active" id="scene-cinematic-btn" data-mode="cinematic">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 2l-2.5 5M10 2L7.5 7M8 7v14M16 7v14"/>
+        </svg>
+        Cinematic
+      </button>
+      <button class="scene-mode-btn" id="scene-studio-btn" data-mode="studio">
+        <svg viewBox="0 0 24 24">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/>
+        </svg>
+        Studio
+      </button>
+    </div>
+  </div>
+
+  <!-- Free Roam HUD Panel -->
+
+  <div class="free-roam-hud" id="free-roam-hud">
+    <h3>Blender Controls</h3>
+    <div class="free-roam-hud-item">
+      <span class="free-roam-hud-label">Orbit View</span>
+      <span class="free-roam-hud-key">MMB Drag</span>
+    </div>
+    <div class="free-roam-hud-item">
+      <span class="free-roam-hud-label">Pan View</span>
+      <span class="free-roam-hud-key">Shift + MMB</span>
+    </div>
+    <div class="free-roam-hud-item">
+      <span class="free-roam-hud-label">Zoom In/Out</span>
+      <span class="free-roam-hud-key">Scroll / Ctrl+MMB</span>
+    </div>
+    <button class="free-roam-exit-btn" id="free-roam-exit-btn">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Exit Free Roam</span>
+    </button>
+  </div>
+
+  <!-- Color Selector Pill Container -->
+  <div class="color-pill-container" id="color-pill">
+    <!-- Toggle Button to collapse/expand -->
+    <button class="pill-toggle-btn" id="color-pill-toggle" aria-label="Toggle Color Customizer">
+      <svg class="toggle-icon" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <h3>Paint Finish</h3>
+
+    <!-- Target Component Selector Tabs -->
+    <div class="color-target-selector">
+      <button class="target-btn active" data-target="all">All</button>
+      <button class="target-btn" data-target="body">Body</button>
+      <button class="target-btn" data-target="hood">Hood</button>
+      <button class="target-btn" data-target="doors">Doors</button>
+    </div>
+    
+    <!-- Visual Divider -->
+    <div class="color-divider"></div>
+    
+    <!-- BMW M4 Color Options List -->
+    <div class="color-options-list">
+      <!-- Default (dashed reset ring) -->
+      <button class="color-opt-btn default-opt active" data-color="default" title="Original GLB Material">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+      </button>
+      <button class="color-opt-btn" data-color="black_sapphire" style="background-color: #0D0D11; border: 1px solid rgba(255,255,255,0.15);" title="Black Sapphire Metallic (475)"></button>
+      <button class="color-opt-btn" data-color="toronto_red" style="background-color: #A62C2B;" title="Toronto Red Metallic (C3G)"></button>
+      <button class="color-opt-btn" data-color="skyscraper_grey" style="background-color: #7C8184;" title="Skyscraper Grey Metallic (C4W)"></button>
+      <button class="color-opt-btn" data-color="portimao_blue" style="background-color: #153E7E;" title="Portimao Blue Metallic (C31)"></button>
+      <button class="color-opt-btn" data-color="sao_paulo_yellow" style="background-color: #D2E635;" title="Sao Paulo Yellow Metallic (C4H)"></button>
+      <button class="color-opt-btn" data-color="isle_of_man_green" style="background-color: #135342;" title="Isle of Man Green Metallic (C4G)"></button>
+      <button class="color-opt-btn" data-color="brooklyn_grey" style="background-color: #A0A6A9;" title="Brooklyn Grey Metallic (C4P)"></button>
+      <button class="color-opt-btn" data-color="dravit_grey" style="background-color: #545654;" title="Dravit Grey Metallic (C3E)"></button>
+      <button class="color-opt-btn" data-color="tanzanite_blue" style="background-color: #101B2B;" title="Tanzanite Blue Metallic (X10)"></button>
+      <button class="color-opt-btn" data-color="aventurine_red" style="background-color: #5E1914;" title="Aventurine Red Metallic (C57)"></button>
+      <button class="color-opt-btn" data-color="frozen_isle_of_man" style="background-color: #1D4439;" title="Frozen Isle Of Man Green (C4G Matte)"></button>
+      <button class="color-opt-btn" data-color="riviera_blue" style="background-color: #43A6D6;" title="Riviera Blue (P5C)"></button>
+      <button class="color-opt-btn" data-color="matte_white" style="background-color: #F0EFEB; border: 1px solid rgba(255,255,255,0.2);" title="Alpine White (Matte)"></button>
+      
+      <!-- Custom Color Picker (Premium full-width) -->
+      <div style="grid-column: span 2; position: relative;">
+        <label id="car-custom-color-btn" title="Custom Color" style="display:flex; align-items:center; gap:10px; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(255,255,255,0.18); border-radius: 12px; padding: 6px 12px; cursor:pointer; transition: all 0.3s; width:100%; box-sizing:border-box; position:relative; overflow:hidden;">
+          <div id="car-color-preview" style="width:20px; height:20px; border-radius:50%; background: conic-gradient(red, yellow, green, cyan, blue, magenta, red); border: 1.5px solid rgba(255,255,255,0.35); flex-shrink:0; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: background 0.2s;"></div>
+          <span style="font-size:0.58rem; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1.5px; flex:1;">Custom</span>
+          <input type="color" id="car-color-picker" value="#ffffff" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0;">
+        </label>
+      </div>
+    </div>
+
+    <!-- Paint Finish Controls: Metallic Slider -->
+    <div class="paint-finish-controls">
+      <div class="color-divider"></div>
+      <div class="intensity-label-row">
+        <span class="customizer-label">Metallic</span>
+        <span class="intensity-value" id="metallic-val">90%</span>
+      </div>
+      <input type="range" class="paint-slider" id="paint-metallic-input" min="0" max="1" step="0.01" value="0.9">
+      <div class="intensity-label-row" style="margin-top:4px;">
+        <span class="customizer-label">Roughness</span>
+        <span class="intensity-value" id="roughness-val">20%</span>
+      </div>
+      <input type="range" class="paint-slider" id="paint-roughness-input" min="0" max="1" step="0.01" value="0.2">
+    </div>
+  </div>
+
+  <!-- Light Customizer Pill Container -->
+  <div class="light-pill-container" id="light-pill">
+    <!-- Toggle Button to collapse/expand -->
+    <button class="pill-toggle-btn" id="light-pill-toggle" aria-label="Toggle Light Customizer">
+      <svg class="toggle-icon" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    
+    <h3>Studio Lights</h3>
+
+    <!-- Light Customization Target Tabs -->
+    <div class="light-target-selector">
+      <button class="light-target-btn active" data-target="all">All</button>
+      <button class="light-target-btn" data-target="key">Key</button>
+      <button class="light-target-btn" data-target="rim">Rim</button>
+      <button class="light-target-btn" data-target="under">Under</button>
+      <button class="light-target-btn" data-target="ceiling">Ceiling</button>
+    </div>
+
+    <!-- Visual Divider -->
+    <div class="color-divider"></div>
+    
+    <!-- Light Schemes Selector -->
+    <div class="light-color-selector">
+      <span class="customizer-label">Color Scheme</span>
+      <div class="light-schemes-grid">
+        <button class="scheme-btn active" data-scheme="default" title="Showroom (Warm/Cool Whites)" style="background: linear-gradient(135deg, #FFFFFF 50%, #F5F5F0 50%);"></button>
+        <button class="scheme-btn" data-scheme="neon" title="Neon Studio (Teal / Orange)" style="background: linear-gradient(135deg, #249EA0 50%, #C44536 50%);"></button>
+        <button class="scheme-btn" data-scheme="cyber" title="Cyberpunk (Cyan / Magenta)" style="background: linear-gradient(135deg, #00F0FF 50%, #FF007F 50%);"></button>
+        <button class="scheme-btn" data-scheme="sunset" title="Sunset Gold (Gold / Red)" style="background: linear-gradient(135deg, #FFB800 50%, #FF3C00 50%);"></button>
+        <button class="scheme-btn" data-scheme="violet" title="Electro Violet (Blue / Purple)" style="background: linear-gradient(135deg, #003AFF 50%, #9A00FF 50%);"></button>
+        <button class="scheme-btn" data-scheme="red" title="Racing Red (Red / White)" style="background: linear-gradient(135deg, #FF0000 50%, #FFFFFF 50%);"></button>
+      </div>
+    </div>
+
+    <!-- Visual Divider -->
+    <div class="color-divider"></div>
+
+    <!-- Custom Dual Color Pickers -->
+    <div class="light-custom-colors">
+      <span class="customizer-label">Custom Light Colors</span>
+      <div class="light-pickers-row">
+        <div class="light-picker-item">
+          <span>Left</span>
+          <input type="color" id="light-color-left" value="#ffffff">
+        </div>
+        <div class="light-picker-item">
+          <span>Right</span>
+          <input type="color" id="light-color-right" value="#ffffff">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Visual Divider -->
+    <div class="color-divider"></div>
+    
+    <!-- Intensity Slider -->
+    <div class="light-intensity-control">
+      <div class="intensity-label-row">
+        <span class="customizer-label">Intensity</span>
+        <span class="intensity-value" id="intensity-val">100%</span>
+      </div>
+      <input type="range" class="light-slider" id="light-intensity-input" min="0" max="2.5" step="0.05" value="1.0">
+    </div>
+  </div>
+
+  <!-- Collapsed Pill Triggers -->
+  <button class="collapsed-pill-trigger" id="light-pill-collapsed-trigger" aria-label="Open Light Customizer">
+    <svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="collapsed-pill-trigger" id="color-pill-collapsed-trigger" aria-label="Open Color Customizer">
+    <svg viewBox="0 0 24 24"><path d="M12 22C17.52 22 22 17.52 22 12S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-16a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm10-6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- --- GRAPHICS RENDERING PIPELINE --- -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    // 1. ENVIRONMENT STAGING CONFIGURATION
+    const canvas = document.querySelector('#webgl-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog('#040406', 15, 55); // Gentle linear studio fog to prevent black fade
+    // Background removed to allow HTML transparent layers behind canvas
+
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 100);
+
+    // Initial Camera Target Arrays
+    let cameraPosition = new THREE.Vector3(0, 1.4, 7.8);
+    let cameraTarget = new THREE.Vector3(0, 0.2, 0);
+    camera.position.copy(cameraPosition);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Soft Cinematic Shading Optimizations
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+
+    // 2. SOFT FALL-OFF SHOWROOM LIGHTING RIG (Crisp whites by default for realism)
+    const backgroundFill = new THREE.AmbientLight('#ffffff', 0.40); // Lifted ambient shadows
+    scene.add(backgroundFill);
+
+    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.30);
+    zenithHighlight.position.set(0, 12, 0);
+    scene.add(zenithHighlight);
+
+    const zenithHighlight1 = new THREE.DirectionalLight('#ffffff', 0.60);
+    zenithHighlight1.position.set(3, 12, 0);
+    scene.add(zenithHighlight1);
+
+    const zenithHighlight2 = new THREE.DirectionalLight('#ffffff', 0.60);
+    zenithHighlight2.position.set(-3, 12, 0);
+    scene.add(zenithHighlight2);
+
+    // Back side zenith highlights
+    const zenithHighlightBack = new THREE.DirectionalLight('#ffffff', 0);
+    zenithHighlightBack.position.set(0, 2, 4);
+    scene.add(zenithHighlightBack);
+
+    const zenithHighlight1Back = new THREE.DirectionalLight('#ffffff', 0.50);
+    zenithHighlight1Back.position.set(3, 2, 4);
+    scene.add(zenithHighlight1Back);
+
+    const zenithHighlight2Back = new THREE.DirectionalLight('#ffffff', 0.50);
+    zenithHighlight2Back.position.set(-3, 2, 4);
+    scene.add(zenithHighlight2Back);
+
+    // Right Side Key: Soft White SpotLight with maximum blur fallback edges
+    const tealSpotKey = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4, 1.0, 1.1);
+    tealSpotKey.position.set(7, 6, 4);
+    tealSpotKey.castShadow = true;
+    tealSpotKey.shadow.mapSize.width = 1024;
+    tealSpotKey.shadow.mapSize.height = 1024;
+    tealSpotKey.shadow.bias = -0.00004;
+    scene.add(tealSpotKey);
+
+    // Left Side Key: Soft White SpotLight with maximum blur fallback edges
+    const orangeSpotKey = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4, 1.0, 1.1);
+    orangeSpotKey.position.set(-7, 6, 4);
+    orangeSpotKey.castShadow = true;
+    orangeSpotKey.shadow.mapSize.width = 1024;
+    orangeSpotKey.shadow.mapSize.height = 1024;
+    orangeSpotKey.shadow.bias = -0.00004;
+    scene.add(orangeSpotKey);
+
+    // Right Side Rim: Soft White SpotLight (Focuses on roofline and rear shoulder contours)
+    const tealSpotRim = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4.5, 0.8, 1.1);
+    tealSpotRim.position.set(6, 7.5, -7);
+    tealSpotRim.castShadow = true;
+    tealSpotRim.shadow.bias = -0.00004;
+    scene.add(tealSpotRim);
+
+    // Left Side Rim: Soft White SpotLight (Focuses on roofline and rear shoulder contours)
+    const orangeSpotRim = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4.5, 0.8, 1.1);
+    orangeSpotRim.position.set(-6, 7.5, -7);
+    orangeSpotRim.castShadow = true;
+    orangeSpotRim.shadow.bias = -0.00004;
+    scene.add(orangeSpotRim);
+
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects
+    const underTealFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    underTealFill.position.set(3.5, 0.5, 1);
+    scene.add(underTealFill);
+
+    const underOrangeFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    underOrangeFill.position.set(-3.5, 0.5, 1);
+    scene.add(underOrangeFill);
+
+    // Top-Front volumetric highlight clusters for surface ground bounce effects
+    const topFrontTealFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    topFrontTealFill.position.set(1.5, 5.5, 1.75);
+    scene.add(topFrontTealFill);
+
+    const topFrontOrangeFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    topFrontOrangeFill.position.set(-1.5, 5.5, 1.75);
+    scene.add(topFrontOrangeFill);
+
+
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects
+    const underTealFillback = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    underTealFillback.position.set(3.5, 0.5, -4);
+    scene.add(underTealFillback);
+
+    const underOrangeFillback = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    underOrangeFillback.position.set(-3.5, 0.5, -4);
+    scene.add(underOrangeFillback);
+
+    // Front Spotlight for direct grille and hood illumination (Shadow disabled for performance)
+    const frontSpotLight = new THREE.SpotLight(0xffffff, 25.0, 10, Math.PI / 5, 0.8, 1.2);
+    frontSpotLight.position.set(0, 2, 10);
+    frontSpotLight.castShadow = true;
+    frontSpotLight.shadow.bias = -0.00004;
+    scene.add(frontSpotLight);
+
+    const rearSpotLight = new THREE.SpotLight(0xffffff, 2.0, 10, Math.PI / 5, 0.5, 1.2);
+    rearSpotLight.position.set(0, 1, -5);
+    rearSpotLight.castShadow = true;
+    rearSpotLight.shadow.bias = -0.00004;
+    scene.add(rearSpotLight);
+    scene.add(rearSpotLight.target);
+
+    const rearSpotLight1 = new THREE.SpotLight(0xffffff, 12.0, 5, Math.PI / 5, 0.8, 1.2);
+    rearSpotLight1.position.set(1, 2, -5);
+    rearSpotLight1.castShadow = true;
+    rearSpotLight1.shadow.bias = -0.00004;
+    scene.add(rearSpotLight1);
+    scene.add(rearSpotLight1.target);
+
+    const rearSpotLight2 = new THREE.SpotLight(0xffffff, 12.0, 5, Math.PI / 5, 0.8, 1.2);
+    rearSpotLight2.position.set(-1, 2, -5);
+    rearSpotLight2.castShadow = true;
+    rearSpotLight2.shadow.bias = -0.00004;
+    scene.add(rearSpotLight2);
+    scene.add(rearSpotLight2.target);
+
+    const rearSpotLightbottom1 = new THREE.SpotLight(0xffffff, 8.0, 5, Math.PI / 2, 0.5, 0.5);
+    rearSpotLightbottom1.position.set(1, 0.1, -3.8);
+    rearSpotLightbottom1.target.position.set(0, 1.5, -2);
+    rearSpotLightbottom1.castShadow = false;
+    rearSpotLightbottom1.shadow.bias = -0.00004;
+    rearSpotLightbottom1.target.updateMatrixWorld();
+    scene.add(rearSpotLightbottom1);
+
+    const rearSpotLightbottom2 = new THREE.SpotLight(0xffffff, 8.0, 5, Math.PI / 2, 0.5, 0.5);
+    rearSpotLightbottom2.position.set(-1, 0.1, -3.8);
+    rearSpotLightbottom2.target.position.set(0, 1.5, -2);
+    rearSpotLightbottom2.castShadow = false;
+    rearSpotLightbottom2.shadow.bias = -0.00004;
+    rearSpotLightbottom2.target.updateMatrixWorld();
+    scene.add(rearSpotLightbottom2);
+
+    // --- 2. Lighting & Environment ---
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0);
+    scene.add(hemiLight);
+
+    const topLight = new THREE.DirectionalLight(0xffffff, 1.20);
+    topLight.position.set(0, 5, 0);
+    scene.add(topLight);
+
+    const leftOrangeLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    leftOrangeLight.position.set(-5, 2.5, 4);
+    scene.add(leftOrangeLight);
+
+    const rightTealLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    rightTealLight.position.set(5, 2.5, 4);
+    scene.add(rightTealLight);
+
+    const leftOrangeLightback = new THREE.DirectionalLight(0xffffff, 1.0);
+    leftOrangeLightback.position.set(-5, 2.5, 8);
+    scene.add(leftOrangeLightback);
+
+    const rightTealLightback = new THREE.DirectionalLight(0xffffff, 1.0);
+    rightTealLightback.position.set(5, 2.5, 8);
+    scene.add(rightTealLightback);
+
+    // Overhead wing spotlights (Instantiated globally so they can be tracked in editing)
+    const leftOverheadSpot = new THREE.SpotLight(0xffffff, 60.0, 8, Math.PI / 5, 0.5, 1.2);
+    leftOverheadSpot.castShadow = true;
+    leftOverheadSpot.shadow.bias = -0.00004;
+
+    const rightOverheadSpot = new THREE.SpotLight(0xffffff, 60.0, 8, Math.PI / 5, 0.5, 1.2);
+    rightOverheadSpot.castShadow = true;
+    rightOverheadSpot.shadow.bias = -0.00004;
+
+    // Top-down Red Spot Light
+    /*const topRedSpot = new THREE.SpotLight(0xC44536, 40.0, 50, Math.PI / 4, 1.0, 1.1);
+    topRedSpot.position.set(-4, 12, 0);
+    topRedSpot.castShadow = true;
+    topRedSpot.shadow.bias = -0.00004;
+    scene.add(topRedSpot);
+
+    // Top-down Teal Spot Light
+    const topTealSpot = new THREE.SpotLight(0x249EA0, 40.0, 50, Math.PI / 4, 1.0, 1.1);
+    topTealSpot.position.set(4, 12, 0);
+    topTealSpot.castShadow = true;
+    topTealSpot.shadow.bias = -0.00004;
+    scene.add(topTealSpot);
+
+    // Top-down Teal Spot Light
+    const topTealSpot = new THREE.SpotLight(0xffffff, 10.0, 20, Math.PI / 4, 1.0, 1.1);
+    topTealSpot.position.set(4, 12, 0);
+    topTealSpot.castShadow = true;
+    topTealSpot.shadow.bias = -0.00004;
+    scene.add(topTealSpot);*/
+
+    // Interior Spotlight (Illuminates the dashboard/steering wheel section)
+    const interiorLight = new THREE.SpotLight(0xBDFCFF, 20, 1, Math.PI / 4, 0.8, 1);
+    interiorLight.position.set(0, 0.9, 0);
+    interiorLight.target.position.set(1, 3, 7.5);
+    scene.add(interiorLight);
+    scene.add(interiorLight.target);
+
+    // 3. TARGET COMPONENT SELECTION HANDLERS
+    const carContainerGroup = new THREE.Group();
+    scene.add(carContainerGroup);
+
+    // Part Node tracking assignments populated on file unpack traversal
+    let hoodMeshNodes = [];
+    let driverDoorMeshNodes = [];
+    let passengerDoorMeshNodes = [];
+    let steeringWheelMeshNodes = [];
+    let hoodGroup = null;
+    let driverDoorGroup = null;
+    let passengerDoorGroup = null;
+
+    // Arrays for color changing paint nodes
+    let paintBodyNodes = [];
+    let paintHoodNodes = [];
+    let paintDoorNodes = [];
+
+    // Automated Target Discovery Engine
+    const modelLoader = new GLTFLoader();
+    const loadPercentText = document.getElementById('load-progress');
+    const loadingScreenMask = document.getElementById('loader');
+
+    let carModel = null;
+    let boxLimits = { min: { y: -1.3 } };
+
+    modelLoader.load(
+      'bmw_m4_cs_main4.glb', // Loaded direct verbatim user file[cite: 2]
+      (gltf) => {
+        carModel = gltf.scene;
+
+        // Measure structural geometry bounds directly
+        boxLimits = new THREE.Box3().setFromObject(carModel);
+        const dimensionVector = boxLimits.getSize(new THREE.Vector3());
+        const centerOffsetVector = boxLimits.getCenter(new THREE.Vector3());
+
+        // Maximize Hero Presence Scalar (Configured up to an optimized scale of 6.2)
+        const maximumBound = Math.max(dimensionVector.x, dimensionVector.y, dimensionVector.z);
+        const autoScaleFactor = 27.5 / maximumBound;
+        carModel.scale.set(autoScaleFactor, autoScaleFactor, autoScaleFactor);
+
+        // Adjust local pivot coordinates flush to center floor grids
+        boxLimits.setFromObject(carModel);
+        boxLimits.getCenter(centerOffsetVector);
+        carModel.position.x = -centerOffsetVector.x;
+        carModel.position.y = -boxLimits.min.y - 1.3;
+        carModel.position.z = -centerOffsetVector.z;
+
+        // Scan scene graph nodes to assign interactive components and lighting capabilities
+        carModel.traverse((childNode) => {
+          const nameString = childNode.name.toLowerCase();
+
+          // Wildcard structural tracking pattern matches
+          if (nameString.includes('hood_of_bmw')) {
+            hoodMeshNodes.push(childNode);
+          }
+          if (nameString.includes('left_door_of_bmw')) {
+            driverDoorMeshNodes.push(childNode);
+          }
+          if (nameString.includes('right_door_of_bmw')) {
+            passengerDoorMeshNodes.push(childNode);
+          }
+          if (nameString.includes('steering') || nameString.includes('wheel_m')) {
+            steeringWheelMeshNodes.push(childNode);
+          }
+
+          if (childNode.isMesh) {
+            childNode.castShadow = true;
+            childNode.receiveShadow = true;
+            if (childNode.material) {
+              childNode.material.envMapIntensity = 2.2;
+
+              // Color changing classification
+              const matName = childNode.material.name ? childNode.material.name.toLowerCase() : "";
+              const isPaint = nameString.includes('paint') || nameString.includes('coloured') ||
+                              matName.includes('paint') || matName.includes('coloured') || matName.includes('color');
+
+              if (isPaint) {
+                // Store the original material so we can restore it exactly ("not touching even anything")
+                childNode.userData.originalMaterial = childNode.material;
+
+                // Check hierarchical parents to accurately identify hood and door nodes
+                let isDoor = nameString.includes('door') || nameString.includes('left_') || nameString.includes('right_');
+                let parentNode = childNode.parent;
+                while (parentNode && !isDoor) {
+                  const parentName = parentNode.name.toLowerCase();
+                  if (parentName.includes('door') || parentName.includes('left_') || parentName.includes('right_')) {
+                    isDoor = true;
+                  }
+                  parentNode = parentNode.parent;
+                }
+
+                let isHood = nameString.includes('hood');
+                let parentNodeH = childNode.parent;
+                while (parentNodeH && !isHood) {
+                  const parentName = parentNodeH.name.toLowerCase();
+                  if (parentName.includes('hood')) {
+                    isHood = true;
+                  }
+                  parentNodeH = parentNodeH.parent;
+                }
+
+                if (isHood) {
+                  paintHoodNodes.push(childNode);
+                } else if (isDoor) {
+                  paintDoorNodes.push(childNode);
+                } else {
+                  paintBodyNodes.push(childNode);
+                }
+              }
+            }
+          }
+        });
+
+        // --- PIVOT CORRECTION ENGINE ---
+        // Dynamically fix the hood hinge since the raw GLB pivot is often at (0,0,0)
+        if (hoodMeshNodes.length > 0) {
+          hoodGroup = new THREE.Group();
+          carModel.add(hoodGroup);
+          const hoodBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          hoodMeshNodes.forEach(mesh => {
+            hoodBox.expandByObject(mesh);
+          });
+          const localBox = new THREE.Box3().copy(hoodBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.min.z;
+          const hingeY = localBox.max.y - 0.02;
+          hoodGroup.position.set(0, hingeY, hingeZ);
+          hoodMeshNodes.forEach(mesh => {
+            hoodGroup.attach(mesh);
+          });
+        }
+
+        // Dynamically fix the left door hinge (front-outer edge)
+        if (driverDoorMeshNodes.length > 0) {
+          driverDoorGroup = new THREE.Group();
+          carModel.add(driverDoorGroup);
+          const doorBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          driverDoorMeshNodes.forEach(mesh => doorBox.expandByObject(mesh));
+          const localBox = new THREE.Box3().copy(doorBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.max.z;
+          const hingeX = localBox.max.x;
+          driverDoorGroup.position.set(hingeX, 0, hingeZ);
+          driverDoorMeshNodes.forEach(mesh => driverDoorGroup.attach(mesh));
+        }
+
+        // Dynamically fix the right door hinge (front-outer edge)
+        if (passengerDoorMeshNodes.length > 0) {
+          passengerDoorGroup = new THREE.Group();
+          carModel.add(passengerDoorGroup);
+          const doorBox = new THREE.Box3();
+          carModel.updateMatrixWorld(true);
+          passengerDoorMeshNodes.forEach(mesh => doorBox.expandByObject(mesh));
+          const localBox = new THREE.Box3().copy(doorBox).applyMatrix4(carModel.matrixWorld.clone().invert());
+          const hingeZ = localBox.max.z;
+          const hingeX = localBox.min.x;
+          passengerDoorGroup.position.set(hingeX, 0, hingeZ);
+          passengerDoorMeshNodes.forEach(mesh => passengerDoorGroup.attach(mesh));
+        }
+
+        carContainerGroup.add(carModel);
+
+        // --- ADD OVERHEAD SPOTLIGHTS FOR THE WINGS ---
+        try {
+          let wingNode = null;
+          carModel.traverse((node) => {
+            if (node.name.includes('Wing0a_Coloured_Geo_lodA')) {
+              wingNode = node;
+            }
+          });
+          if (wingNode) {
+            const wingBox = new THREE.Box3().setFromObject(wingNode);
+
+            // Left wingtip position coordinates
+            const leftLightWorld = new THREE.Vector3(wingBox.min.x + 0.08, wingBox.max.y - 0.015, (wingBox.min.z + wingBox.max.z) / 2);
+            const leftLightLocal = leftLightWorld.clone();
+            carModel.worldToLocal(leftLightLocal);
+
+            // Left overhead spotlight facing the left wing tip
+            leftOverheadSpot.position.set(leftLightLocal.x - 0.2, leftLightLocal.y + 1.8, leftLightLocal.z + 0.3);
+            leftOverheadSpot.target.position.copy(leftLightLocal);
+            carModel.add(leftOverheadSpot);
+            carModel.add(leftOverheadSpot.target);
+
+            // Right wingtip position coordinates
+            const rightLightWorld = new THREE.Vector3(wingBox.max.x - 0.08, wingBox.max.y - 0.015, (wingBox.min.z + wingBox.max.z) / 2);
+            const rightLightLocal = rightLightWorld.clone();
+            carModel.worldToLocal(rightLightLocal);
+
+            // Right overhead spotlight facing the right wing tip
+            rightOverheadSpot.position.set(rightLightLocal.x + 0.2, rightLightLocal.y + 1.8, rightLightLocal.z + 0.3);
+            rightOverheadSpot.target.position.copy(rightLightLocal);
+            carModel.add(rightOverheadSpot);
+            carModel.add(rightOverheadSpot.target);
+          }
+        } catch (e) {
+          console.error("Error setting up overhead spotlights:", e);
+        }
+
+        // Wipe loader screen interface mask
+        loadingScreenMask.style.opacity = '0';
+        setTimeout(() => loadingScreenMask.style.display = 'none', 620);
+      },
+      (xhr) => {
+        if (xhr.total > 0) {
+          const calculationPercentage = Math.round((xhr.loaded / xhr.total) * 100);
+          loadPercentText.innerText = `Calibrating Stage ${calculationPercentage}%`;
+        }
+      },
+      (error) => {
+        console.error("Staging Error: Verify file name match precisely inside assets pathing setup.", error);
+        loadPercentText.innerText = "Error Packing Stage Model";
+      }
+    );
+
+    // Matte Shadows Ground Receiver Plane
+    /*const shadowFloorPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.MeshStandardMaterial({ color: 0x000000 })
+    );*/
+
+    // Matte Shadows Ground Receiver Plane
+    const shadowFloorPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(100, 100),
+      new THREE.ShadowMaterial({ opacity: 0.5 })
+    );
+
+    shadowFloorPlane.position.y = -0.1;
+    shadowFloorPlane.rotation.x = -Math.PI / 2;
+    shadowFloorPlane.receiveShadow = true;
+    scene.add(shadowFloorPlane);
+
+    // Blueprint Cyber Grid Frame Map (Teal #249EA0 setup configuration)
+    const stageLayoutGrid = new THREE.GridHelper(50, 60, '#249EA0', '#0a0e14');
+    stageLayoutGrid.position.y = -0.005;
+    stageLayoutGrid.material.opacity = 0.16;
+    stageLayoutGrid.material.transparent = true;
+    //scene.add(stageLayoutGrid);
+
+    // 4. COORDINATED GLOBAL CONTINUOUS LERP TIMELINE CONFIGURATIONS
+    let globalScrollProgress = 0;
+    let targetScrollProgress = 0;
+
+    // Fluid interpolation variables
+    let liveCamPos = new THREE.Vector3(0, 1.6, 7.5);
+    let liveCamTarget = new THREE.Vector3(0, 0.2, 0);
+
+    // Blender Free Roam Camera variables
+    let freeRoamActive = false;
+    let freeRoamTarget = new THREE.Vector3();
+    let freeRoamTheta = 0;
+    let freeRoamPhi = Math.PI / 2;
+    let freeRoamRadius = 7.5;
+    let isDragging = false;
+
+    const minRadius = 1.5;
+    const maxRadius = 35.0;
+    const minPhi = 0.05;
+    const maxPhi = Math.PI / 2 - 0.01;
+
+    function initFreeRoamFromLiveState() {
+      freeRoamTarget.copy(liveCamTarget);
+      const offset = new THREE.Vector3().subVectors(liveCamPos, liveCamTarget);
+      freeRoamRadius = offset.length();
+      freeRoamTheta = Math.atan2(offset.x, offset.z);
+      freeRoamPhi = Math.acos(Math.max(-1.0, Math.min(1.0, offset.y / freeRoamRadius)));
+      freeRoamPhi = Math.max(minPhi, Math.min(maxPhi, freeRoamPhi));
+    }
+
+    let nextCamPos = new THREE.Vector3();
+    let nextCamTarget = new THREE.Vector3();
+
+    let nextHoodRotation = 0;
+    let nextDriverDoorRotation = 0;
+    let nextPassengerDoorRotation = 0;
+
+    window.addEventListener('scroll', () => {
+      if (freeRoamActive) return; // ignore scroll events in free roam
+      const maximalLimit = document.documentElement.scrollHeight - window.innerHeight;
+      if (maximalLimit > 0) {
+        targetScrollProgress = window.scrollY / maximalLimit;
+      }
+    });
+
+    // Pointer events for Blender Camera navigation
+    canvas.addEventListener('mousedown', (event) => {
+      // MMB is 1, LMB is 0
+      if (freeRoamActive && (event.button === 1 || event.button === 0)) {
+        isDragging = true;
+        event.preventDefault();
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    window.addEventListener('mousemove', (event) => {
+      if (!freeRoamActive || !isDragging) return;
+
+      const isShift = event.shiftKey;
+      const isCtrl = event.ctrlKey;
+
+      if (isShift) {
+        // PAN: Shift + Drag
+        const localRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+        const localUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+        const factor = freeRoamRadius * 0.0015;
+        freeRoamTarget.addScaledVector(localRight, -event.movementX * factor);
+        freeRoamTarget.addScaledVector(localUp, event.movementY * factor);
+      } else if (isCtrl) {
+        // ZOOM: Ctrl + Drag
+        const zoomFactor = 0.005;
+        freeRoamRadius += event.movementY * zoomFactor * freeRoamRadius;
+        freeRoamRadius = Math.max(minRadius, Math.min(maxRadius, freeRoamRadius));
+      } else {
+        // ORBIT: Drag
+        const orbitFactor = 0.003;
+        freeRoamTheta -= event.movementX * orbitFactor;
+        freeRoamPhi -= event.movementY * orbitFactor;
+        freeRoamPhi = Math.max(minPhi, Math.min(maxPhi, freeRoamPhi));
+      }
+    });
+
+    window.addEventListener('wheel', (event) => {
+      if (freeRoamActive) {
+        event.preventDefault();
+        const zoomIntensity = 0.001;
+        freeRoamRadius += event.deltaY * zoomIntensity * freeRoamRadius;
+        freeRoamRadius = Math.max(minRadius, Math.min(maxRadius, freeRoamRadius));
+      }
+    }, { passive: false });
+
+    // UI Trigger Listeners
+    const freeRoamBtn = document.getElementById('free-roam-btn');
+    const freeRoamExitBtn = document.getElementById('free-roam-exit-btn');
+
+    if (freeRoamBtn) {
+      freeRoamBtn.addEventListener('click', () => {
+        document.body.classList.add('free-roam-active');
+        freeRoamActive = true;
+        initFreeRoamFromLiveState();
+      });
+    }
+
+    if (freeRoamExitBtn) {
+      freeRoamExitBtn.addEventListener('click', () => {
+        document.body.classList.remove('free-roam-active');
+        freeRoamActive = false;
+        
+        // Reset customizer panels layout to default open
+        if (colorPill) colorPill.classList.remove('collapsed');
+        if (lightPill) lightPill.classList.remove('collapsed');
+        if (colorCollapsedTrigger) colorCollapsedTrigger.classList.remove('visible');
+        if (lightCollapsedTrigger) lightCollapsedTrigger.classList.remove('visible');
+      });
+    }
+
+    // --- 7.5 COLLAPSIBLE PANEL TOGGLES ---
+    const colorPill = document.getElementById('color-pill');
+    const colorPillToggle = document.getElementById('color-pill-toggle');
+    const colorCollapsedTrigger = document.getElementById('color-pill-collapsed-trigger');
+    const lightPill = document.getElementById('light-pill');
+    const lightPillToggle = document.getElementById('light-pill-toggle');
+    const lightCollapsedTrigger = document.getElementById('light-pill-collapsed-trigger');
+
+    if (colorPill && colorPillToggle && colorCollapsedTrigger) {
+      colorPillToggle.addEventListener('click', () => {
+        colorPill.classList.add('collapsed');
+        colorCollapsedTrigger.classList.add('visible');
+      });
+      colorCollapsedTrigger.addEventListener('click', () => {
+        colorPill.classList.remove('collapsed');
+        colorCollapsedTrigger.classList.remove('visible');
+      });
+    }
+
+    if (lightPill && lightPillToggle && lightCollapsedTrigger) {
+      lightPillToggle.addEventListener('click', () => {
+        lightPill.classList.add('collapsed');
+        lightCollapsedTrigger.classList.add('visible');
+      });
+      lightCollapsedTrigger.addEventListener('click', () => {
+        lightPill.classList.remove('collapsed');
+        lightCollapsedTrigger.classList.remove('visible');
+      });
+    }
+
+    // --- SCENE MODE TOGGLE: CINEMATIC / STUDIO ---
+    const sceneModeInner = document.getElementById('scene-mode-inner');
+    const sceneCinematicBtn = document.getElementById('scene-cinematic-btn');
+    const sceneStudioBtn = document.getElementById('scene-studio-btn');
+    let activeSceneMode = 'cinematic'; // default — function applySceneMode defined below
+
+    if (sceneCinematicBtn) {
+      sceneCinematicBtn.addEventListener('click', () => {
+        if (activeSceneMode !== 'cinematic') applySceneMode('cinematic');
+      });
+    }
+    if (sceneStudioBtn) {
+      sceneStudioBtn.addEventListener('click', () => {
+        if (activeSceneMode !== 'studio') applySceneMode('studio');
+      });
+    }
+
+    // --- 7.6 STUDIO LIGHTS CUSTOMIZER ---
+
+    // Define groups of split-colored keys
+    const tealLights = [
+      zenithHighlight1, zenithHighlight1Back, tealSpotKey, tealSpotRim,
+      underTealFill, topFrontTealFill, underTealFillback, frontSpotLight,
+      rearSpotLight1, rearSpotLightbottom1, rightTealLight, rightTealLightback,
+      rightOverheadSpot
+    ];
+
+    const orangeLights = [
+      zenithHighlight2, zenithHighlight2Back, orangeSpotKey, orangeSpotRim,
+      underOrangeFill, topFrontOrangeFill, underOrangeFillback, rearSpotLight2,
+      rearSpotLightbottom2, leftOrangeLight, leftOrangeLightback,
+      leftOverheadSpot
+    ];
+
+    const otherLights = [
+      backgroundFill, zenithHighlight, zenithHighlightBack,
+      rearSpotLight, hemiLight, topLight, interiorLight
+    ];
+
+    const allLights = [...tealLights, ...orangeLights, ...otherLights];
+
+    // Light Groups definitions for separate customization
+    const lightGroups = {
+      key: [
+        tealSpotKey, orangeSpotKey, frontSpotLight,
+        leftOrangeLight, rightTealLight, leftOrangeLightback, rightTealLightback
+      ],
+      rim: [
+        tealSpotRim, orangeSpotRim,
+        rearSpotLight, rearSpotLight1, rearSpotLight2
+      ],
+      under: [
+        underTealFill, underOrangeFill,
+        underTealFillback, underOrangeFillback,
+        rearSpotLightbottom1, rearSpotLightbottom2
+      ],
+      ceiling: [
+        leftOverheadSpot, rightOverheadSpot,
+        topLight,
+        zenithHighlight, zenithHighlightBack,
+        zenithHighlight1, zenithHighlight2,
+        zenithHighlight1Back, zenithHighlight2Back,
+        topFrontTealFill, topFrontOrangeFill
+      ]
+    };
+
+    // State Tracking for Lighting Options
+    let activeLightTarget = 'all'; // 'all', 'key', 'rim', 'under', 'ceiling'
+    
+    const lightScales = {
+      all: 1.0,
+      key: 1.0,
+      rim: 1.0,
+      under: 1.0,
+      ceiling: 0.15
+    };
+
+    const activeSchemes = {
+      all: 'default',
+      key: 'default',
+      rim: 'default',
+      under: 'default',
+      ceiling: 'default'
+    };
+
+    // Store base initial intensities to scale from
+    const baseIntensities = new Map();
+    allLights.forEach(light => {
+      if (light) {
+        baseIntensities.set(light, light.intensity);
+      }
+    });
+
+    // Apply initial scaled intensities (ceiling lights starting at 15%)
+    applyAllIntensities();
+
+    const lightSchemes = {
+      default: { teal: 0xFFFFFF, orange: 0xF5F5F0 },
+      neon: { teal: 0x249EA0, orange: 0xC44536 },
+      cyber: { teal: 0x00F0FF, orange: 0xFF007F },
+      sunset: { teal: 0xFFB800, orange: 0xFF3C00 },
+      violet: { teal: 0x003AFF, orange: 0x9A00FF },
+      red: { teal: 0xFF0000, orange: 0xFFFFFF }
+    };
+
+    // Light target tabs event handlers
+    const lightTargetBtns = document.querySelectorAll('.light-target-btn');
+    const intensitySlider = document.getElementById('light-intensity-input');
+    const intensityValText = document.getElementById('intensity-val');
+    const schemeBtns = document.querySelectorAll('.scheme-btn');
+    
+    const lightColorLeft = document.getElementById('light-color-left');
+    const lightColorRight = document.getElementById('light-color-right');
+
+    if (lightTargetBtns) {
+      lightTargetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          lightTargetBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeLightTarget = btn.dataset.target;
+
+          // Sync range slider value & value display
+          if (intensitySlider && intensityValText) {
+            intensitySlider.value = lightScales[activeLightTarget];
+            intensityValText.innerText = Math.round(lightScales[activeLightTarget] * 100) + '%';
+          }
+
+          // Sync active color scheme buttons
+          updateSchemeBtnsActiveState();
+          
+          // Sync custom color pickers to matching active target's light color
+          syncCustomColorPickers();
+        });
+      });
+    }
+
+    // Helper to highlight active color scheme for current target
+    function updateSchemeBtnsActiveState() {
+      const currentSchemeName = activeSchemes[activeLightTarget];
+      schemeBtns.forEach(btn => {
+        if (btn.dataset.scheme === currentSchemeName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Scheme Selection Buttons Event Listeners
+    schemeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const schemeName = btn.dataset.scheme;
+        applyLightScheme(schemeName);
+      });
+    });
+
+    function applyLightScheme(schemeName) {
+      const scheme = lightSchemes[schemeName];
+      if (!scheme) return;
+
+      activeSchemes[activeLightTarget] = schemeName;
+
+      if (activeLightTarget === 'all') {
+        // Set all specific target schemes to match the global one
+        activeSchemes.key = schemeName;
+        activeSchemes.rim = schemeName;
+        activeSchemes.under = schemeName;
+        activeSchemes.ceiling = schemeName;
+
+        tealLights.forEach(light => {
+          if (light) light.color.setHex(scheme.teal);
+        });
+        orangeLights.forEach(light => {
+          if (light) light.color.setHex(scheme.orange);
+        });
+      } else {
+        // Apply colors only to the selected group
+        const targetLights = lightGroups[activeLightTarget] || [];
+        targetLights.forEach(light => {
+          if (!light) return;
+          if (tealLights.includes(light)) {
+            light.color.setHex(scheme.teal);
+          } else if (orangeLights.includes(light)) {
+            light.color.setHex(scheme.orange);
+          }
+        });
+
+        // Determine if all targets match the same scheme to sync the global 'all' state
+        if (activeSchemes.key === activeSchemes.rim && 
+            activeSchemes.rim === activeSchemes.under && 
+            activeSchemes.under === activeSchemes.ceiling) {
+          activeSchemes.all = activeSchemes.key;
+        } else {
+          activeSchemes.all = ''; // mixed
+        }
+      }
+
+      updateSchemeBtnsActiveState();
+      
+      // Update custom color picker swatch displays
+      syncCustomColorPickers();
+    }
+
+    // Apply custom dual colors to lights
+    function applyCustomLightColors() {
+      if (!lightColorLeft || !lightColorRight) return;
+      const leftHex = lightColorLeft.value;
+      const rightHex = lightColorRight.value;
+
+      activeSchemes[activeLightTarget] = 'custom';
+
+      if (activeLightTarget === 'all') {
+        activeSchemes.key = 'custom';
+        activeSchemes.rim = 'custom';
+        activeSchemes.under = 'custom';
+        activeSchemes.ceiling = 'custom';
+
+        tealLights.forEach(light => {
+          if (light) light.color.setHex(parseInt(leftHex.replace('#', '0x'), 16));
+        });
+        orangeLights.forEach(light => {
+          if (light) light.color.setHex(parseInt(rightHex.replace('#', '0x'), 16));
+        });
+      } else {
+        const targetLights = lightGroups[activeLightTarget] || [];
+        targetLights.forEach(light => {
+          if (!light) return;
+          if (tealLights.includes(light)) {
+            light.color.setHex(parseInt(leftHex.replace('#', '0x'), 16));
+          } else if (orangeLights.includes(light)) {
+            light.color.setHex(parseInt(rightHex.replace('#', '0x'), 16));
+          }
+        });
+
+        // Check if all targets are now marked custom, to sync 'all'
+        if (activeSchemes.key === activeSchemes.rim && 
+            activeSchemes.rim === activeSchemes.under && 
+            activeSchemes.under === activeSchemes.ceiling) {
+          activeSchemes.all = 'custom';
+        } else {
+          activeSchemes.all = ''; // mixed
+        }
+      }
+
+      updateSchemeBtnsActiveState();
+    }
+
+    // Read colors from active lights and sync inputs
+    function syncCustomColorPickers() {
+      if (!lightColorLeft || !lightColorRight) return;
+      let leftLight = null;
+      let rightLight = null;
+
+      if (activeLightTarget === 'all') {
+        leftLight = tealLights.find(l => l !== null);
+        rightLight = orangeLights.find(l => l !== null);
+      } else {
+        const targetLights = lightGroups[activeLightTarget] || [];
+        leftLight = targetLights.find(l => tealLights.includes(l));
+        rightLight = targetLights.find(l => orangeLights.includes(l));
+      }
+
+      if (leftLight) {
+        lightColorLeft.value = '#' + leftLight.color.getHexString();
+      }
+      if (rightLight) {
+        lightColorRight.value = '#' + rightLight.color.getHexString();
+      }
+    }
+
+    if (lightColorLeft && lightColorRight) {
+      lightColorLeft.addEventListener('input', applyCustomLightColors);
+      lightColorRight.addEventListener('input', applyCustomLightColors);
+      
+      // Initial sync
+      syncCustomColorPickers();
+    }
+
+    // --- SCENE MODE APPLY FUNCTION ---
+    // Per-light cinematic colors (exactly from original code)
+    const cinematicColors = new Map([
+      [backgroundFill,       0xffffff],  // ambient stays white but lower intensity
+      [zenithHighlight,      0xffffff],
+      [zenithHighlight1,     0x249EA0],  // teal from original
+      [zenithHighlight2,     0xC44536],  // orange from original
+      [zenithHighlightBack,  0xffffff],
+      [zenithHighlight1Back, 0x249EA0],
+      [zenithHighlight2Back, 0xC44536],
+      [tealSpotKey,          0x249EA0],
+      [orangeSpotKey,        0xC44536],
+      [tealSpotRim,          0x249EA0],
+      [orangeSpotRim,        0xC44536],
+      [underTealFill,        0x249EA0],
+      [underOrangeFill,      0xC44536],
+      [topFrontTealFill,     0x249EA0],
+      [topFrontOrangeFill,   0xC44536],
+      [underTealFillback,    0x249EA0],
+      [underOrangeFillback,  0xC44536],
+      [frontSpotLight,       0x249EA0],
+      [rearSpotLight,        0xffffff],
+      [rearSpotLight1,       0x249EA0],
+      [rearSpotLight2,       0xC44536],
+      [rearSpotLightbottom1, 0x249EA0],
+      [rearSpotLightbottom2, 0xC44536],
+      [hemiLight,            0xffffff],
+      [topLight,             0x249EA0],
+      [leftOrangeLight,      0xC44536],
+      [rightTealLight,       0x249EA0],
+      [leftOrangeLightback,  0xC44536],
+      [rightTealLightback,   0x249EA0],
+      [leftOverheadSpot,     0xC44536],
+      [rightOverheadSpot,    0x249EA0],
+      [interiorLight,        0xBDFCFF],
+    ]);
+
+    // Cinematic original intensities (from original code)
+    const cinematicIntensities = new Map([
+      [backgroundFill,       0.25],
+      [zenithHighlight,      0.25],
+      [zenithHighlight1,     0.50],
+      [zenithHighlight2,     0.50],
+      [zenithHighlightBack,  0],
+      [zenithHighlight1Back, 0.50],
+      [zenithHighlight2Back, 0.50],
+      [tealSpotKey,          8.0],
+      [orangeSpotKey,        8.0],
+      [tealSpotRim,          8.0],
+      [orangeSpotRim,        8.0],
+      [underTealFill,        10.5],
+      [underOrangeFill,      10.5],
+      [topFrontTealFill,     7.0],
+      [topFrontOrangeFill,   7.0],
+      [underTealFillback,    10.5],
+      [underOrangeFillback,  10.5],
+      [frontSpotLight,       20.0],
+      [rearSpotLight,        1.0],
+      [rearSpotLight1,       50.0],
+      [rearSpotLight2,       50.0],
+      [rearSpotLightbottom1, 10.0],
+      [rearSpotLightbottom2, 10.0],
+      [hemiLight,            0],
+      [topLight,             0.75],
+      [leftOrangeLight,      4.0],
+      [rightTealLight,       4.0],
+      [leftOrangeLightback,  1.0],
+      [rightTealLightback,   1.0],
+      [leftOverheadSpot,     60.0],
+      [rightOverheadSpot,    60.0],
+      [interiorLight,        20.0],
+    ]);
+
+    // Studio (current) state intensities — capture live values right now
+    const studioIntensities = new Map();
+    const studioColors = new Map();
+    allLights.forEach(light => {
+      if (!light) return;
+      studioIntensities.set(light, light.intensity);
+      studioColors.set(light, light.color.getHex());
+    });
+
+    function applySceneMode(mode) {
+      activeSceneMode = mode;
+
+      if (mode === 'cinematic') {
+        // Fog: original dark exponential fog
+        scene.fog = new THREE.FogExp2('#040506', 0.08);
+
+        // Restore each light to original cinematic color + intensity
+        allLights.forEach(light => {
+          if (!light) return;
+          const col = cinematicColors.get(light);
+          const inten = cinematicIntensities.get(light);
+          if (col !== undefined) light.color.setHex(col);
+          if (inten !== undefined) {
+            light.intensity = inten;
+            baseIntensities.set(light, inten);
+          }
+        });
+      } else {
+        // Fog: gentle studio linear fog
+        scene.fog = new THREE.Fog('#040406', 15, 55);
+
+        // Restore each light to studio (current default) colors + intensities
+        allLights.forEach(light => {
+          if (!light) return;
+          const col = studioColors.get(light);
+          const inten = studioIntensities.get(light);
+          if (col !== undefined) light.color.setHex(col);
+          if (inten !== undefined) {
+            light.intensity = inten;
+            baseIntensities.set(light, inten);
+          }
+        });
+      }
+
+      // Re-snap the intensity slider scale (keeping ceiling at 0.15, others at 1.0)
+      Object.keys(lightScales).forEach(k => {
+        lightScales[k] = (k === 'ceiling') ? 0.15 : 1.0;
+      });
+      if (intensitySlider) {
+        intensitySlider.value = lightScales[activeLightTarget];
+        updateSliderFill(intensitySlider);
+      }
+      if (intensityValText) {
+        intensityValText.innerText = Math.round(lightScales[activeLightTarget] * 100) + '%';
+      }
+
+      applyAllIntensities();
+
+      // Slide the toggle UI indicator
+      if (sceneModeInner) sceneModeInner.classList.toggle('studio-active', mode === 'studio');
+      if (sceneCinematicBtn) sceneCinematicBtn.classList.toggle('active', mode === 'cinematic');
+      if (sceneStudioBtn) sceneStudioBtn.classList.toggle('active', mode === 'studio');
+
+      // Sync scheme buttons + color pickers
+      const matchingScheme = mode === 'studio' ? 'default' : 'neon';
+      ['all', 'key', 'rim', 'under', 'ceiling'].forEach(k => activeSchemes[k] = matchingScheme);
+      updateSchemeBtnsActiveState();
+      syncCustomColorPickers();
+    }
+
+
+    // --- SLIDER TRACK FILL UTILITY ---
+    function updateSliderFill(slider) {
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 1;
+      const val = parseFloat(slider.value) || 0;
+      const pct = ((val - min) / (max - min) * 100).toFixed(1) + '%';
+      slider.style.setProperty('--pct', pct);
+    }
+
+    // Light Intensity Range Slider Control
+    if (intensitySlider && intensityValText) {
+      updateSliderFill(intensitySlider); // init fill
+      intensitySlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        intensityValText.innerText = Math.round(val * 100) + '%';
+        lightScales[activeLightTarget] = val;
+        updateSliderFill(intensitySlider);
+        applyAllIntensities();
+      });
+    }
+
+    // --- PAINT FINISH METALLIC & ROUGHNESS SLIDERS ---
+    const paintMetallicInput = document.getElementById('paint-metallic-input');
+    const paintRoughnessInput = document.getElementById('paint-roughness-input');
+    const metallicValEl = document.getElementById('metallic-val');
+    const roughnessValEl = document.getElementById('roughness-val');
+
+    if (paintMetallicInput) {
+      updateSliderFill(paintMetallicInput);
+      paintMetallicInput.addEventListener('input', (e) => {
+        globalMetalness = parseFloat(e.target.value);
+        useSliderFinish = true;
+        if (metallicValEl) metallicValEl.innerText = Math.round(globalMetalness * 100) + '%';
+        updateSliderFill(paintMetallicInput);
+        // Apply to all currently colored nodes
+        const applyToNodes = (nodes) => {
+          nodes.forEach(mesh => {
+            if (mesh.material !== mesh.userData.originalMaterial) {
+              mesh.material.metalness = globalMetalness;
+            }
+          });
+        };
+        applyToNodes([...paintBodyNodes, ...paintHoodNodes, ...paintDoorNodes]);
+      });
+    }
+
+    if (paintRoughnessInput) {
+      updateSliderFill(paintRoughnessInput);
+      paintRoughnessInput.addEventListener('input', (e) => {
+        globalRoughness = parseFloat(e.target.value);
+        useSliderFinish = true;
+        if (roughnessValEl) roughnessValEl.innerText = Math.round(globalRoughness * 100) + '%';
+        updateSliderFill(paintRoughnessInput);
+        // Apply to all currently colored nodes
+        const applyToNodes = (nodes) => {
+          nodes.forEach(mesh => {
+            if (mesh.material !== mesh.userData.originalMaterial) {
+              mesh.material.roughness = globalRoughness;
+            }
+          });
+        };
+        applyToNodes([...paintBodyNodes, ...paintHoodNodes, ...paintDoorNodes]);
+      });
+    }
+
+    function applyAllIntensities() {
+      allLights.forEach(light => {
+        if (!light) return;
+        const base = baseIntensities.get(light) || 0;
+        
+        let groupScale = 1.0;
+        if (lightGroups.key.includes(light)) {
+          groupScale = lightScales.key;
+        } else if (lightGroups.rim.includes(light)) {
+          groupScale = lightScales.rim;
+        } else if (lightGroups.under.includes(light)) {
+          groupScale = lightScales.under;
+        } else if (lightGroups.ceiling.includes(light)) {
+          groupScale = lightScales.ceiling;
+        }
+
+        // Proportional mix: base value * target scale * global scale
+        light.intensity = base * groupScale * lightScales.all;
+      });
+    }
+
+    // --- 8. COLOR PILL SELECTION HANDLERS ---
+    let activePaintTarget = 'all';
+    
+    // Store current color selections (default is 'default')
+    let currentColors = {
+      all: 'default',
+      body: 'default',
+      hood: 'default',
+      doors: 'default'
+    };
+
+    // Color definitions
+    const colorsMap = {
+      default: null,
+      black_sapphire: 0x0D0D11,
+      toronto_red: 0xA62C2B,
+      skyscraper_grey: 0x7C8184,
+      portimao_blue: 0x153E7E,
+      sao_paulo_yellow: 0xD2E635,
+      isle_of_man_green: 0x135342,
+      brooklyn_grey: 0xA0A6A9,
+      dravit_grey: 0x545654,
+      tanzanite_blue: 0x101B2B,
+      aventurine_red: 0x5E1914,
+      frozen_isle_of_man: 0x1D4439,
+      riviera_blue: 0x43A6D6,
+      matte_white: 0xF0EFEB
+    };
+
+    // Target Selection tabs
+    const targetBtns = document.querySelectorAll('.target-btn');
+    targetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        targetBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activePaintTarget = btn.dataset.target;
+        
+        // Update color button active styles
+        updateColorPillActiveState();
+      });
+    });
+
+    // Color options
+    const colorOptBtns = document.querySelectorAll('.color-opt-btn');
+    colorOptBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const colorName = btn.dataset.color;
+        currentColors[activePaintTarget] = colorName;
+        
+        if (activePaintTarget === 'all') {
+          currentColors.body = colorName;
+          currentColors.hood = colorName;
+          currentColors.doors = colorName;
+        } else {
+          // If a single target is edited, check if they all match to keep 'all' synced
+          if (currentColors.body === currentColors.hood && currentColors.hood === currentColors.doors) {
+            currentColors.all = currentColors.body;
+          } else {
+            currentColors.all = ''; // mixed
+          }
+        }
+        
+        // Apply color
+        applySelectedColor(activePaintTarget, colorName);
+        
+        // Update active class
+        updateColorPillActiveState();
+      });
+    });
+
+    const carColorPicker = document.getElementById('car-color-picker');
+    const carCustomColorBtn = document.getElementById('car-custom-color-btn');
+    const carColorPreview = document.getElementById('car-color-preview');
+
+    if (carColorPicker) {
+      carColorPicker.addEventListener('input', (e) => {
+        const selectedHex = e.target.value;
+        const colorName = 'custom_' + selectedHex.replace('#', '');
+        
+        // Update the preview swatch color
+        if (carColorPreview) carColorPreview.style.background = selectedHex;
+        
+        // Save custom color in colorsMap dynamically
+        colorsMap[colorName] = parseInt(selectedHex.replace('#', '0x'), 16);
+        
+        currentColors[activePaintTarget] = colorName;
+        
+        if (activePaintTarget === 'all') {
+          currentColors.body = colorName;
+          currentColors.hood = colorName;
+          currentColors.doors = colorName;
+        } else {
+          if (currentColors.body === currentColors.hood && currentColors.hood === currentColors.doors) {
+            currentColors.all = currentColors.body;
+          } else {
+            currentColors.all = ''; // mixed
+          }
+        }
+        
+        applySelectedColor(activePaintTarget, colorName);
+        updateColorPillActiveState();
+      });
+    }
+
+    function updateColorPillActiveState() {
+      const activeColor = currentColors[activePaintTarget];
+      colorOptBtns.forEach(btn => {
+        if (activeColor && btn.dataset.color === activeColor) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      if (carCustomColorBtn && carColorPicker) {
+        if (activeColor && activeColor.startsWith('custom_')) {
+          carCustomColorBtn.style.borderColor = 'rgba(255,255,255,0.55)';
+          carCustomColorBtn.style.background = 'rgba(255,255,255,0.08)';
+          const hexColor = '#' + activeColor.split('_')[1];
+          carColorPicker.value = hexColor;
+          if (carColorPreview) carColorPreview.style.background = hexColor;
+        } else {
+          carCustomColorBtn.style.borderColor = '';
+          carCustomColorBtn.style.background = '';
+          if (carColorPreview) carColorPreview.style.background = 'conic-gradient(red, yellow, green, cyan, blue, magenta, red)';
+        }
+      }
+    }
+
+    function applySelectedColor(target, colorName) {
+      const isDefault = colorName === 'default';
+      const colorHex = colorsMap[colorName];
+      
+      if (target === 'all') {
+        // Apply to all three components
+        paintBodyNodes.forEach(mesh => setMeshColor(mesh, colorHex, colorName, isDefault));
+        paintHoodNodes.forEach(mesh => setMeshColor(mesh, colorHex, colorName, isDefault));
+        paintDoorNodes.forEach(mesh => setMeshColor(mesh, colorHex, colorName, isDefault));
+      } else {
+        let targetNodes = [];
+        if (target === 'body') targetNodes = paintBodyNodes;
+        else if (target === 'hood') targetNodes = paintHoodNodes;
+        else if (target === 'doors') targetNodes = paintDoorNodes;
+        
+        targetNodes.forEach(mesh => {
+          setMeshColor(mesh, colorHex, colorName, isDefault);
+        });
+      }
+    }
+
+    // Global paint material override values (driven by sliders, defaults match standard metallic preset)
+    let globalMetalness = 0.9;
+    let globalRoughness = 0.2;
+    let useSliderFinish = false; // true once user has touched metallic/roughness sliders
+
+    function setMeshColor(mesh, colorHex, colorName, isDefault = false) {
+      if (isDefault) {
+        if (mesh.userData.originalMaterial) {
+          mesh.material = mesh.userData.originalMaterial;
+        }
+      } else {
+        // Clone if not already cloned to isolate this target component
+        if (mesh.material === mesh.userData.originalMaterial) {
+          mesh.material = mesh.userData.originalMaterial.clone();
+        }
+        mesh.material.color.setHex(colorHex);
+        
+        if (useSliderFinish) {
+          // User has manually set metallic/roughness — respect it
+          mesh.material.metalness = globalMetalness;
+          mesh.material.roughness = globalRoughness;
+        } else if (colorName === 'frozen_isle_of_man' || colorName === 'matte_white') {
+          // Matte/Frozen finishes
+          mesh.material.roughness = 0.72;
+          mesh.material.metalness = 0.05;
+        } else if (colorName === 'sao_paulo_yellow' || colorName === 'riviera_blue') {
+          // Gloss Uni Paint
+          mesh.material.roughness = 0.15;
+          mesh.material.metalness = 0.1;
+        } else {
+          // Metallic Paint Finishes
+          mesh.material.roughness = 0.2;
+          mesh.material.metalness = 0.9;
+        }
+        
+        // Sync slider display to reflect applied values
+        const appliedM = mesh.material.metalness;
+        const appliedR = mesh.material.roughness;
+        const metallicInput = document.getElementById('paint-metallic-input');
+        const roughnessInput = document.getElementById('paint-roughness-input');
+        const metallicVal = document.getElementById('metallic-val');
+        const roughnessVal = document.getElementById('roughness-val');
+        if (metallicInput && !useSliderFinish) {
+          metallicInput.value = appliedM;
+          updateSliderFill(metallicInput);
+          if (metallicVal) metallicVal.innerText = Math.round(appliedM * 100) + '%';
+        }
+        if (roughnessInput && !useSliderFinish) {
+          roughnessInput.value = appliedR;
+          updateSliderFill(roughnessInput);
+          if (roughnessVal) roughnessVal.innerText = Math.round(appliedR * 100) + '%';
+        }
+      }
+    }
+
+    let lastTime = performance.now();
+    let timeElapsed = 0;
+
+    // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
+    // Defined globally to prevent massive garbage collection on every frame
+    const timeline = [
+      // Progress 0.000: Hero Stance - Initial Front-Quarter View
+      { progress: 0.000, carYOffset: -2, camPos: [0, 0.7, 7.5], camTarget: [0, 1, 0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.050: Hero Stance - Slow Zoom & Alignment
+      { progress: 0.050, carYOffset: -2, camPos: [0, 1.4, 7.5], camTarget: [0.1, 0.2, 0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.145: Headlight Section - Approaching Right Laser Headlight
+      { progress: 0.135, carYOffset: -2, camPos: [1.7, 1, 4], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.165: Headlight Section - Close-Up on Headlight Matrix
+      { progress: 0.165, carYOffset: -2, camPos: [1.7, 1, 3.5], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.210: Cockpit Section - Approaching Left Driver Side Door
+      { progress: 0.210, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.8, 0.6, 2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.225: Cockpit Section - Left Door Opens, Displaying Interior
+      { progress: 0.225, carYOffset: -2, camPos: [0.9, 1.2, -0.2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.240: Cockpit Section - Close-Up Steering Calibration View
+      { progress: 0.240, carYOffset: -2, camPos: [0.9, 1.2, -0.3], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.270: Cockpit Section - Hold Steering Calibration View
+      { progress: 0.270, carYOffset: -2, camPos: [0.9, 1.2, -0.4], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.300: Cockpit Section - Transitioning Out of Cockpit
+      { progress: 0.300, carYOffset: -2, camPos: [5, 5, -2], camTarget: [0.2, 1.5, 2.5], hood: 0, doorL: -0.75, doorR: 0 },
+      // Progress 0.340: Engine Section - Front View, Preparing to Open Hood
+      { progress: 0.340, carYOffset: -2, camPos: [0, 1.1, 8], camTarget: [0.4, 0.9, 0.7], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.380: Engine Section - Hood Opens, Exposing TwinPower Turbo
+      { progress: 0.380, carYOffset: -2, camPos: [0, 3.0, 5.0], camTarget: [0, 0.5, 1.5], hood: -0.95, doorL: 0, doorR: 0 },
+      // Progress 0.450: Engine Section - Close-Up on the Engine Compartment
+      { progress: 0.450, carYOffset: -2, camPos: [3, 2.75, -1], camTarget: [1, 0.3, 1.5], hood: -1, doorL: 0, doorR: 0 },
+      // Progress 0.535: Dynamics Section - Hood Closes, Rotating to Side Profile
+      { progress: 0.535, carYOffset: -2, camPos: [4, 2, -6.5], camTarget: [1.0, 0.3, 1.5], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.680: Dynamics Section - Low-Angle Focus on Forged Alloys & Tyres
+      { progress: 0.680, carYOffset: -2, camPos: [-2, 0.5, -6], camTarget: [0, 0.3, -2.5], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.800: Exhaust Section - Rear-Quarter View Focusing on Quad Titanium Exhaust
+      { progress: 0.800, carYOffset: -2, camPos: [3, 2, -5], camTarget: [0.8, 0.7, -2.0], hood: 0, doorL: 0, doorR: 0 },
+      // Progress 0.895: Taillight / Brand Section - OLED Rear Signature View
+      { progress: 0.895, carYOffset: -2, camPos: [-2, 1.9, -6], camTarget: [0, 0, 0], hood: 0, doorL: -0, doorR: -0 },
+      // Progress 1.000: Outro / CTA Stance - Cinematic Wide Side Profile
+      { progress: 1.000, carYOffset: -2, camPos: [-9.0, 1.5, 0.0], camTarget: [5, 0.5, 0], hood: 0, doorL: 0, doorR: 0 }
+    ];
+
+    function cycleRenderFrame() {
+      const currentTime = performance.now();
+      const deltaTime = Math.min((currentTime - lastTime) / 1000, 0.1);
+      lastTime = currentTime;
+      timeElapsed += deltaTime;
+
+      // Frame-rate independent responsive smoothing
+      // scrollSpeed = 4.5 gives responsive yet smooth scroll tracking
+      const scrollEase = 1 - Math.exp(-4.5 * deltaTime);
+      globalScrollProgress += (targetScrollProgress - globalScrollProgress) * scrollEase;
+
+      // Find which segment we are in
+      let currentSeg = 0;
+      for (let i = 0; i < timeline.length - 1; i++) {
+        if (globalScrollProgress >= timeline[i].progress && globalScrollProgress <= timeline[i + 1].progress) {
+          currentSeg = i;
+          break;
+        }
+      }
+      if (globalScrollProgress >= 1.0) currentSeg = timeline.length - 2;
+
+      const segStart = timeline[currentSeg];
+      const segEnd = timeline[currentSeg + 1];
+
+      const stepProgress = (globalScrollProgress - segStart.progress) / (segEnd.progress - segStart.progress);
+
+      const startY = -boxLimits.min.y + (segStart.carYOffset !== undefined ? segStart.carYOffset : -1.3);
+      const endY = -boxLimits.min.y + (segEnd.carYOffset !== undefined ? segEnd.carYOffset : -1.3);
+      const nextCarY = THREE.MathUtils.lerp(
+        startY,
+        endY,
+        stepProgress
+      );
+
+      if (carModel) {
+        carModel.position.y = nextCarY;
+      }
+
+      nextCamPos.set(
+        THREE.MathUtils.lerp(segStart.camPos[0], segEnd.camPos[0], stepProgress),
+        THREE.MathUtils.lerp(segStart.camPos[1], segEnd.camPos[1], stepProgress),
+        THREE.MathUtils.lerp(segStart.camPos[2], segEnd.camPos[2], stepProgress)
+      );
+
+      nextCamTarget.set(
+        THREE.MathUtils.lerp(segStart.camTarget[0], segEnd.camTarget[0], stepProgress),
+        THREE.MathUtils.lerp(segStart.camTarget[1], segEnd.camTarget[1], stepProgress),
+        THREE.MathUtils.lerp(segStart.camTarget[2], segEnd.camTarget[2], stepProgress)
+      );
+
+      nextHoodRotation = THREE.MathUtils.lerp(segStart.hood, segEnd.hood, stepProgress);
+      nextDriverDoorRotation = THREE.MathUtils.lerp(segStart.doorL, segEnd.doorL, stepProgress);
+      nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
+
+      // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
+      // camEase = 6.0 ensures camera and mesh parts follow target positions dynamically with low latency
+      const camEase = 1 - Math.exp(-6.0 * deltaTime);
+      if (freeRoamActive) {
+        const offset = new THREE.Vector3();
+        offset.x = freeRoamRadius * Math.sin(freeRoamPhi) * Math.sin(freeRoamTheta);
+        offset.y = freeRoamRadius * Math.cos(freeRoamPhi);
+        offset.z = freeRoamRadius * Math.sin(freeRoamPhi) * Math.cos(freeRoamTheta);
+        
+        const targetCamPos = new THREE.Vector3().addVectors(freeRoamTarget, offset);
+        
+        const freeEase = 1 - Math.exp(-12.0 * deltaTime); // Snappy camera following
+        liveCamPos.lerp(targetCamPos, freeEase);
+        liveCamTarget.lerp(freeRoamTarget, freeEase);
+      } else {
+        liveCamPos.lerp(nextCamPos, camEase);
+        liveCamTarget.lerp(nextCamTarget, camEase);
+      }
+
+      camera.position.copy(liveCamPos);
+      camera.lookAt(liveCamTarget);
+
+      // Interpolate mesh components if discovered successfully in glTF graph traversal
+      if (hoodGroup) {
+        hoodGroup.rotation.x = THREE.MathUtils.lerp(hoodGroup.rotation.x, nextHoodRotation, camEase);
+      }
+
+      if (driverDoorGroup) {
+        driverDoorGroup.rotation.y = THREE.MathUtils.lerp(driverDoorGroup.rotation.y, nextDriverDoorRotation, camEase);
+      } else {
+        driverDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, nextDriverDoorRotation, camEase); });
+      }
+
+      if (passengerDoorGroup) {
+        passengerDoorGroup.rotation.y = THREE.MathUtils.lerp(passengerDoorGroup.rotation.y, -nextPassengerDoorRotation, camEase);
+      } else {
+        passengerDoorMeshNodes.forEach(node => { node.rotation.y = THREE.MathUtils.lerp(node.rotation.y, -nextPassengerDoorRotation, camEase); });
+      }
+      steeringWheelMeshNodes.forEach(node => {
+        // Rotate steering wheel subtly with time during cockpit stop phase to emphasize reality accents
+        if (globalScrollProgress > 0.66 && globalScrollProgress <= 0.88) {
+          node.rotation.z = Math.sin(timeElapsed * 1.5) * 0.25;
+        } else {
+          node.rotation.z = THREE.MathUtils.lerp(node.rotation.z, 0, camEase);
+        }
+      });
+
+      // Smoothly hide hero bottom image based on scroll progress (reaches 0 by progress 0.050)
+      const heroImageElement = document.querySelector('.hero-image-bottom');
+      if (heroImageElement) {
+        const scrollOpacity = Math.max(0, 1 - (globalScrollProgress / 0.050));
+        heroImageElement.style.setProperty('--scroll-opacity', scrollOpacity);
+        if (scrollOpacity <= 0) {
+          heroImageElement.style.pointerEvents = 'none';
+        } else {
+          heroImageElement.style.pointerEvents = 'auto';
+        }
+      }
+
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(cycleRenderFrame);
+    }
+
+    // 5. VIEWPORT TRANSLATOR ADJUSTMENT LISTENER
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- 6. INTERACTIVE AUDIO SYNTHESIS & WAVE VISUALIZER ---
+    class EngineSoundGenerator {
+      constructor(type = 'engine') {
+        this.type = type;
+        this.audioCtx = null;
+        this.analyser = null;
+        this.isPlaying = false;
+        this.oscillators = [];
+        this.gainNode = null;
+        this.filterNode = null;
+        this.noiseNode = null;
+        this.noiseFilter = null;
+        this.lfo = null;
+        this.lfoGain = null;
+      }
+
+      init() {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 64;
+        
+        this.gainNode = this.audioCtx.createGain();
+        this.gainNode.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+
+        this.filterNode = this.audioCtx.createBiquadFilter();
+        this.filterNode.type = 'lowpass';
+        this.filterNode.frequency.setValueAtTime(this.type === 'engine' ? 180 : 320, this.audioCtx.currentTime);
+        this.filterNode.Q.setValueAtTime(1.5, this.audioCtx.currentTime);
+
+        const baseFreq = this.type === 'engine' ? 28 : 22;
+        const numOscs = this.type === 'engine' ? 4 : 5;
+        
+        for (let i = 0; i < numOscs; i++) {
+          const osc = this.audioCtx.createOscillator();
+          osc.type = i % 2 === 0 ? 'sawtooth' : 'triangle';
+          
+          const multiplier = i === 0 ? 1 : (i === 1 ? 1.5 : (i === 2 ? 2.0 : 3.5));
+          osc.frequency.setValueAtTime(baseFreq * multiplier, this.audioCtx.currentTime);
+          osc.detune.setValueAtTime((Math.random() - 0.5) * 15, this.audioCtx.currentTime);
+          
+          const oscGain = this.audioCtx.createGain();
+          oscGain.gain.setValueAtTime(i === 0 ? 0.35 : 0.15, this.audioCtx.currentTime);
+          
+          osc.connect(oscGain);
+          oscGain.connect(this.filterNode);
+          this.oscillators.push(osc);
+        }
+
+        const bufferSize = this.audioCtx.sampleRate * 2;
+        const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        
+        this.noiseNode = this.audioCtx.createBufferSource();
+        this.noiseNode.buffer = noiseBuffer;
+        this.noiseNode.loop = true;
+
+        this.noiseFilter = this.audioCtx.createBiquadFilter();
+        this.noiseFilter.type = 'bandpass';
+        this.noiseFilter.frequency.setValueAtTime(this.type === 'engine' ? 120 : 160, this.audioCtx.currentTime);
+        this.noiseFilter.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
+        
+        const noiseGain = this.audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(this.type === 'engine' ? 0.04 : 0.16, this.audioCtx.currentTime);
+
+        this.noiseNode.connect(this.noiseFilter);
+        this.noiseFilter.connect(noiseGain);
+        noiseGain.connect(this.gainNode);
+
+        this.lfo = this.audioCtx.createOscillator();
+        this.lfo.type = 'sine';
+        this.lfo.frequency.setValueAtTime(this.type === 'engine' ? 14 : 9, this.audioCtx.currentTime);
+
+        this.lfoGain = this.audioCtx.createGain();
+        this.lfoGain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+
+        this.lfo.connect(this.lfoGain);
+        this.lfoGain.connect(this.gainNode.gain);
+
+        this.filterNode.connect(this.gainNode);
+        this.gainNode.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
+      }
+
+      play() {
+        if (this.isPlaying) return;
+        if (!this.audioCtx) this.init();
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+        this.oscillators.forEach(osc => osc.start());
+        this.noiseNode.start();
+        this.lfo.start();
+
+        this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.gainNode.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        this.gainNode.gain.linearRampToValueAtTime(this.type === 'engine' ? 0.70 : 0.80, this.audioCtx.currentTime + 0.15);
+
+        this.isPlaying = true;
+      }
+
+      stop() {
+        if (!this.isPlaying) return;
+        
+        this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.gainNode.gain.linearRampToValueAtTime(0.0, this.audioCtx.currentTime + 0.2);
+        
+        const oscsToStop = this.oscillators;
+        const noiseToStop = this.noiseNode;
+        const lfoToStop = this.lfo;
+        
+        setTimeout(() => {
+          oscsToStop.forEach(osc => { try { osc.stop(); } catch(e) {} });
+          try { noiseToStop.stop(); } catch(e) {}
+          try { lfoToStop.stop(); } catch(e) {}
+        }, 250);
+
+        this.oscillators = [];
+        this.noiseNode = null;
+        this.lfo = null;
+        this.audioCtx = null;
+        this.isPlaying = false;
+      }
+    }
+
+    const engineSound = new EngineSoundGenerator('engine');
+    const exhaustSound = new EngineSoundGenerator('exhaust');
+
+    function setupAudioPlayer(playerId, generator) {
+      const playerEl = document.getElementById(playerId);
+      if (!playerEl) return;
+
+      const playBtn = playerEl.querySelector('.play-btn');
+      const playIcon = playBtn.querySelector('.play-icon');
+      const pauseIcon = playBtn.querySelector('.pause-icon');
+      const canvas = playerEl.querySelector('.wave-visualizer');
+      const ctx = canvas.getContext('2d');
+
+      let phase = 0;
+      let isHovered = false;
+      let smoothHover = 0;
+      let lastFrameTime = performance.now();
+
+      function renderWave() {
+        requestAnimationFrame(renderWave);
+
+        const now = performance.now();
+        const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+        lastFrameTime = now;
+
+        // Smooth hover transition with exponential decay
+        const hoverEase = 1 - Math.exp(-8 * dt);
+        smoothHover += ((isHovered ? 1.0 : 0.0) - smoothHover) * hoverEase;
+
+        let amplitude = 1.5; // Idle ambient amplitude
+        let phaseSpeed = 0.04; // Idle speed
+
+        const colors = [
+          canvas.dataset.color1 || 'rgba(36, 158, 160, 0.95)',
+          canvas.dataset.color2 || 'rgba(30, 200, 203, 0.70)',
+          canvas.dataset.color3 || 'rgba(36, 158, 160, 0.45)',
+          canvas.dataset.color4 || 'rgba(255, 255, 255, 0.25)',
+          canvas.dataset.color5 || 'rgba(36, 158, 160, 0.12)'
+        ];
+
+        if (generator.isPlaying && generator.analyser) {
+          const bufferLength = generator.analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          generator.analyser.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) {
+            sum += dataArray[i];
+          }
+          const average = sum / bufferLength;
+          
+          // Compute amplitude: scale with audio data (range 2.5px to 12.5px)
+          amplitude = (average / 255) * 10 + 2.5;
+          amplitude *= (1.0 + smoothHover * 0.28); // Maximum amplitude capped at ~16px to prevent clipping
+          
+          // Phase speed matches LFO frequency (accelerates on rev hover)
+          phaseSpeed = generator.lfo ? (generator.lfo.frequency.value * 0.012) : 0.15;
+        } else {
+          // Subtle breathing when paused, speeds up slightly on hover to acknowledge pointer
+          amplitude = 1.6 + smoothHover * 0.9;
+          phaseSpeed = 0.03 + smoothHover * 0.03;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        phase += phaseSpeed;
+
+        const numWaves = 5;
+        for (let l = 0; l < numWaves; l++) {
+          ctx.beginPath();
+          
+          // Apply a glowing neon filter when active
+          if (generator.isPlaying) {
+            ctx.shadowBlur = (12 - l * 2) * (1.0 + smoothHover * 0.4);
+            ctx.shadowColor = canvas.dataset.accent || '#249EA0';
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          
+          // Foreground lines are thicker, background are thinner
+          ctx.lineWidth = l === 0 ? 2.2 : (l === 1 ? 1.4 : (l === 2 ? 0.9 : 0.5));
+          ctx.strokeStyle = colors[l % colors.length];
+          
+          // Offset the phase of each wave layer to create a sliding 3D effect
+          const wavePhase = phase + l * (Math.PI / 2.2);
+          
+          // Frequencies adjust based on layer and hover state (making them look tighter and more aggressive on hover)
+          const baseFreq = (0.038 - l * 0.006) * (1.0 + smoothHover * 0.25);
+
+          for (let x = 0; x < canvas.width; x++) {
+            // Taper waves at left and right edges with a sine envelope
+            const envelope = Math.sin((x / canvas.width) * Math.PI);
+            
+            // Normalized compound wave components (coefficients sum to 1.0, ensuring no boundary clipping)
+            const primarySine = Math.sin(x * baseFreq + wavePhase) * 0.65;
+            const secondaryHarmonic = Math.sin(x * (baseFreq * 2.2) - wavePhase * 1.3) * (0.22 + smoothHover * 0.08);
+            const tertiaryJitter = Math.sin(x * (baseFreq * 4.6) + wavePhase * 2.5) * (0.05 + smoothHover * 0.05);
+            
+            const waveY = (primarySine + secondaryHarmonic + tertiaryJitter) * amplitude * envelope;
+            const y = canvas.height / 2 + waveY;
+            
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+        }
+      }
+      
+      // Initialize the rendering loop
+      renderWave();
+
+      playBtn.addEventListener('click', () => {
+        if (generator.isPlaying) {
+          generator.stop();
+          playerEl.classList.remove('playing');
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          
+          // Smoothly restore background music volume if playing
+          if (window.ambientMusic && window.ambientMusic.isPlaying) {
+            window.ambientMusic.fadeTo(0.32, 1.0);
+          }
+        } else {
+          if (generator === engineSound && exhaustSound.isPlaying) {
+            document.getElementById('exhaust-player').querySelector('.play-btn').click();
+          } else if (generator === exhaustSound && engineSound.isPlaying) {
+            document.getElementById('engine-player').querySelector('.play-btn').click();
+          }
+
+          generator.play();
+          playerEl.classList.add('playing');
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+
+          // Duck background music volume during active engine sound previews to prevent mud
+          if (window.ambientMusic && window.ambientMusic.isPlaying) {
+            window.ambientMusic.fadeTo(0.04, 0.8);
+          }
+        }
+      });
+
+      playerEl.addEventListener('mouseenter', () => {
+        isHovered = true;
+        if (generator.isPlaying && generator.audioCtx) {
+          const time = generator.audioCtx.currentTime;
+          const baseFreq = generator.type === 'engine' ? 28 : 22;
+          generator.oscillators.forEach((osc, idx) => {
+            const multiplier = idx === 0 ? 1 : (idx === 1 ? 1.5 : (idx === 2 ? 2.0 : 3.5));
+            osc.frequency.setValueAtTime(osc.frequency.value, time);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * multiplier * 2.2, time + 0.5);
+          });
+          generator.lfo.frequency.setValueAtTime(generator.lfo.frequency.value, time);
+          generator.lfo.frequency.linearRampToValueAtTime(generator.type === 'engine' ? 32 : 22, time + 0.5);
+        }
+      });
+
+      playerEl.addEventListener('mouseleave', () => {
+        isHovered = false;
+        if (generator.isPlaying && generator.audioCtx) {
+          const time = generator.audioCtx.currentTime;
+          const baseFreq = generator.type === 'engine' ? 28 : 22;
+          generator.oscillators.forEach((osc, idx) => {
+            const multiplier = idx === 0 ? 1 : (idx === 1 ? 1.5 : (idx === 2 ? 2.0 : 3.5));
+            osc.frequency.setValueAtTime(osc.frequency.value, time);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * multiplier, time + 0.7);
+          });
+          generator.lfo.frequency.setValueAtTime(generator.lfo.frequency.value, time);
+          generator.lfo.frequency.linearRampToValueAtTime(generator.type === 'engine' ? 14 : 9, time + 0.7);
+        }
+      });
+    }
+
+    // --- 7. AMBIENT BACKGROUND MUSIC GENERATOR (SHOWROOM ENVIRONMENT) ---
+    class AmbientMusicGenerator {
+      constructor() {
+        this.audioCtx = null;
+        this.isPlaying = false;
+        this.filterNode = null;
+        this.padFilterNode = null;
+        this.delayL = null;
+        this.delayR = null;
+        this.feedbackL = null;
+        this.feedbackR = null;
+        this.panDelayL = null;
+        this.panDelayR = null;
+        this.mainGain = null;
+        this.chordTimeout = null;
+        this.currentChordIdx = 0;
+        
+        // Peaceful, blissful showroom chord progression with root drone configurations (Fmaj9, Cmaj9, G6/9, Am11)
+        this.chords = [
+          { root: 87.31, notes: [174.61, 261.63, 329.63, 392.00, 523.25, 659.25] }, // F2 root, F3 C4 E4 G4 C5 E5 (Fmaj9)
+          { root: 130.81, notes: [261.63, 329.63, 392.00, 493.88, 587.33, 783.99] }, // C3 root, C4 E4 G4 B4 D5 G5 (Cmaj9)
+          { root: 98.00, notes: [196.00, 293.66, 392.00, 440.00, 587.33, 739.99] }, // G2 root, G3 D4 G4 A4 D5 F#5 (G6/9)
+          { root: 110.00, notes: [220.00, 329.63, 392.00, 523.25, 587.33, 659.25] }  // A2 root, A3 E4 G4 C5 D5 E5 (Am11)
+        ];
+      }
+
+      init() {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // High-cut warm filter at 1000Hz to preserve sparkling chime tones while keeping them soft
+        this.filterNode = this.audioCtx.createBiquadFilter();
+        this.filterNode.type = 'lowpass';
+        this.filterNode.frequency.setValueAtTime(1000, this.audioCtx.currentTime);
+        this.filterNode.Q.setValueAtTime(0.7, this.audioCtx.currentTime);
+
+        // Low-pass warm pad filter for the drone to keep the low-end deep and clean (150Hz)
+        this.padFilterNode = this.audioCtx.createBiquadFilter();
+        this.padFilterNode.type = 'lowpass';
+        this.padFilterNode.frequency.setValueAtTime(150, this.audioCtx.currentTime);
+        this.padFilterNode.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
+        
+        // Dual-channel delay lines for spacious ping-pong echo loops
+        this.delayL = this.audioCtx.createDelay(2.0);
+        this.delayL.delayTime.setValueAtTime(0.60, this.audioCtx.currentTime);
+        
+        this.delayR = this.audioCtx.createDelay(2.0);
+        this.delayR.delayTime.setValueAtTime(0.90, this.audioCtx.currentTime);
+        
+        // Feedback gain nodes for cross feedback
+        this.feedbackL = this.audioCtx.createGain();
+        this.feedbackL.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
+        
+        this.feedbackR = this.audioCtx.createGain();
+        this.feedbackR.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
+        
+        // Cross-feedback connection: L delay connects to feedback -> R delay, and vice-versa
+        this.delayL.connect(this.feedbackL);
+        this.feedbackL.connect(this.delayR);
+        
+        this.delayR.connect(this.feedbackR);
+        this.feedbackR.connect(this.delayL);
+
+        // Stereo panners for delay lines
+        this.panDelayL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        this.panDelayR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        
+        if (this.panDelayL) this.panDelayL.pan.setValueAtTime(-0.85, this.audioCtx.currentTime);
+        if (this.panDelayR) this.panDelayR.pan.setValueAtTime(0.85, this.audioCtx.currentTime);
+        
+        // Master volume control
+        this.mainGain = this.audioCtx.createGain();
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        
+        // Routing graph
+        this.filterNode.connect(this.mainGain);
+        this.filterNode.connect(this.delayL);
+        this.filterNode.connect(this.delayR);
+        
+        if (this.panDelayL && this.panDelayR) {
+          this.delayL.connect(this.panDelayL);
+          this.panDelayL.connect(this.mainGain);
+          this.delayR.connect(this.panDelayR);
+          this.panDelayR.connect(this.mainGain);
+        } else {
+          this.delayL.connect(this.mainGain);
+          this.delayR.connect(this.mainGain);
+        }
+
+        this.padFilterNode.connect(this.mainGain);
+        this.mainGain.connect(this.audioCtx.destination);
+      }
+
+      start() {
+        if (this.isPlaying) return;
+        if (!this.audioCtx) this.init();
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        
+        this.isPlaying = true;
+        this.mainGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+        
+        // Slow swell fade-in of background music over 2.5s for maximum elegance
+        const targetGain = (engineSound.isPlaying || exhaustSound.isPlaying) ? 0.03 : 0.28;
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, this.audioCtx.currentTime + 2.5);
+        
+        this.playNextChord();
+      }
+
+      fadeTo(targetGain, duration = 1.0) {
+        if (!this.isPlaying || !this.audioCtx || !this.mainGain) return;
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, now + duration);
+      }
+
+      playNextChord() {
+        if (!this.isPlaying) return;
+        
+        const now = this.audioCtx.currentTime;
+        const chord = this.chords[this.currentChordIdx];
+        const duration = 6.0; // Seconds per chord
+        
+        const chordOscillators = [];
+        const chordGains = [];
+
+        // 1. Synthesize soft background drone pad for warmth and bliss
+        const padOsc = this.audioCtx.createOscillator();
+        padOsc.type = 'triangle';
+        padOsc.frequency.setValueAtTime(chord.root, now);
+
+        // Add slow LFO pitch vibrato to drone for luxury movement
+        const vibratoLfo = this.audioCtx.createOscillator();
+        vibratoLfo.type = 'sine';
+        vibratoLfo.frequency.setValueAtTime(0.25, now);
+        const vibratoGain = this.audioCtx.createGain();
+        vibratoGain.gain.setValueAtTime(1.5, now);
+        
+        vibratoLfo.connect(vibratoGain);
+        vibratoGain.connect(padOsc.frequency);
+
+        const padGain = this.audioCtx.createGain();
+        padGain.gain.setValueAtTime(0.0, now);
+        // Slower attack for the background pad
+        padGain.gain.linearRampToValueAtTime(0.035, now + 2.0);
+        // Hold, then decay release
+        padGain.gain.setValueAtTime(0.035, now + duration - 2.5);
+        padGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        padOsc.connect(padGain);
+        padGain.connect(this.padFilterNode);
+
+        vibratoLfo.start(now);
+        padOsc.start(now);
+
+        chordOscillators.push(padOsc, vibratoLfo);
+        chordGains.push(padGain, vibratoGain);
+        
+        // 2. Synthesize arpeggiated surround chimes
+        chord.notes.forEach((freq, idx) => {
+          // Cascade chimes spaced out to create movement
+          const noteDelay = idx * 0.35;
+          const playTime = now + noteDelay;
+          
+          // Shimmering chorus effect using twin-detuned oscillators per chime
+          const osc1 = this.audioCtx.createOscillator();
+          const osc2 = this.audioCtx.createOscillator();
+          
+          osc1.type = 'sine';
+          osc2.type = 'sine';
+          
+          osc1.frequency.setValueAtTime(freq, playTime);
+          osc2.frequency.setValueAtTime(freq, playTime);
+          
+          osc1.detune.setValueAtTime(-4, playTime);
+          osc2.detune.setValueAtTime(4, playTime);
+          
+          const voiceGain = this.audioCtx.createGain();
+          voiceGain.gain.setValueAtTime(0.0, playTime);
+          
+          // Soft attack envelope for chime ring-in
+          const targetVol = idx === 0 ? 0.06 : 0.03;
+          voiceGain.gain.linearRampToValueAtTime(targetVol, playTime + 1.2);
+          
+          // Hold, then release
+          voiceGain.gain.setValueAtTime(targetVol, playTime + duration - 2.5 - noteDelay);
+          voiceGain.gain.exponentialRampToValueAtTime(0.001, playTime + duration - noteDelay);
+          
+          // Stereo panning for note spatial separation
+          const notePan = ((idx % 2 === 0 ? -1 : 1) * (0.3 + (idx * 0.08))).toFixed(2);
+          const voicePanner = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+          
+          osc1.connect(voiceGain);
+          osc2.connect(voiceGain);
+          
+          if (voicePanner) {
+            voicePanner.pan.setValueAtTime(parseFloat(notePan), playTime);
+            voiceGain.connect(voicePanner);
+            voicePanner.connect(this.filterNode);
+          } else {
+            voiceGain.connect(this.filterNode);
+          }
+          
+          osc1.start(playTime);
+          osc2.start(playTime);
+          
+          chordOscillators.push(osc1, osc2);
+          chordGains.push(voiceGain);
+          if (voicePanner) chordGains.push(voicePanner);
+        });
+        
+        this.currentChordIdx = (this.currentChordIdx + 1) % this.chords.length;
+        
+        // Clean up sound nodes after decay completes
+        setTimeout(() => {
+          chordOscillators.forEach(osc => {
+            try { osc.stop(); } catch(e) {}
+            try { osc.disconnect(); } catch(e) {}
+          });
+          chordGains.forEach(g => {
+            try { g.disconnect(); } catch(e) {}
+          });
+        }, duration * 1000 + 2000);
+
+        this.chordTimeout = setTimeout(() => this.playNextChord(), (duration - 1.5) * 1000); // 1.5s crossfade overlap
+      }
+
+      stop() {
+        if (!this.isPlaying) return;
+        this.isPlaying = false;
+        
+        if (this.chordTimeout) clearTimeout(this.chordTimeout);
+        
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(0.0, now + 1.5); // Fade out music
+        
+        setTimeout(() => {
+          if (!this.isPlaying && this.audioCtx) {
+            this.audioCtx.close();
+            this.audioCtx = null;
+          }
+        }, 1600);
+      }
+    }
+
+    const ambientMusic = new AmbientMusicGenerator();
+    window.ambientMusic = ambientMusic; // Attach to window for global coordination
+
+    const musicBtn = document.getElementById('music-toggle-btn');
+    if (musicBtn) {
+      musicBtn.addEventListener('click', () => {
+        if (ambientMusic.isPlaying) {
+          ambientMusic.stop();
+          musicBtn.classList.remove('playing');
+        } else {
+          ambientMusic.start();
+          musicBtn.classList.add('playing');
+        }
+      });
+    }
+
+    // --- Mobile Menu Toggle logic ---
+    const mobileToggleBtn = document.getElementById('mobile-nav-toggle-btn');
+    const mobileOverlay = document.getElementById('mobile-menu-overlay');
+    const frontIcon = mobileToggleBtn ? mobileToggleBtn.querySelector('.car-front-icon') : null;
+    const sideIcon = mobileToggleBtn ? mobileToggleBtn.querySelector('.car-side-icon') : null;
+
+    if (mobileToggleBtn && mobileOverlay) {
+      const mobileOverlayLinks = mobileOverlay.querySelectorAll('.mobile-menu-links a, .mobile-menu-actions a');
+      
+      mobileToggleBtn.addEventListener('click', () => {
+        const isActive = mobileOverlay.classList.toggle('active');
+        if (isActive) {
+          if (frontIcon) frontIcon.style.display = 'none';
+          if (sideIcon) sideIcon.style.display = 'block';
+        } else {
+          if (frontIcon) frontIcon.style.display = 'block';
+          if (sideIcon) sideIcon.style.display = 'none';
+        }
+      });
+      
+      mobileOverlayLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          mobileOverlay.classList.remove('active');
+          if (frontIcon) frontIcon.style.display = 'block';
+          if (sideIcon) sideIcon.style.display = 'none';
+        });
+      });
+    }
+
+    setupAudioPlayer('engine-player', engineSound);
+    setupAudioPlayer('exhaust-player', exhaustSound);
+
+    // Start engine loops
+    cycleRenderFrame();
+  </script>
+</body>
+
+</html>
