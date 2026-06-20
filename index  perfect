@@ -1906,6 +1906,86 @@
             cursor: pointer;
             border-radius: 50%;
         }
+        /* --- AUTO SCROLL BUTTON (Left Bottom) --- */
+        .auto-scroll-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 99;
+            background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 80%), rgba(8, 8, 12, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-left: 1.5px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .auto-scroll-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 30px rgba(36, 158, 160, 0.6);
+            transform: translateY(-4px);
+        }
+
+        .auto-scroll-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .auto-scroll-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .auto-scroll-btn .auto-scroll-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .auto-scroll-btn .auto-scroll-icon.reverse {
+            transform: rotate(180deg);
+        }
+
+        .auto-scroll-btn.active {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 80%), rgba(8, 8, 12, 0.6);
+            box-shadow: 0 0 30px rgba(36, 158, 160, 0.2);
+        }
+
+        body.free-roam-active .auto-scroll-btn {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        @media (max-width: 720px) {
+            .auto-scroll-btn {
+                padding: 10px 18px;
+                font-size: 0.65rem;
+                gap: 6px;
+                bottom: 20px;
+                left: 20px;
+            }
+            .auto-scroll-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
     </style>
 
     <!-- Loader Modules for Graphic Engine -->
@@ -2264,6 +2344,15 @@
         fill="none" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
     <span>Free Roam 3D</span>
+</button>
+
+<!-- Auto Scroll Button (Left Bottom) -->
+<button class="auto-scroll-btn" id="auto-scroll-btn" aria-label="Auto Scroll Tour">
+    <svg class="auto-scroll-icon" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </svg>
+    <span id="auto-scroll-label">Auto Scroll</span>
 </button>
 
 <!-- Interactive Car Controls HUD — TOP CENTER -->
@@ -5213,6 +5302,236 @@
 
     // Start engine loops
     cycleRenderFrame();
+
+    // --- AUTO SCROLL FEATURE ---
+    const autoScrollBtn = document.getElementById('auto-scroll-btn');
+    const autoScrollLabel = document.getElementById('auto-scroll-label');
+    const autoScrollIcon = autoScrollBtn ? autoScrollBtn.querySelector('.auto-scroll-icon') : null;
+
+    const sectionIds = ['hero', 'headlight', 'cockpit', 'engineering', 'tyres', 'exhaust', 'taillight', 'brand', 'cta'];
+
+    let autoScrollState = {
+        active: false,
+        direction: 1, // 1 = down, -1 = up
+        currentIndex: 0,
+        timerId: null,
+        isPaused: false,
+        isScrolling: false
+    };
+
+    function getSectionTop(id) {
+        const el = document.getElementById(id);
+        return el ? el.offsetTop : 0;
+    }
+
+    function getSectionPositions() {
+        return sectionIds.map(id => getSectionTop(id));
+    }
+
+    function findClosestSectionIndex(scrollY) {
+        const positions = getSectionPositions();
+        let closest = 0;
+        let minDist = Infinity;
+        positions.forEach((pos, i) => {
+            const dist = Math.abs(pos - scrollY);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = i;
+            }
+        });
+        return closest;
+    }
+
+    function scrollToSection(index, callback) {
+        const positions = getSectionPositions();
+        if (index < 0 || index >= positions.length) {
+            if (callback) callback(false);
+            return false;
+        }
+        const target = positions[index];
+        window.scrollTo({ top: target, behavior: 'smooth' });
+
+        // Estimate scroll duration based on distance
+        const currentY = window.scrollY;
+        const distance = Math.abs(target - currentY);
+        const duration = Math.min(Math.max(distance / 800, 600), 1800);
+
+        if (callback) {
+            setTimeout(() => callback(true), duration);
+        }
+        return true;
+    }
+
+    function startAutoScroll() {
+        if (autoScrollState.active) return;
+
+        // If we're at the end in current direction, reverse
+        const positions = getSectionPositions();
+        const currentY = window.scrollY;
+        const closestIdx = findClosestSectionIndex(currentY);
+
+        // Determine direction based on position
+        if (autoScrollState.direction === 1 && closestIdx >= positions.length - 1) {
+            // At bottom, going down → reverse to up
+            autoScrollState.direction = -1;
+        } else if (autoScrollState.direction === -1 && closestIdx <= 0) {
+            // At top, going up → reverse to down
+            autoScrollState.direction = 1;
+        }
+
+        autoScrollState.currentIndex = closestIdx;
+        autoScrollState.active = true;
+        autoScrollState.isPaused = false;
+        autoScrollState.isScrolling = false;
+
+        if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll ●';
+        if (autoScrollBtn) autoScrollBtn.classList.add('active');
+        if (autoScrollIcon && autoScrollState.direction === -1) {
+            autoScrollIcon.classList.add('reverse');
+        } else if (autoScrollIcon) {
+            autoScrollIcon.classList.remove('reverse');
+        }
+
+        // Start the auto-scroll loop
+        autoScrollStep();
+    }
+
+    function stopAutoScroll() {
+        autoScrollState.active = false;
+        autoScrollState.isPaused = false;
+        autoScrollState.isScrolling = false;
+
+        if (autoScrollState.timerId) {
+            clearTimeout(autoScrollState.timerId);
+            autoScrollState.timerId = null;
+        }
+
+        if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll';
+        if (autoScrollBtn) autoScrollBtn.classList.remove('active');
+    }
+
+    function toggleAutoScroll() {
+        if (autoScrollState.active) {
+            // Stop and reverse direction
+            const currentDir = autoScrollState.direction;
+            autoScrollState.direction = -currentDir;
+            stopAutoScroll();
+
+            // Restart in reverse direction
+            setTimeout(() => {
+                startAutoScroll();
+            }, 300);
+        } else {
+            startAutoScroll();
+        }
+    }
+
+    function autoScrollStep() {
+        if (!autoScrollState.active) return;
+        if (autoScrollState.isPaused) return;
+        if (autoScrollState.isScrolling) return;
+
+        const positions = getSectionPositions();
+        const nextIndex = autoScrollState.currentIndex + autoScrollState.direction;
+
+        // Check if we've reached the end
+        if (nextIndex < 0 || nextIndex >= positions.length) {
+            // Reached the end — stop and mark as inactive
+            stopAutoScroll();
+            if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll ■';
+            return;
+        }
+
+        // Move to next section
+        autoScrollState.currentIndex = nextIndex;
+        autoScrollState.isScrolling = true;
+
+        // Update icon direction
+        if (autoScrollIcon) {
+            if (autoScrollState.direction === -1) {
+                autoScrollIcon.classList.add('reverse');
+            } else {
+                autoScrollIcon.classList.remove('reverse');
+            }
+        }
+
+        scrollToSection(autoScrollState.currentIndex, (completed) => {
+            autoScrollState.isScrolling = false;
+
+            if (!autoScrollState.active) return;
+
+            // Pause at the section
+            autoScrollState.isPaused = true;
+            const pauseDuration = 1800 + Math.random() * 600; // 1.8-2.4 seconds
+
+            if (autoScrollState.timerId) {
+                clearTimeout(autoScrollState.timerId);
+            }
+
+            autoScrollState.timerId = setTimeout(() => {
+                if (!autoScrollState.active) return;
+                autoScrollState.isPaused = false;
+                autoScrollState.timerId = null;
+                // Continue to next step
+                autoScrollStep();
+            }, pauseDuration);
+        });
+    }
+
+    // Auto Scroll Button event listener
+    if (autoScrollBtn) {
+        autoScrollBtn.addEventListener('click', toggleAutoScroll);
+    }
+
+    // Stop auto-scroll when user manually scrolls
+    let manualScrollTimeout = null;
+    window.addEventListener('scroll', () => {
+        if (autoScrollState.active) {
+            // Debounce: if user scrolls manually, stop auto-scroll
+            if (manualScrollTimeout) {
+                clearTimeout(manualScrollTimeout);
+            }
+            manualScrollTimeout = setTimeout(() => {
+                // Check if the user is still interacting
+                // If the scroll position changed significantly from the target, stop
+                if (autoScrollState.active && !autoScrollState.isScrolling) {
+                    const positions = getSectionPositions();
+                    const currentY = window.scrollY;
+                    const targetY = positions[autoScrollState.currentIndex] || 0;
+                    if (Math.abs(currentY - targetY) > 100) {
+                        stopAutoScroll();
+                        if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll ⏹';
+                    }
+                }
+                manualScrollTimeout = null;
+            }, 300);
+        }
+    });
+
+    // Stop auto-scroll when free roam is activated
+    const origFreeRoamBtnHandler = freeRoamBtn ? freeRoamBtn._listeners ? null : null : null;
+    if (freeRoamBtn) {
+        const originalClick = freeRoamBtn.click;
+        freeRoamBtn.addEventListener('click', () => {
+            if (autoScrollState.active) {
+                stopAutoScroll();
+                if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll';
+            }
+        });
+    }
+
+    // Also handle free roam exit to potentially resume state — but we keep it simple: auto-scroll stays off after free roam.
+    if (freeRoamExitBtn) {
+        freeRoamExitBtn.addEventListener('click', () => {
+            // Don't auto-restart, just ensure it's off
+            if (autoScrollState.active) {
+                stopAutoScroll();
+                if (autoScrollLabel) autoScrollLabel.textContent = 'Auto Scroll';
+            }
+        });
+    }
+
+    console.log('🚗 Auto Scroll feature ready — button at left bottom.');
 </script>
 </body>
 
