@@ -532,8 +532,8 @@
       display: inline-flex;
       align-items: center;
       gap: 15px;
-      box-shadow: 
-        0 15px 35px rgba(0, 0, 0, 0.5), 
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
       z-index: 10;
       pointer-events: auto;
@@ -547,15 +547,31 @@
     }
 
     @keyframes enginePulse {
-      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
-      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(36, 158, 160, 0.3); }
-      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1); }
+      0% {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1);
+      }
+
+      50% {
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(36, 158, 160, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(36, 158, 160, 0.1);
+      }
     }
 
     @keyframes exhaustPulse {
-      0% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
-      50% { box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(196, 69, 54, 0.3); }
-      100% { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1); }
+      0% {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1);
+      }
+
+      50% {
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 25px rgba(196, 69, 54, 0.3);
+      }
+
+      100% {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 15px rgba(196, 69, 54, 0.1);
+      }
     }
 
     .glass-audio-player.playing#engine-player {
@@ -681,6 +697,11 @@
       transform: translateY(0px) scale(0.98);
     }
 
+    .bg-music-toggle.left-btn {
+      right: auto;
+      left: 30px;
+    }
+
     .bg-music-toggle svg {
       width: 24px;
       height: 24px;
@@ -688,8 +709,13 @@
     }
 
     @keyframes spinTyre {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .bg-music-toggle svg.tyre-icon {
@@ -739,7 +765,8 @@
     /* Mobile Overlay Menu Drawer */
     .mobile-menu-overlay {
       position: fixed;
-      top: 80px; /* Directly below fixed navbar */
+      top: 80px;
+      /* Directly below fixed navbar */
       left: 0;
       width: 100%;
       height: 0;
@@ -884,22 +911,148 @@
       }
     }
 
+    /* Scene mode transition overlay */
+    #scene-loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(4, 4, 6, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #scene-loading-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .scene-spinner {
+      width: 36px;
+      height: 36px;
+      border: 2.5px solid rgba(255, 255, 255, 0.08);
+      border-top-color: var(--color-accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .scene-loading-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    /* --- INTERACTIVE CONTROLS HUD (Doors & Hood) --- */
+    .car-controls-hud {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      z-index: 120;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-80px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.free-roam-active .car-controls-hud {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .car-ctrl-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 22px;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .car-ctrl-btn:hover {
+      color: #fff;
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 80%), rgba(12, 12, 18, 0.75);
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 12px rgba(36, 158, 160, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .car-ctrl-btn.active-open {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      box-shadow: 0 0 14px rgba(36, 158, 160, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .car-ctrl-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .ctrl-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 0 4px;
+      align-self: center;
+    }
+
     /* --- FREE ROAM CAM VIEW & BLENDER CONTROLS --- */
     body.free-roam-active {
       overflow: hidden !important;
       height: 100vh;
     }
+
     body.free-roam-active #webgl-canvas {
       pointer-events: auto;
       cursor: grab;
     }
+
     body.free-roam-active #webgl-canvas:active {
       cursor: grabbing;
     }
 
-    main, nav, .bg-music-toggle {
+    main,
+    nav,
+    .bg-music-toggle {
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
+
     body.free-roam-active main,
     body.free-roam-active nav,
     body.free-roam-active .bg-music-toggle {
@@ -933,20 +1086,24 @@
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .free-roam-btn:hover {
       background: var(--color-accent);
       border-color: var(--color-accent);
       box-shadow: 0 0 30px rgba(36, 158, 160, 0.6);
       transform: translateY(-4px);
     }
+
     .free-roam-btn:active {
       transform: translateY(-1px);
     }
+
     .free-roam-btn svg {
       width: 18px;
       height: 18px;
       fill: currentColor;
     }
+
     body.free-roam-active .free-roam-btn {
       opacity: 0;
       pointer-events: none;
@@ -964,25 +1121,28 @@
       pointer-events: none;
       transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     body.free-roam-active .scene-mode-toggle {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
       pointer-events: auto;
     }
+
     .scene-mode-inner {
       position: relative;
       display: flex;
       align-items: center;
-      background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.01) 80%), rgba(8, 8, 12, 0.65);
+      background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.01) 80%), rgba(8, 8, 12, 0.65);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-top: 1.5px solid rgba(255,255,255,0.18);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1.5px solid rgba(255, 255, 255, 0.18);
       border-radius: 40px;
       padding: 5px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       gap: 2px;
     }
+
     /* Sliding active indicator */
     .scene-mode-inner::before {
       content: '';
@@ -992,14 +1152,16 @@
       width: calc(50% - 5px);
       height: calc(100% - 10px);
       border-radius: 35px;
-      background: linear-gradient(135deg, var(--color-accent) 0%, rgba(36,158,160,0.75) 100%);
-      box-shadow: 0 0 18px rgba(36,158,160,0.55), inset 0 1px 0 rgba(255,255,255,0.2);
+      background: linear-gradient(135deg, var(--color-accent) 0%, rgba(36, 158, 160, 0.75) 100%);
+      box-shadow: 0 0 18px rgba(36, 158, 160, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 0;
     }
+
     .scene-mode-inner.studio-active::before {
       left: calc(50% + 0px);
     }
+
     .scene-mode-btn {
       position: relative;
       z-index: 1;
@@ -1017,12 +1179,14 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.8px;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255, 255, 255, 0.45);
       white-space: nowrap;
     }
+
     .scene-mode-btn.active {
       color: #fff;
     }
+
     .scene-mode-btn svg {
       width: 13px;
       height: 13px;
@@ -1034,8 +1198,9 @@
       stroke-linejoin: round;
       transition: filter 0.3s ease;
     }
+
     .scene-mode-btn.active svg {
-      filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
     }
 
 
@@ -1060,26 +1225,31 @@
       pointer-events: none;
       white-space: nowrap;
     }
+
     body.free-roam-active .free-roam-hud {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
       pointer-events: auto;
     }
+
     .free-roam-hud h3 {
       display: none;
     }
+
     .free-roam-hud-item {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 0.78rem;
     }
+
     .free-roam-hud-label {
       color: var(--color-muted);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
+
     .free-roam-hud-key {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1096,15 +1266,18 @@
         gap: 12px;
         padding: 8px 18px;
       }
+
       .free-roam-hud-item {
         font-size: 0.7rem;
         gap: 6px;
       }
+
       .free-roam-exit-btn {
         padding: 6px 12px;
         font-size: 0.65rem;
       }
     }
+
     .free-roam-exit-btn {
       padding: 8px 16px;
       border-radius: 20px;
@@ -1123,11 +1296,13 @@
       margin-left: 10px;
       outline: none;
     }
+
     .free-roam-exit-btn:hover {
       background: #c44536;
       box-shadow: 0 0 20px rgba(196, 69, 54, 0.6);
       transform: translateY(-2px);
     }
+
     .free-roam-exit-btn svg {
       width: 12px;
       height: 12px;
@@ -1140,6 +1315,7 @@
       gap: 6px;
       width: 100%;
     }
+
     .light-target-btn {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1156,10 +1332,12 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none;
     }
+
     .light-target-btn:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.1);
     }
+
     .light-target-btn.active {
       background: var(--color-accent);
       border-color: var(--color-accent);
@@ -1191,17 +1369,20 @@
       opacity: 0;
       pointer-events: none;
     }
+
     body.free-roam-active .color-pill-container {
       transform: translateY(-50%) translateX(0);
       opacity: 1;
       pointer-events: auto;
     }
+
     .color-target-selector {
       display: flex;
       flex-direction: column;
       gap: 8px;
       align-items: center;
     }
+
     .target-btn {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1218,28 +1399,33 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none;
     }
+
     .target-btn:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.2);
     }
+
     .target-btn.active {
       background: var(--color-accent);
       border-color: var(--color-accent);
       color: #fff;
       box-shadow: 0 0 12px rgba(36, 158, 160, 0.4);
     }
+
     .color-divider {
       width: 100%;
       height: 1px;
       background: rgba(255, 255, 255, 0.08);
     }
+
     .color-options-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       justify-items: center;
     }
+
     .color-opt-btn {
       width: 26px;
       height: 26px;
@@ -1255,14 +1441,17 @@
       justify-content: center;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
+
     .color-opt-btn:hover {
       transform: scale(1.2);
     }
+
     .color-opt-btn.active {
       border-color: #fff;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
       transform: scale(1.1);
     }
+
     .color-opt-btn.default-opt {
       grid-column: span 2;
       width: 100%;
@@ -1273,16 +1462,19 @@
       color: rgba(255, 255, 255, 0.7);
       box-shadow: none;
     }
+
     .color-opt-btn.default-opt:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.12);
       border-color: #fff;
     }
+
     .color-opt-btn.default-opt.active {
       border: 2px solid #fff;
       color: #fff;
       background: rgba(255, 255, 255, 0.15);
     }
+
     .color-opt-btn.default-opt svg {
       width: 14px;
       height: 14px;
@@ -1310,29 +1502,31 @@
       outline: none;
       z-index: 10;
     }
-    
+
     #color-pill-toggle {
       left: -20px;
       border-radius: 10px 0 0 10px;
       border-right: none;
     }
+
     #color-pill-toggle:hover {
       color: #fff;
       background: rgba(8, 8, 12, 0.9);
       box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
     }
-    
+
     #light-pill-toggle {
       right: -20px;
       border-radius: 0 10px 10px 0;
       border-left: none;
     }
+
     #light-pill-toggle:hover {
       color: #fff;
       background: rgba(8, 8, 12, 0.9);
       box-shadow: 5px 0 15px rgba(0, 0, 0, 0.4);
     }
-    
+
     .toggle-icon {
       width: 12px;
       height: 12px;
@@ -1345,7 +1539,7 @@
       opacity: 0;
       pointer-events: none;
     }
-    
+
     .light-pill-container.collapsed {
       transform: translateY(-50%) translateX(calc(-100% - 40px)) !important;
       opacity: 0;
@@ -1379,12 +1573,15 @@
       padding: 0;
       outline: none;
     }
+
     #light-pill-collapsed-trigger {
       left: 30px;
     }
+
     #color-pill-collapsed-trigger {
       right: 30px;
     }
+
     .collapsed-pill-trigger:hover {
       color: #fff;
       background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 80%), rgba(8, 8, 12, 0.7);
@@ -1392,9 +1589,11 @@
       box-shadow: 0 0 15px rgba(36, 158, 160, 0.5);
       transform: translateY(-50%) scale(1.08);
     }
+
     .collapsed-pill-trigger:active {
       transform: translateY(-50%) scale(0.98);
     }
+
     .collapsed-pill-trigger svg {
       width: 22px;
       height: 22px;
@@ -1404,7 +1603,7 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-    
+
     body.free-roam-active #light-pill-collapsed-trigger.visible,
     body.free-roam-active #color-pill-collapsed-trigger.visible {
       transform: translateY(-50%) scale(1);
@@ -1436,14 +1635,15 @@
       opacity: 0;
       pointer-events: none;
     }
-    
+
     body.free-roam-active .light-pill-container {
       transform: translateY(-50%) translateX(0);
       opacity: 1;
       pointer-events: auto;
     }
-    
-    .light-pill-container h3, .color-pill-container h3 {
+
+    .light-pill-container h3,
+    .color-pill-container h3 {
       font-family: var(--font-display);
       font-size: 1.05rem;
       text-transform: uppercase;
@@ -1451,56 +1651,57 @@
       background: linear-gradient(135deg, #ffffff 30%, var(--color-accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
       margin-bottom: 2px;
       text-align: center;
       width: 100%;
     }
-    
-    .light-color-selector, .light-intensity-control {
+
+    .light-color-selector,
+    .light-intensity-control {
       display: flex;
       flex-direction: column;
       gap: 8px;
       width: 100%;
     }
-    
+
     .customizer-label {
       font-size: 0.62rem;
       font-weight: 800;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255, 255, 255, 0.45);
       text-transform: uppercase;
       letter-spacing: 2px;
     }
-    
+
     .light-schemes-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       width: 100%;
     }
-    
+
     .scheme-btn {
       width: 100%;
       height: 32px;
       border-radius: 10px;
       border: 2px solid transparent;
       cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none;
     }
-    
+
     .scheme-btn:hover {
       transform: scale(1.08);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
     }
-    
+
     .scheme-btn.active {
       border-color: #fff;
       box-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
       transform: scale(1.04);
     }
-    
+
     .intensity-label-row {
       display: flex;
       justify-content: space-between;
@@ -1508,7 +1709,7 @@
       width: 100%;
       margin-bottom: 2px;
     }
-    
+
     .intensity-value {
       font-size: 0.78rem;
       font-weight: 700;
@@ -1522,17 +1723,20 @@
     }
 
     /* Generic range slider shared by both light-slider and paint-slider */
-    .light-slider, .paint-slider {
+    .light-slider,
+    .paint-slider {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
       height: 5px;
       border-radius: 3px;
-      background: linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) var(--pct, 100%), rgba(255,255,255,0.1) var(--pct, 100%));
+      background: linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) var(--pct, 0%), rgba(255, 255, 255, 0.1) var(--pct, 0%));
       outline: none;
       cursor: pointer;
     }
-    .light-slider::-webkit-slider-thumb, .paint-slider::-webkit-slider-thumb {
+
+    .light-slider::-webkit-slider-thumb,
+    .paint-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 14px;
@@ -1540,11 +1744,13 @@
       border-radius: 50%;
       background: #fff;
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(36, 158, 160, 0.7), 0 2px 4px rgba(0,0,0,0.5);
+      box-shadow: 0 0 8px rgba(36, 158, 160, 0.7), 0 2px 4px rgba(0, 0, 0, 0.5);
       border: 2px solid var(--color-accent);
       transition: transform 0.15s, box-shadow 0.15s;
     }
-    .light-slider::-webkit-slider-thumb:hover, .paint-slider::-webkit-slider-thumb:hover {
+
+    .light-slider::-webkit-slider-thumb:hover,
+    .paint-slider::-webkit-slider-thumb:hover {
       transform: scale(1.25);
       box-shadow: 0 0 14px rgba(36, 158, 160, 0.9);
     }
@@ -1568,20 +1774,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 7px 10px;
       border-radius: 10px;
       gap: 6px;
       transition: border-color 0.3s;
     }
+
     .light-picker-item:hover {
-      border-color: rgba(255,255,255,0.18);
+      border-color: rgba(255, 255, 255, 0.18);
     }
+
     .light-picker-item span {
       font-size: 0.58rem;
       font-weight: 800;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255, 255, 255, 0.4);
       text-transform: uppercase;
       letter-spacing: 1.5px;
     }
@@ -1600,16 +1808,19 @@
       outline: none;
       flex-shrink: 0;
     }
+
     input[type="color"]::-webkit-color-swatch-wrapper {
       padding: 0;
       border-radius: 50%;
     }
+
     input[type="color"]::-webkit-color-swatch {
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       transition: border-color 0.25s, transform 0.25s;
     }
+
     input[type="color"]:hover::-webkit-color-swatch {
       border-color: rgba(255, 255, 255, 0.9);
     }
@@ -1636,12 +1847,15 @@
       overflow: hidden;
       flex-shrink: 0;
       transition: transform 0.25s, box-shadow 0.25s;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
     }
+
     .custom-color-trigger input[type="color"] {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       opacity: 0;
       cursor: pointer;
       border-radius: 50%;
@@ -1670,6 +1884,12 @@
       Stage 0%</div>
   </div>
 
+  <!-- Scene Mode Transition Loading Overlay -->
+  <div id="scene-loading-overlay">
+    <div class="scene-spinner"></div>
+    <div class="scene-loading-label" id="scene-loading-label">Switching Scene...</div>
+  </div>
+
   <div class="background-logo-wrapper">
     <img src="m4csr.png">
   </div>
@@ -1696,20 +1916,25 @@
     <div class="nav-logo">
       <img onclick="location.href='#engineering'" src="mcomp.png" style="margin-left: 30px;">
     </div>
-    
+
     <!-- Mobile Toggle Button -->
     <button class="mobile-nav-toggle" aria-label="Toggle Menu" id="mobile-nav-toggle-btn">
       <!-- Front View SVG (Closed State) -->
       <svg class="car-front-icon" viewBox="0 0 100 100">
         <!-- Roof and Windshield outline -->
-        <path d="M35 32 L65 32 L72 45 L28 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <path d="M35 32 L65 32 L72 45 L28 45 Z" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linejoin="round" />
         <!-- Car Body Front Hood & Grille outline -->
-        <path d="M22 45 L78 45 C83 45, 85 47, 85 52 L83 68 C83 72, 80 74, 76 74 L24 74 C20 74, 17 72, 17 68 L15 52 C15 47, 17 45, 22 45 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <path
+          d="M22 45 L78 45 C83 45, 85 47, 85 52 L83 68 C83 72, 80 74, 76 74 L24 74 C20 74, 17 72, 17 68 L15 52 C15 47, 17 45, 22 45 Z"
+          fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
         <!-- Headlights Left -->
-        <path d="M19 53 L29 51 L31 56 L20 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M19 53 L29 51 L31 56 L20 58 Z" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linejoin="round" />
         <path d="M22 54 L27 53" stroke="currentColor" stroke-width="1.2" />
         <!-- Headlights Right -->
-        <path d="M81 53 L71 51 L69 56 L80 58 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+        <path d="M81 53 L71 51 L69 56 L80 58 Z" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linejoin="round" />
         <path d="M78 54 L73 53" stroke="currentColor" stroke-width="1.2" />
         <!-- Kidney Grilles (Left & Right) -->
         <rect x="38" y="52" width="10" height="15" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
@@ -1727,13 +1952,17 @@
       <!-- Side View SVG (Open State) -->
       <svg class="car-side-icon" viewBox="0 0 100 100" style="display:none;">
         <!-- Ground Line -->
-        <line x1="10" y1="72" x2="90" y2="72" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2" opacity="0.3" />
+        <line x1="10" y1="72" x2="90" y2="72" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2"
+          opacity="0.3" />
         <!-- Car Silhouette Profile -->
-        <path d="M12 60 C12 56, 25 54, 30 50 C35 45, 40 33, 50 33 C62 33, 73 34, 78 48 C80 50, 84 50, 87 52 C88 53, 89 56, 88 60 C87 63, 85 64, 83 64 L78 64 C78 57, 68 57, 68 64 L34 64 C34 57, 24 57, 24 64 L15 64 C13 64, 12 62, 12 60 Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+        <path
+          d="M12 60 C12 56, 25 54, 30 50 C35 45, 40 33, 50 33 C62 33, 73 34, 78 48 C80 50, 84 50, 87 52 C88 53, 89 56, 88 60 C87 63, 85 64, 83 64 L78 64 C78 57, 68 57, 68 64 L34 64 C34 57, 24 57, 24 64 L15 64 C13 64, 12 62, 12 60 Z"
+          fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
         <!-- Rear spoiler/tail detail -->
         <path d="M85 51 C86 49, 87 49, 88 50" fill="none" stroke="currentColor" stroke-width="1.5" />
         <!-- Cabin Window Outline -->
-        <path d="M36 49 L48 37 C54 37, 64 37, 72 49 Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+        <path d="M36 49 L48 37 C54 37, 64 37, 72 49 Z" fill="none" stroke="currentColor" stroke-width="1.5"
+          stroke-linejoin="round" />
         <line x1="56" y1="37" x2="58" y2="49" stroke="currentColor" stroke-width="1.5" />
         <!-- Front Wheel (hub + spokes) -->
         <circle cx="29" cy="64" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
@@ -1767,29 +1996,33 @@
 
   <main>
     <section id="hero">
-      <!-- Showroom Background Music Toggle -->
-      <button class="bg-music-toggle" aria-label="Toggle Background Music" id="music-toggle-btn">
+      <!-- Showroom Background Music Toggle (Ambient / Chimes) -->
+      <button class="bg-music-toggle" aria-label="Toggle Background Music" id="music-toggle-btn" title="Showroom Ambient Track (Right Top)">
         <svg class="tyre-icon" viewBox="0 0 100 100">
           <defs>
             <g id="m4cs-rim-spoke">
               <!-- Y-Spoke Base -->
-              <line x1="59.5" y1="50" x2="64.5" y2="50" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+              <line x1="59.5" y1="50" x2="64.5" y2="50" stroke="currentColor" stroke-width="1.1"
+                stroke-linecap="round" />
               <!-- Y-Spoke Left Branch -->
-              <line x1="64.5" y1="50" x2="87.5" y2="47.1" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+              <line x1="64.5" y1="50" x2="87.5" y2="47.1" stroke="currentColor" stroke-width="0.9"
+                stroke-linecap="round" />
               <!-- Y-Spoke Right Branch -->
-              <line x1="64.5" y1="50" x2="87.5" y2="52.9" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+              <line x1="64.5" y1="50" x2="87.5" y2="52.9" stroke="currentColor" stroke-width="0.9"
+                stroke-linecap="round" />
             </g>
           </defs>
-          
+
           <!-- Outer Tyre Wall (Deep matte black rim border) -->
           <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.3" />
           <!-- Tread Ribs details -->
-          <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.8" fill="none" stroke-dasharray="3,3" opacity="0.2" />
+          <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.8" fill="none" stroke-dasharray="3,3"
+            opacity="0.2" />
           <!-- Wheel Rim Outer Edge Lip -->
           <circle cx="50" cy="50" r="39" stroke="currentColor" stroke-width="1.4" fill="none" />
           <!-- Inner Rim Spoke Ring -->
           <circle cx="50" cy="50" r="37.5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.8" />
-          
+
           <!-- 10 Spoke Groups Rotated Symmetrically (Style 827M Mesh) -->
           <use href="#m4cs-rim-spoke" transform="rotate(0, 50, 50)" />
           <use href="#m4cs-rim-spoke" transform="rotate(36, 50, 50)" />
@@ -1806,8 +2039,35 @@
           <circle cx="50" cy="50" r="9.5" fill="#040406" stroke="currentColor" stroke-width="1.0" />
           <!-- Inner Center Cap Detail -->
           <circle cx="50" cy="50" r="7.5" fill="#040406" stroke="currentColor" stroke-width="0.4" opacity="0.5" />
-          
+
           <!-- Bolt Holes Nestled inside Y splits (5 holes at 72 deg intervals on radius 16.5) -->
+          <circle cx="66.5" cy="50" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="34.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="40.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="36.6" cy="59.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+          <circle cx="55.1" cy="65.7" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
+        </svg>
+      </button>
+
+      <!-- Party Background Music Toggle (Sequenced EDM) -->
+      <button class="bg-music-toggle left-btn" aria-label="Toggle Party Background Music" id="party-music-toggle-btn" title="Party / Car Studio Track (Left Top)">
+        <svg class="tyre-icon" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.3" />
+          <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="0.8" fill="none" stroke-dasharray="3,3" opacity="0.2" />
+          <circle cx="50" cy="50" r="39" stroke="currentColor" stroke-width="1.4" fill="none" />
+          <circle cx="50" cy="50" r="37.5" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.8" />
+          <use href="#m4cs-rim-spoke" transform="rotate(0, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(36, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(72, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(108, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(144, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(180, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(216, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(252, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(288, 50, 50)" />
+          <use href="#m4cs-rim-spoke" transform="rotate(324, 50, 50)" />
+          <circle cx="50" cy="50" r="9.5" fill="#040406" stroke="currentColor" stroke-width="1.0" />
+          <circle cx="50" cy="50" r="7.5" fill="#040406" stroke="currentColor" stroke-width="0.4" opacity="0.5" />
           <circle cx="66.5" cy="50" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
           <circle cx="55.1" cy="34.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
           <circle cx="36.6" cy="40.3" r="2.0" fill="#111" stroke="currentColor" stroke-width="0.75" />
@@ -1851,14 +2111,22 @@
       <div class="audio-player-wrapper">
         <div class="glass-audio-player" id="engine-player">
           <button class="play-btn" aria-label="Play Engine Sound">
-            <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <svg class="play-icon" viewBox="0 0 24 24">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
           </button>
           <div class="player-info">
             <span class="player-title">Engine sound</span>
             <span class="player-subtitle">revs on hover</span>
           </div>
-          <canvas class="wave-visualizer" id="engine-canvas" width="160" height="40" data-accent="#249ea0" data-color1="rgba(36, 158, 160, 0.95)" data-color2="rgba(30, 200, 203, 0.70)" data-color3="rgba(36, 158, 160, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(36, 158, 160, 0.15)"></canvas>
+          <canvas class="wave-visualizer" id="engine-canvas" width="160" height="40" data-accent="#249ea0"
+            data-color1="rgba(36, 158, 160, 0.95)" data-color2="rgba(30, 200, 203, 0.70)"
+            data-color3="rgba(36, 158, 160, 0.45)" data-color4="rgba(255, 255, 255, 0.25)"
+            data-color5="rgba(36, 158, 160, 0.15)"></canvas>
         </div>
       </div>
 
@@ -1889,14 +2157,22 @@
       <!-- Interactive Exhaust Audio Player -->
       <div class="glass-audio-player" id="exhaust-player">
         <button class="play-btn" aria-label="Play Exhaust Sound">
-          <svg class="play-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          <svg class="play-icon" viewBox="0 0 24 24">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;">
+            <rect x="6" y="4" width="4" height="16" />
+            <rect x="14" y="4" width="4" height="16" />
+          </svg>
         </button>
         <div class="player-info">
           <span class="player-title">Exhaust sound</span>
           <span class="player-subtitle">revs on hover</span>
         </div>
-        <canvas class="wave-visualizer" id="exhaust-canvas" width="160" height="40" data-accent="#c44536" data-color1="rgba(196, 69, 54, 0.95)" data-color2="rgba(235, 94, 40, 0.70)" data-color3="rgba(196, 69, 54, 0.45)" data-color4="rgba(255, 255, 255, 0.25)" data-color5="rgba(196, 69, 54, 0.15)"></canvas>
+        <canvas class="wave-visualizer" id="exhaust-canvas" width="160" height="40" data-accent="#c44536"
+          data-color1="rgba(196, 69, 54, 0.95)" data-color2="rgba(235, 94, 40, 0.70)"
+          data-color3="rgba(196, 69, 54, 0.45)" data-color4="rgba(255, 255, 255, 0.25)"
+          data-color5="rgba(196, 69, 54, 0.15)"></canvas>
       </div>
 
       <div class="glass-card">
@@ -1933,23 +2209,53 @@
   <!-- Free Roam 3D Button -->
   <button class="free-roam-btn" id="free-roam-btn" aria-label="Enter Free Roam 3D View">
     <svg viewBox="0 0 24 24">
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2"
+        fill="none" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
     <span>Free Roam 3D</span>
   </button>
+
+  <!-- Interactive Car Controls HUD -->
+  <div class="car-controls-hud" id="car-controls-hud">
+    <div class="ctrl-divider"></div>
+    <button class="car-ctrl-btn" id="ctrl-door-left-btn" aria-label="Toggle Left Door">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <path d="M9 3v18M3 9h6" />
+      </svg>
+      <span id="ctrl-door-left-label">Open Left Door</span>
+    </button>
+    <button class="car-ctrl-btn" id="ctrl-hood-btn" aria-label="Toggle Hood">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11l9-8 9 8" />
+        <path d="M5 11v8a1 1 0 001 1h12a1 1 0 001-1v-8" />
+        <path d="M9 21V12h6v9" />
+      </svg>
+      <span id="ctrl-hood-label">Open Hood</span>
+    </button>
+    <button class="car-ctrl-btn" id="ctrl-door-right-btn" aria-label="Toggle Right Door">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <path d="M15 3v18M15 9h6" />
+      </svg>
+      <span id="ctrl-door-right-label">Open Right Door</span>
+    </button>
+  </div>
 
   <!-- Scene Mode Toggle: Cinematic / Studio -->
   <div class="scene-mode-toggle" id="scene-mode-toggle">
     <div class="scene-mode-inner" id="scene-mode-inner">
       <button class="scene-mode-btn active" id="scene-cinematic-btn" data-mode="cinematic">
         <svg viewBox="0 0 24 24">
-          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 2l-2.5 5M10 2L7.5 7M8 7v14M16 7v14"/>
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 2l-2.5 5M10 2L7.5 7M8 7v14M16 7v14" />
         </svg>
         Cinematic
       </button>
       <button class="scene-mode-btn" id="scene-studio-btn" data-mode="studio">
         <svg viewBox="0 0 24 24">
-          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/>
+          <path
+            d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4" />
         </svg>
         Studio
       </button>
@@ -1974,7 +2280,8 @@
     </div>
     <button class="free-roam-exit-btn" id="free-roam-exit-btn">
       <svg viewBox="0 0 24 24">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2.5"
+          fill="none" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
       <span>Exit Free Roam</span>
     </button>
@@ -1984,7 +2291,10 @@
   <div class="color-pill-container" id="color-pill">
     <!-- Toggle Button to collapse/expand -->
     <button class="pill-toggle-btn" id="color-pill-toggle" aria-label="Toggle Color Customizer">
-      <svg class="toggle-icon" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="toggle-icon" viewBox="0 0 24 24">
+        <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
     </button>
 
     <h3>Paint Finish</h3>
@@ -1996,38 +2306,59 @@
       <button class="target-btn" data-target="hood">Hood</button>
       <button class="target-btn" data-target="doors">Doors</button>
     </div>
-    
+
     <!-- Visual Divider -->
     <div class="color-divider"></div>
-    
+
     <!-- BMW M4 Color Options List -->
     <div class="color-options-list">
       <!-- Default (dashed reset ring) -->
       <button class="color-opt-btn default-opt active" data-color="default" title="Original GLB Material">
         <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round">
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          <path
+            d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
         </svg>
       </button>
-      <button class="color-opt-btn" data-color="black_sapphire" style="background-color: #0D0D11; border: 1px solid rgba(255,255,255,0.15);" title="Black Sapphire Metallic (475)"></button>
-      <button class="color-opt-btn" data-color="toronto_red" style="background-color: #A62C2B;" title="Toronto Red Metallic (C3G)"></button>
-      <button class="color-opt-btn" data-color="skyscraper_grey" style="background-color: #7C8184;" title="Skyscraper Grey Metallic (C4W)"></button>
-      <button class="color-opt-btn" data-color="portimao_blue" style="background-color: #153E7E;" title="Portimao Blue Metallic (C31)"></button>
-      <button class="color-opt-btn" data-color="sao_paulo_yellow" style="background-color: #D2E635;" title="Sao Paulo Yellow Metallic (C4H)"></button>
-      <button class="color-opt-btn" data-color="isle_of_man_green" style="background-color: #135342;" title="Isle of Man Green Metallic (C4G)"></button>
-      <button class="color-opt-btn" data-color="brooklyn_grey" style="background-color: #A0A6A9;" title="Brooklyn Grey Metallic (C4P)"></button>
-      <button class="color-opt-btn" data-color="dravit_grey" style="background-color: #545654;" title="Dravit Grey Metallic (C3E)"></button>
-      <button class="color-opt-btn" data-color="tanzanite_blue" style="background-color: #101B2B;" title="Tanzanite Blue Metallic (X10)"></button>
-      <button class="color-opt-btn" data-color="aventurine_red" style="background-color: #5E1914;" title="Aventurine Red Metallic (C57)"></button>
-      <button class="color-opt-btn" data-color="frozen_isle_of_man" style="background-color: #1D4439;" title="Frozen Isle Of Man Green (C4G Matte)"></button>
-      <button class="color-opt-btn" data-color="riviera_blue" style="background-color: #43A6D6;" title="Riviera Blue (P5C)"></button>
-      <button class="color-opt-btn" data-color="matte_white" style="background-color: #F0EFEB; border: 1px solid rgba(255,255,255,0.2);" title="Alpine White (Matte)"></button>
-      
+      <button class="color-opt-btn" data-color="black_sapphire"
+        style="background-color: #0D0D11; border: 1px solid rgba(255,255,255,0.15);"
+        title="Black Sapphire Metallic (475)"></button>
+      <button class="color-opt-btn" data-color="toronto_red" style="background-color: #A62C2B;"
+        title="Toronto Red Metallic (C3G)"></button>
+      <button class="color-opt-btn" data-color="skyscraper_grey" style="background-color: #7C8184;"
+        title="Skyscraper Grey Metallic (C4W)"></button>
+      <button class="color-opt-btn" data-color="portimao_blue" style="background-color: #153E7E;"
+        title="Portimao Blue Metallic (C31)"></button>
+      <button class="color-opt-btn" data-color="sao_paulo_yellow" style="background-color: #D2E635;"
+        title="Sao Paulo Yellow Metallic (C4H)"></button>
+      <button class="color-opt-btn" data-color="isle_of_man_green" style="background-color: #135342;"
+        title="Isle of Man Green Metallic (C4G)"></button>
+      <button class="color-opt-btn" data-color="brooklyn_grey" style="background-color: #A0A6A9;"
+        title="Brooklyn Grey Metallic (C4P)"></button>
+      <button class="color-opt-btn" data-color="dravit_grey" style="background-color: #545654;"
+        title="Dravit Grey Metallic (C3E)"></button>
+      <button class="color-opt-btn" data-color="tanzanite_blue" style="background-color: #101B2B;"
+        title="Tanzanite Blue Metallic (X10)"></button>
+      <button class="color-opt-btn" data-color="aventurine_red" style="background-color: #5E1914;"
+        title="Aventurine Red Metallic (C57)"></button>
+      <button class="color-opt-btn" data-color="frozen_isle_of_man" style="background-color: #1D4439;"
+        title="Frozen Isle Of Man Green (C4G Matte)"></button>
+      <button class="color-opt-btn" data-color="riviera_blue" style="background-color: #43A6D6;"
+        title="Riviera Blue (P5C)"></button>
+      <button class="color-opt-btn" data-color="matte_white"
+        style="background-color: #F0EFEB; border: 1px solid rgba(255,255,255,0.2);"
+        title="Alpine White (Matte)"></button>
+
       <!-- Custom Color Picker (Premium full-width) -->
       <div style="grid-column: span 2; position: relative;">
-        <label id="car-custom-color-btn" title="Custom Color" style="display:flex; align-items:center; gap:10px; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(255,255,255,0.18); border-radius: 12px; padding: 6px 12px; cursor:pointer; transition: all 0.3s; width:100%; box-sizing:border-box; position:relative; overflow:hidden;">
-          <div id="car-color-preview" style="width:20px; height:20px; border-radius:50%; background: conic-gradient(red, yellow, green, cyan, blue, magenta, red); border: 1.5px solid rgba(255,255,255,0.35); flex-shrink:0; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: background 0.2s;"></div>
-          <span style="font-size:0.58rem; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1.5px; flex:1;">Custom</span>
-          <input type="color" id="car-color-picker" value="#ffffff" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0;">
+        <label id="car-custom-color-btn" title="Custom Color"
+          style="display:flex; align-items:center; gap:10px; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(255,255,255,0.18); border-radius: 12px; padding: 6px 12px; cursor:pointer; transition: all 0.3s; width:100%; box-sizing:border-box; position:relative; overflow:hidden;">
+          <div id="car-color-preview"
+            style="width:20px; height:20px; border-radius:50%; background: conic-gradient(red, yellow, green, cyan, blue, magenta, red); border: 1.5px solid rgba(255,255,255,0.35); flex-shrink:0; box-shadow: 0 2px 6px rgba(0,0,0,0.4); transition: background 0.2s;">
+          </div>
+          <span
+            style="font-size:0.58rem; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1.5px; flex:1;">Custom</span>
+          <input type="color" id="car-color-picker" value="#ffffff"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0;">
         </label>
       </div>
     </div>
@@ -2052,9 +2383,12 @@
   <div class="light-pill-container" id="light-pill">
     <!-- Toggle Button to collapse/expand -->
     <button class="pill-toggle-btn" id="light-pill-toggle" aria-label="Toggle Light Customizer">
-      <svg class="toggle-icon" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="toggle-icon" viewBox="0 0 24 24">
+        <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
     </button>
-    
+
     <h3>Studio Lights</h3>
 
     <!-- Light Customization Target Tabs -->
@@ -2068,17 +2402,23 @@
 
     <!-- Visual Divider -->
     <div class="color-divider"></div>
-    
+
     <!-- Light Schemes Selector -->
     <div class="light-color-selector">
       <span class="customizer-label">Color Scheme</span>
       <div class="light-schemes-grid">
-        <button class="scheme-btn active" data-scheme="default" title="Showroom (Warm/Cool Whites)" style="background: linear-gradient(135deg, #FFFFFF 50%, #F5F5F0 50%);"></button>
-        <button class="scheme-btn" data-scheme="neon" title="Neon Studio (Teal / Orange)" style="background: linear-gradient(135deg, #249EA0 50%, #C44536 50%);"></button>
-        <button class="scheme-btn" data-scheme="cyber" title="Cyberpunk (Cyan / Magenta)" style="background: linear-gradient(135deg, #00F0FF 50%, #FF007F 50%);"></button>
-        <button class="scheme-btn" data-scheme="sunset" title="Sunset Gold (Gold / Red)" style="background: linear-gradient(135deg, #FFB800 50%, #FF3C00 50%);"></button>
-        <button class="scheme-btn" data-scheme="violet" title="Electro Violet (Blue / Purple)" style="background: linear-gradient(135deg, #003AFF 50%, #9A00FF 50%);"></button>
-        <button class="scheme-btn" data-scheme="red" title="Racing Red (Red / White)" style="background: linear-gradient(135deg, #FF0000 50%, #FFFFFF 50%);"></button>
+        <button class="scheme-btn active" data-scheme="default" title="Showroom (Warm/Cool Whites)"
+          style="background: linear-gradient(135deg, #FFFFFF 50%, #F5F5F0 50%);"></button>
+        <button class="scheme-btn" data-scheme="neon" title="Neon Studio (Teal / Orange)"
+          style="background: linear-gradient(135deg, #249EA0 50%, #C44536 50%);"></button>
+        <button class="scheme-btn" data-scheme="cyber" title="Cyberpunk (Cyan / Magenta)"
+          style="background: linear-gradient(135deg, #00F0FF 50%, #FF007F 50%);"></button>
+        <button class="scheme-btn" data-scheme="sunset" title="Sunset Gold (Gold / Red)"
+          style="background: linear-gradient(135deg, #FFB800 50%, #FF3C00 50%);"></button>
+        <button class="scheme-btn" data-scheme="violet" title="Electro Violet (Blue / Purple)"
+          style="background: linear-gradient(135deg, #003AFF 50%, #9A00FF 50%);"></button>
+        <button class="scheme-btn" data-scheme="red" title="Racing Red (Red / White)"
+          style="background: linear-gradient(135deg, #FF0000 50%, #FFFFFF 50%);"></button>
       </div>
     </div>
 
@@ -2099,10 +2439,10 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Visual Divider -->
     <div class="color-divider"></div>
-    
+
     <!-- Intensity Slider -->
     <div class="light-intensity-control">
       <div class="intensity-label-row">
@@ -2115,10 +2455,18 @@
 
   <!-- Collapsed Pill Triggers -->
   <button class="collapsed-pill-trigger" id="light-pill-collapsed-trigger" aria-label="Open Light Customizer">
-    <svg viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg viewBox="0 0 24 24">
+      <path
+        d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5M9 18h6M10 22h4"
+        stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
   </button>
   <button class="collapsed-pill-trigger" id="color-pill-collapsed-trigger" aria-label="Open Color Customizer">
-    <svg viewBox="0 0 24 24"><path d="M12 22C17.52 22 22 17.52 22 12S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-16a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm10-6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <svg viewBox="0 0 24 24">
+      <path
+        d="M12 22C17.52 22 22 17.52 22 12S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-16a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-5 4a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm10-6a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
   </button>
 
   <!-- --- GRAPHICS RENDERING PIPELINE --- -->
@@ -2141,7 +2489,7 @@
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Cap at 1.5 for perf
 
     // Soft Cinematic Shading Optimizations
     renderer.shadowMap.enabled = true;
@@ -2150,10 +2498,10 @@
     renderer.toneMappingExposure = 1.0;
 
     // 2. SOFT FALL-OFF SHOWROOM LIGHTING RIG (Crisp whites by default for realism)
-    const backgroundFill = new THREE.AmbientLight('#ffffff', 0.40); // Lifted ambient shadows
+    const backgroundFill = new THREE.AmbientLight('#ffffff', 0.15); // Lifted ambient shadows
     scene.add(backgroundFill);
 
-    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.30);
+    const zenithHighlight = new THREE.DirectionalLight('#ffffff', 0.15);
     zenithHighlight.position.set(0, 12, 0);
     scene.add(zenithHighlight);
 
@@ -2182,8 +2530,8 @@
     const tealSpotKey = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4, 1.0, 1.1);
     tealSpotKey.position.set(7, 6, 4);
     tealSpotKey.castShadow = true;
-    tealSpotKey.shadow.mapSize.width = 1024;
-    tealSpotKey.shadow.mapSize.height = 1024;
+    tealSpotKey.shadow.mapSize.width = 2048;
+    tealSpotKey.shadow.mapSize.height = 2048;
     tealSpotKey.shadow.bias = -0.00004;
     scene.add(tealSpotKey);
 
@@ -2191,31 +2539,31 @@
     const orangeSpotKey = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4, 1.0, 1.1);
     orangeSpotKey.position.set(-7, 6, 4);
     orangeSpotKey.castShadow = true;
-    orangeSpotKey.shadow.mapSize.width = 1024;
-    orangeSpotKey.shadow.mapSize.height = 1024;
+    orangeSpotKey.shadow.mapSize.width = 2048;
+    orangeSpotKey.shadow.mapSize.height = 2048;
     orangeSpotKey.shadow.bias = -0.00004;
     scene.add(orangeSpotKey);
 
     // Right Side Rim: Soft White SpotLight (Focuses on roofline and rear shoulder contours)
     const tealSpotRim = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4.5, 0.8, 1.1);
     tealSpotRim.position.set(6, 7.5, -7);
-    tealSpotRim.castShadow = true;
+    tealSpotRim.castShadow = false;
     tealSpotRim.shadow.bias = -0.00004;
     scene.add(tealSpotRim);
 
     // Left Side Rim: Soft White SpotLight (Focuses on roofline and rear shoulder contours)
     const orangeSpotRim = new THREE.SpotLight('#ffffff', 10.0, 40, Math.PI / 4.5, 0.8, 1.1);
     orangeSpotRim.position.set(-6, 7.5, -7);
-    orangeSpotRim.castShadow = true;
+    orangeSpotRim.castShadow = false;
     orangeSpotRim.shadow.bias = -0.00004;
     scene.add(orangeSpotRim);
 
-    // Under-chassis volumetric highlight clusters for surface ground bounce effects
-    const underTealFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects (Dimmed to prevent washing out contact shadows)
+    const underTealFill = new THREE.PointLight('#ffffff', 0.8, 9, 1.8);
     underTealFill.position.set(3.5, 0.5, 1);
     scene.add(underTealFill);
 
-    const underOrangeFill = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    const underOrangeFill = new THREE.PointLight('#ffffff', 0.8, 9, 1.8);
     underOrangeFill.position.set(-3.5, 0.5, 1);
     scene.add(underOrangeFill);
 
@@ -2229,44 +2577,54 @@
     scene.add(topFrontOrangeFill);
 
 
-    // Under-chassis volumetric highlight clusters for surface ground bounce effects
-    const underTealFillback = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    // Under-chassis volumetric highlight clusters for surface ground bounce effects (Dimmed to prevent washing out contact shadows)
+    const underTealFillback = new THREE.PointLight('#ffffff', 0.8, 9, 1.8);
     underTealFillback.position.set(3.5, 0.5, -4);
     scene.add(underTealFillback);
 
-    const underOrangeFillback = new THREE.PointLight('#ffffff', 6.0, 9, 1.8);
+    const underOrangeFillback = new THREE.PointLight('#ffffff', 0.8, 9, 1.8);
     underOrangeFillback.position.set(-3.5, 0.5, -4);
     scene.add(underOrangeFillback);
 
-    // Front Spotlight for direct grille and hood illumination (Shadow disabled for performance)
-    const frontSpotLight = new THREE.SpotLight(0xffffff, 25.0, 10, Math.PI / 5, 0.8, 1.2);
+    // Front Spotlight for direct grille and hood illumination (Distance increased from 10 to 18 to prevent shadow camera frustum clipping)
+    const frontSpotLight = new THREE.SpotLight(0xffffff, 25.0, 18, Math.PI / 5, 0.8, 1.2);
     frontSpotLight.position.set(0, 2, 10);
     frontSpotLight.castShadow = true;
+    frontSpotLight.shadow.mapSize.width = 2048;
+    frontSpotLight.shadow.mapSize.height = 2048;
     frontSpotLight.shadow.bias = -0.00004;
     scene.add(frontSpotLight);
 
     const rearSpotLight = new THREE.SpotLight(0xffffff, 2.0, 10, Math.PI / 5, 0.5, 1.2);
     rearSpotLight.position.set(0, 1, -5);
     rearSpotLight.castShadow = true;
+    rearSpotLight.shadow.mapSize.width = 2048;
+    rearSpotLight.shadow.mapSize.height = 2048;
     rearSpotLight.shadow.bias = -0.00004;
     scene.add(rearSpotLight);
     scene.add(rearSpotLight.target);
 
-    const rearSpotLight1 = new THREE.SpotLight(0xffffff, 12.0, 5, Math.PI / 5, 0.8, 1.2);
+    // Rear Spotlights (Distance increased from 5 to 12 to prevent shadow camera frustum clipping)
+    const rearSpotLight1 = new THREE.SpotLight(0xffffff, 12.0, 12, Math.PI / 5, 0.8, 1.2);
     rearSpotLight1.position.set(1, 2, -5);
     rearSpotLight1.castShadow = true;
+    rearSpotLight1.shadow.mapSize.width = 2048;
+    rearSpotLight1.shadow.mapSize.height = 2048;
     rearSpotLight1.shadow.bias = -0.00004;
     scene.add(rearSpotLight1);
     scene.add(rearSpotLight1.target);
 
-    const rearSpotLight2 = new THREE.SpotLight(0xffffff, 12.0, 5, Math.PI / 5, 0.8, 1.2);
+    const rearSpotLight2 = new THREE.SpotLight(0xffffff, 12.0, 12, Math.PI / 5, 0.8, 1.2);
     rearSpotLight2.position.set(-1, 2, -5);
     rearSpotLight2.castShadow = true;
+    rearSpotLight2.shadow.mapSize.width = 2048;
+    rearSpotLight2.shadow.mapSize.height = 2048;
     rearSpotLight2.shadow.bias = -0.00004;
     scene.add(rearSpotLight2);
     scene.add(rearSpotLight2.target);
 
-    const rearSpotLightbottom1 = new THREE.SpotLight(0xffffff, 8.0, 5, Math.PI / 2, 0.5, 0.5);
+    // Rear Bottom Spotlights (Dimmed from 8.0 to 2.0 to prevent shadow washout)
+    const rearSpotLightbottom1 = new THREE.SpotLight(0xffffff, 2.0, 5, Math.PI / 2, 0.5, 0.5);
     rearSpotLightbottom1.position.set(1, 0.1, -3.8);
     rearSpotLightbottom1.target.position.set(0, 1.5, -2);
     rearSpotLightbottom1.castShadow = false;
@@ -2274,7 +2632,7 @@
     rearSpotLightbottom1.target.updateMatrixWorld();
     scene.add(rearSpotLightbottom1);
 
-    const rearSpotLightbottom2 = new THREE.SpotLight(0xffffff, 8.0, 5, Math.PI / 2, 0.5, 0.5);
+    const rearSpotLightbottom2 = new THREE.SpotLight(0xffffff, 2.0, 5, Math.PI / 2, 0.5, 0.5);
     rearSpotLightbottom2.position.set(-1, 0.1, -3.8);
     rearSpotLightbottom2.target.position.set(0, 1.5, -2);
     rearSpotLightbottom2.castShadow = false;
@@ -2287,8 +2645,19 @@
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0);
     scene.add(hemiLight);
 
+    // Top directional light: Enabled shadows for deep, sharp, and physically realistic contact shadows on the floor
     const topLight = new THREE.DirectionalLight(0xffffff, 1.20);
     topLight.position.set(0, 5, 0);
+    topLight.castShadow = true;
+    topLight.shadow.mapSize.width = 2048;
+    topLight.shadow.mapSize.height = 2048;
+    topLight.shadow.camera.near = 0.5;
+    topLight.shadow.camera.far = 15;
+    topLight.shadow.camera.left = -6;
+    topLight.shadow.camera.right = 6;
+    topLight.shadow.camera.top = 6;
+    topLight.shadow.camera.bottom = -6;
+    topLight.shadow.bias = -0.0005;
     scene.add(topLight);
 
     const leftOrangeLight = new THREE.DirectionalLight(0xffffff, 3.0);
@@ -2310,10 +2679,14 @@
     // Overhead wing spotlights (Instantiated globally so they can be tracked in editing)
     const leftOverheadSpot = new THREE.SpotLight(0xffffff, 60.0, 8, Math.PI / 5, 0.5, 1.2);
     leftOverheadSpot.castShadow = true;
+    leftOverheadSpot.shadow.mapSize.width = 2048;
+    leftOverheadSpot.shadow.mapSize.height = 2048;
     leftOverheadSpot.shadow.bias = -0.00004;
 
     const rightOverheadSpot = new THREE.SpotLight(0xffffff, 60.0, 8, Math.PI / 5, 0.5, 1.2);
     rightOverheadSpot.castShadow = true;
+    rightOverheadSpot.shadow.mapSize.width = 2048;
+    rightOverheadSpot.shadow.mapSize.height = 2048;
     rightOverheadSpot.shadow.bias = -0.00004;
 
     // Top-down Red Spot Light
@@ -2371,7 +2744,7 @@
     let boxLimits = { min: { y: -1.3 } };
 
     modelLoader.load(
-      'bmw_m4_cs_main4.glb', // Loaded direct verbatim user file[cite: 2]
+      'bmw_m4_cs_main6.glb', // Loaded direct verbatim user file[cite: 2]
       (gltf) => {
         carModel = gltf.scene;
 
@@ -2389,7 +2762,7 @@
         boxLimits.setFromObject(carModel);
         boxLimits.getCenter(centerOffsetVector);
         carModel.position.x = -centerOffsetVector.x;
-        carModel.position.y = -boxLimits.min.y - 1.3;
+        carModel.position.y = -boxLimits.min.y - 2.0;
         carModel.position.z = -centerOffsetVector.z;
 
         // Scan scene graph nodes to assign interactive components and lighting capabilities
@@ -2419,7 +2792,7 @@
               // Color changing classification
               const matName = childNode.material.name ? childNode.material.name.toLowerCase() : "";
               const isPaint = nameString.includes('paint') || nameString.includes('coloured') ||
-                              matName.includes('paint') || matName.includes('coloured') || matName.includes('color');
+                matName.includes('paint') || matName.includes('coloured') || matName.includes('color');
 
               if (isPaint) {
                 // Store the original material so we can restore it exactly ("not touching even anything")
@@ -2560,22 +2933,11 @@
       }
     );
 
-    // Matte Shadows Ground Receiver Plane
-    /*const shadowFloorPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(100, 100),
-      new THREE.MeshStandardMaterial({ color: 0x000000 })
-    );*/
 
-    // Matte Shadows Ground Receiver Plane
-    const shadowFloorPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(100, 100),
-      new THREE.ShadowMaterial({ opacity: 0.5 })
-    );
 
-    shadowFloorPlane.position.y = -0.1;
-    shadowFloorPlane.rotation.x = -Math.PI / 2;
-    shadowFloorPlane.receiveShadow = true;
-    scene.add(shadowFloorPlane);
+
+
+
 
     // Blueprint Cyber Grid Frame Map (Teal #249EA0 setup configuration)
     const stageLayoutGrid = new THREE.GridHelper(50, 60, '#249EA0', '#0a0e14');
@@ -2694,12 +3056,66 @@
       freeRoamExitBtn.addEventListener('click', () => {
         document.body.classList.remove('free-roam-active');
         freeRoamActive = false;
-        
+
         // Reset customizer panels layout to default open
         if (colorPill) colorPill.classList.remove('collapsed');
         if (lightPill) lightPill.classList.remove('collapsed');
         if (colorCollapsedTrigger) colorCollapsedTrigger.classList.remove('visible');
         if (lightCollapsedTrigger) lightCollapsedTrigger.classList.remove('visible');
+
+        // Close all doors and hood when exiting free roam
+        manualHoodOpen = false;
+        manualDoorLeftOpen = false;
+        manualDoorRightOpen = false;
+        updateCtrlBtnStates();
+      });
+    }
+
+    // --- INTERACTIVE DOOR & HOOD CONTROLS ---
+    let manualHoodOpen = false;
+    let manualDoorLeftOpen = false;
+    let manualDoorRightOpen = false;
+
+    // Target rotations for manual controls (override scroll when in free roam)
+    const HOOD_OPEN_ROT = -0.95;
+    const DOOR_OPEN_ROT = -0.75;
+
+    function updateCtrlBtnStates() {
+      const hoodBtn = document.getElementById('ctrl-hood-btn');
+      const hoodLabel = document.getElementById('ctrl-hood-label');
+      const doorLeftBtn = document.getElementById('ctrl-door-left-btn');
+      const doorLeftLabel = document.getElementById('ctrl-door-left-label');
+      const doorRightBtn = document.getElementById('ctrl-door-right-btn');
+      const doorRightLabel = document.getElementById('ctrl-door-right-label');
+
+      if (hoodBtn) hoodBtn.classList.toggle('active-open', manualHoodOpen);
+      if (hoodLabel) hoodLabel.textContent = manualHoodOpen ? 'Close Hood' : 'Open Hood';
+      if (doorLeftBtn) doorLeftBtn.classList.toggle('active-open', manualDoorLeftOpen);
+      if (doorLeftLabel) doorLeftLabel.textContent = manualDoorLeftOpen ? 'Close Left Door' : 'Open Left Door';
+      if (doorRightBtn) doorRightBtn.classList.toggle('active-open', manualDoorRightOpen);
+      if (doorRightLabel) doorRightLabel.textContent = manualDoorRightOpen ? 'Close Right Door' : 'Open Right Door';
+    }
+
+    const ctrlHoodBtn = document.getElementById('ctrl-hood-btn');
+    const ctrlDoorLeftBtn = document.getElementById('ctrl-door-left-btn');
+    const ctrlDoorRightBtn = document.getElementById('ctrl-door-right-btn');
+
+    if (ctrlHoodBtn) {
+      ctrlHoodBtn.addEventListener('click', () => {
+        manualHoodOpen = !manualHoodOpen;
+        updateCtrlBtnStates();
+      });
+    }
+    if (ctrlDoorLeftBtn) {
+      ctrlDoorLeftBtn.addEventListener('click', () => {
+        manualDoorLeftOpen = !manualDoorLeftOpen;
+        updateCtrlBtnStates();
+      });
+    }
+    if (ctrlDoorRightBtn) {
+      ctrlDoorRightBtn.addEventListener('click', () => {
+        manualDoorRightOpen = !manualDoorRightOpen;
+        updateCtrlBtnStates();
       });
     }
 
@@ -2737,16 +3153,43 @@
     const sceneModeInner = document.getElementById('scene-mode-inner');
     const sceneCinematicBtn = document.getElementById('scene-cinematic-btn');
     const sceneStudioBtn = document.getElementById('scene-studio-btn');
+    const sceneLoadingOverlay = document.getElementById('scene-loading-overlay');
+    const sceneLoadingLabel = document.getElementById('scene-loading-label');
     let activeSceneMode = 'cinematic'; // default — function applySceneMode defined below
+    let sceneModeSwitching = false;
+
+    function showSceneLoading(modeName) {
+      if (!sceneLoadingOverlay) return;
+      if (sceneLoadingLabel) sceneLoadingLabel.textContent = `Switching to ${modeName}...`;
+      sceneLoadingOverlay.classList.add('active');
+    }
+    function hideSceneLoading() {
+      if (!sceneLoadingOverlay) return;
+      sceneLoadingOverlay.classList.remove('active');
+    }
 
     if (sceneCinematicBtn) {
       sceneCinematicBtn.addEventListener('click', () => {
-        if (activeSceneMode !== 'cinematic') applySceneMode('cinematic');
+        if (activeSceneMode !== 'cinematic' && !sceneModeSwitching) {
+          sceneModeSwitching = true;
+          showSceneLoading('Cinematic');
+          setTimeout(() => {
+            applySceneMode('cinematic');
+            setTimeout(() => { hideSceneLoading(); sceneModeSwitching = false; }, 350);
+          }, 80);
+        }
       });
     }
     if (sceneStudioBtn) {
       sceneStudioBtn.addEventListener('click', () => {
-        if (activeSceneMode !== 'studio') applySceneMode('studio');
+        if (activeSceneMode !== 'studio' && !sceneModeSwitching) {
+          sceneModeSwitching = true;
+          showSceneLoading('Studio');
+          setTimeout(() => {
+            applySceneMode('studio');
+            setTimeout(() => { hideSceneLoading(); sceneModeSwitching = false; }, 350);
+          }, 80);
+        }
       });
     }
 
@@ -2801,7 +3244,7 @@
 
     // State Tracking for Lighting Options
     let activeLightTarget = 'all'; // 'all', 'key', 'rim', 'under', 'ceiling'
-    
+
     const lightScales = {
       all: 1.0,
       key: 1.0,
@@ -2843,7 +3286,7 @@
     const intensitySlider = document.getElementById('light-intensity-input');
     const intensityValText = document.getElementById('intensity-val');
     const schemeBtns = document.querySelectorAll('.scheme-btn');
-    
+
     const lightColorLeft = document.getElementById('light-color-left');
     const lightColorRight = document.getElementById('light-color-right');
 
@@ -2854,15 +3297,16 @@
           btn.classList.add('active');
           activeLightTarget = btn.dataset.target;
 
-          // Sync range slider value & value display
+          // Sync range slider value & value display AND update fill
           if (intensitySlider && intensityValText) {
             intensitySlider.value = lightScales[activeLightTarget];
             intensityValText.innerText = Math.round(lightScales[activeLightTarget] * 100) + '%';
+            updateSliderFill(intensitySlider);
           }
 
           // Sync active color scheme buttons
           updateSchemeBtnsActiveState();
-          
+
           // Sync custom color pickers to matching active target's light color
           syncCustomColorPickers();
         });
@@ -2921,9 +3365,9 @@
         });
 
         // Determine if all targets match the same scheme to sync the global 'all' state
-        if (activeSchemes.key === activeSchemes.rim && 
-            activeSchemes.rim === activeSchemes.under && 
-            activeSchemes.under === activeSchemes.ceiling) {
+        if (activeSchemes.key === activeSchemes.rim &&
+          activeSchemes.rim === activeSchemes.under &&
+          activeSchemes.under === activeSchemes.ceiling) {
           activeSchemes.all = activeSchemes.key;
         } else {
           activeSchemes.all = ''; // mixed
@@ -2931,7 +3375,7 @@
       }
 
       updateSchemeBtnsActiveState();
-      
+
       // Update custom color picker swatch displays
       syncCustomColorPickers();
     }
@@ -2968,9 +3412,9 @@
         });
 
         // Check if all targets are now marked custom, to sync 'all'
-        if (activeSchemes.key === activeSchemes.rim && 
-            activeSchemes.rim === activeSchemes.under && 
-            activeSchemes.under === activeSchemes.ceiling) {
+        if (activeSchemes.key === activeSchemes.rim &&
+          activeSchemes.rim === activeSchemes.under &&
+          activeSchemes.under === activeSchemes.ceiling) {
           activeSchemes.all = 'custom';
         } else {
           activeSchemes.all = ''; // mixed
@@ -3006,7 +3450,7 @@
     if (lightColorLeft && lightColorRight) {
       lightColorLeft.addEventListener('input', applyCustomLightColors);
       lightColorRight.addEventListener('input', applyCustomLightColors);
-      
+
       // Initial sync
       syncCustomColorPickers();
     }
@@ -3014,74 +3458,74 @@
     // --- SCENE MODE APPLY FUNCTION ---
     // Per-light cinematic colors (exactly from original code)
     const cinematicColors = new Map([
-      [backgroundFill,       0xffffff],  // ambient stays white but lower intensity
-      [zenithHighlight,      0xffffff],
-      [zenithHighlight1,     0x249EA0],  // teal from original
-      [zenithHighlight2,     0xC44536],  // orange from original
-      [zenithHighlightBack,  0xffffff],
+      [backgroundFill, 0xffffff],  // ambient stays white but lower intensity
+      [zenithHighlight, 0xffffff],
+      [zenithHighlight1, 0x249EA0],  // teal from original
+      [zenithHighlight2, 0xC44536],  // orange from original
+      [zenithHighlightBack, 0xffffff],
       [zenithHighlight1Back, 0x249EA0],
       [zenithHighlight2Back, 0xC44536],
-      [tealSpotKey,          0x249EA0],
-      [orangeSpotKey,        0xC44536],
-      [tealSpotRim,          0x249EA0],
-      [orangeSpotRim,        0xC44536],
-      [underTealFill,        0x249EA0],
-      [underOrangeFill,      0xC44536],
-      [topFrontTealFill,     0x249EA0],
-      [topFrontOrangeFill,   0xC44536],
-      [underTealFillback,    0x249EA0],
-      [underOrangeFillback,  0xC44536],
-      [frontSpotLight,       0x249EA0],
-      [rearSpotLight,        0xffffff],
-      [rearSpotLight1,       0x249EA0],
-      [rearSpotLight2,       0xC44536],
+      [tealSpotKey, 0x249EA0],
+      [orangeSpotKey, 0xC44536],
+      [tealSpotRim, 0x249EA0],
+      [orangeSpotRim, 0xC44536],
+      [underTealFill, 0x249EA0],
+      [underOrangeFill, 0xC44536],
+      [topFrontTealFill, 0x249EA0],
+      [topFrontOrangeFill, 0xC44536],
+      [underTealFillback, 0x249EA0],
+      [underOrangeFillback, 0xC44536],
+      [frontSpotLight, 0x249EA0],
+      [rearSpotLight, 0xffffff],
+      [rearSpotLight1, 0x249EA0],
+      [rearSpotLight2, 0xC44536],
       [rearSpotLightbottom1, 0x249EA0],
       [rearSpotLightbottom2, 0xC44536],
-      [hemiLight,            0xffffff],
-      [topLight,             0x249EA0],
-      [leftOrangeLight,      0xC44536],
-      [rightTealLight,       0x249EA0],
-      [leftOrangeLightback,  0xC44536],
-      [rightTealLightback,   0x249EA0],
-      [leftOverheadSpot,     0xC44536],
-      [rightOverheadSpot,    0x249EA0],
-      [interiorLight,        0xBDFCFF],
+      [hemiLight, 0xffffff],
+      [topLight, 0x249EA0],
+      [leftOrangeLight, 0xC44536],
+      [rightTealLight, 0x249EA0],
+      [leftOrangeLightback, 0xC44536],
+      [rightTealLightback, 0x249EA0],
+      [leftOverheadSpot, 0xC44536],
+      [rightOverheadSpot, 0x249EA0],
+      [interiorLight, 0xBDFCFF],
     ]);
 
     // Cinematic original intensities (from original code)
     const cinematicIntensities = new Map([
-      [backgroundFill,       0.25],
-      [zenithHighlight,      0.25],
-      [zenithHighlight1,     0.50],
-      [zenithHighlight2,     0.50],
-      [zenithHighlightBack,  0],
+      [backgroundFill, 0.10],
+      [zenithHighlight, 0.10],
+      [zenithHighlight1, 0.50],
+      [zenithHighlight2, 0.50],
+      [zenithHighlightBack, 0],
       [zenithHighlight1Back, 0.50],
       [zenithHighlight2Back, 0.50],
-      [tealSpotKey,          8.0],
-      [orangeSpotKey,        8.0],
-      [tealSpotRim,          8.0],
-      [orangeSpotRim,        8.0],
-      [underTealFill,        10.5],
-      [underOrangeFill,      10.5],
-      [topFrontTealFill,     7.0],
-      [topFrontOrangeFill,   7.0],
-      [underTealFillback,    10.5],
-      [underOrangeFillback,  10.5],
-      [frontSpotLight,       20.0],
-      [rearSpotLight,        1.0],
-      [rearSpotLight1,       50.0],
-      [rearSpotLight2,       50.0],
-      [rearSpotLightbottom1, 10.0],
-      [rearSpotLightbottom2, 10.0],
-      [hemiLight,            0],
-      [topLight,             0.75],
-      [leftOrangeLight,      4.0],
-      [rightTealLight,       4.0],
-      [leftOrangeLightback,  1.0],
-      [rightTealLightback,   1.0],
-      [leftOverheadSpot,     60.0],
-      [rightOverheadSpot,    60.0],
-      [interiorLight,        20.0],
+      [tealSpotKey, 8.0],
+      [orangeSpotKey, 8.0],
+      [tealSpotRim, 8.0],
+      [orangeSpotRim, 8.0],
+      [underTealFill, 1.2],
+      [underOrangeFill, 1.2],
+      [topFrontTealFill, 7.0],
+      [topFrontOrangeFill, 7.0],
+      [underTealFillback, 1.2],
+      [underOrangeFillback, 1.2],
+      [frontSpotLight, 20.0],
+      [rearSpotLight, 1.0],
+      [rearSpotLight1, 50.0],
+      [rearSpotLight2, 50.0],
+      [rearSpotLightbottom1, 3.0],
+      [rearSpotLightbottom2, 3.0],
+      [hemiLight, 0],
+      [topLight, 0.75],
+      [leftOrangeLight, 4.0],
+      [rightTealLight, 4.0],
+      [leftOrangeLightback, 1.0],
+      [rightTealLightback, 1.0],
+      [leftOverheadSpot, 60.0],
+      [rightOverheadSpot, 60.0],
+      [interiorLight, 20.0],
     ]);
 
     // Studio (current) state intensities — capture live values right now
@@ -3142,8 +3586,11 @@
 
       applyAllIntensities();
 
-      // Slide the toggle UI indicator
-      if (sceneModeInner) sceneModeInner.classList.toggle('studio-active', mode === 'studio');
+      // Slide the toggle UI indicator — must match: cinematic = left pill, studio = right pill
+      if (sceneModeInner) {
+        sceneModeInner.classList.remove('studio-active');
+        if (mode === 'studio') sceneModeInner.classList.add('studio-active');
+      }
       if (sceneCinematicBtn) sceneCinematicBtn.classList.toggle('active', mode === 'cinematic');
       if (sceneStudioBtn) sceneStudioBtn.classList.toggle('active', mode === 'studio');
 
@@ -3224,7 +3671,7 @@
       allLights.forEach(light => {
         if (!light) return;
         const base = baseIntensities.get(light) || 0;
-        
+
         let groupScale = 1.0;
         if (lightGroups.key.includes(light)) {
           groupScale = lightScales.key;
@@ -3243,7 +3690,7 @@
 
     // --- 8. COLOR PILL SELECTION HANDLERS ---
     let activePaintTarget = 'all';
-    
+
     // Store current color selections (default is 'default')
     let currentColors = {
       all: 'default',
@@ -3277,7 +3724,7 @@
         targetBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activePaintTarget = btn.dataset.target;
-        
+
         // Update color button active styles
         updateColorPillActiveState();
       });
@@ -3289,7 +3736,7 @@
       btn.addEventListener('click', () => {
         const colorName = btn.dataset.color;
         currentColors[activePaintTarget] = colorName;
-        
+
         if (activePaintTarget === 'all') {
           currentColors.body = colorName;
           currentColors.hood = colorName;
@@ -3302,10 +3749,10 @@
             currentColors.all = ''; // mixed
           }
         }
-        
+
         // Apply color
         applySelectedColor(activePaintTarget, colorName);
-        
+
         // Update active class
         updateColorPillActiveState();
       });
@@ -3319,15 +3766,15 @@
       carColorPicker.addEventListener('input', (e) => {
         const selectedHex = e.target.value;
         const colorName = 'custom_' + selectedHex.replace('#', '');
-        
+
         // Update the preview swatch color
         if (carColorPreview) carColorPreview.style.background = selectedHex;
-        
+
         // Save custom color in colorsMap dynamically
         colorsMap[colorName] = parseInt(selectedHex.replace('#', '0x'), 16);
-        
+
         currentColors[activePaintTarget] = colorName;
-        
+
         if (activePaintTarget === 'all') {
           currentColors.body = colorName;
           currentColors.hood = colorName;
@@ -3339,7 +3786,7 @@
             currentColors.all = ''; // mixed
           }
         }
-        
+
         applySelectedColor(activePaintTarget, colorName);
         updateColorPillActiveState();
       });
@@ -3354,7 +3801,7 @@
           btn.classList.remove('active');
         }
       });
-      
+
       if (carCustomColorBtn && carColorPicker) {
         if (activeColor && activeColor.startsWith('custom_')) {
           carCustomColorBtn.style.borderColor = 'rgba(255,255,255,0.55)';
@@ -3373,7 +3820,7 @@
     function applySelectedColor(target, colorName) {
       const isDefault = colorName === 'default';
       const colorHex = colorsMap[colorName];
-      
+
       if (target === 'all') {
         // Apply to all three components
         paintBodyNodes.forEach(mesh => setMeshColor(mesh, colorHex, colorName, isDefault));
@@ -3384,7 +3831,7 @@
         if (target === 'body') targetNodes = paintBodyNodes;
         else if (target === 'hood') targetNodes = paintHoodNodes;
         else if (target === 'doors') targetNodes = paintDoorNodes;
-        
+
         targetNodes.forEach(mesh => {
           setMeshColor(mesh, colorHex, colorName, isDefault);
         });
@@ -3407,7 +3854,7 @@
           mesh.material = mesh.userData.originalMaterial.clone();
         }
         mesh.material.color.setHex(colorHex);
-        
+
         if (useSliderFinish) {
           // User has manually set metallic/roughness — respect it
           mesh.material.metalness = globalMetalness;
@@ -3425,7 +3872,7 @@
           mesh.material.roughness = 0.2;
           mesh.material.metalness = 0.9;
         }
-        
+
         // Sync slider display to reflect applied values
         const appliedM = mesh.material.metalness;
         const appliedR = mesh.material.roughness;
@@ -3448,6 +3895,8 @@
 
     let lastTime = performance.now();
     let timeElapsed = 0;
+    // Cache DOM reference once to avoid per-frame query
+    const _heroImageElement = document.querySelector('.hero-image-bottom');
 
     // --- ADVANCED CONTINUOUS PARAMETER TIMELINE CHART ---
     // Defined globally to prevent massive garbage collection on every frame
@@ -3542,6 +3991,13 @@
       nextDriverDoorRotation = THREE.MathUtils.lerp(segStart.doorL, segEnd.doorL, stepProgress);
       nextPassengerDoorRotation = THREE.MathUtils.lerp(segStart.doorR, segEnd.doorR, stepProgress);
 
+      // In free roam mode, use manual button targets instead of scroll timeline
+      if (freeRoamActive) {
+        nextHoodRotation = manualHoodOpen ? HOOD_OPEN_ROT : 0;
+        nextDriverDoorRotation = manualDoorLeftOpen ? DOOR_OPEN_ROT : 0;
+        nextPassengerDoorRotation = manualDoorRightOpen ? DOOR_OPEN_ROT : 0;
+      }
+
       // --- UNIFIED SMOOTH LERP RESOLUTIONS MATRIX ---
       // camEase = 6.0 ensures camera and mesh parts follow target positions dynamically with low latency
       const camEase = 1 - Math.exp(-6.0 * deltaTime);
@@ -3550,9 +4006,9 @@
         offset.x = freeRoamRadius * Math.sin(freeRoamPhi) * Math.sin(freeRoamTheta);
         offset.y = freeRoamRadius * Math.cos(freeRoamPhi);
         offset.z = freeRoamRadius * Math.sin(freeRoamPhi) * Math.cos(freeRoamTheta);
-        
+
         const targetCamPos = new THREE.Vector3().addVectors(freeRoamTarget, offset);
-        
+
         const freeEase = 1 - Math.exp(-12.0 * deltaTime); // Snappy camera following
         liveCamPos.lerp(targetCamPos, freeEase);
         liveCamTarget.lerp(freeRoamTarget, freeEase);
@@ -3590,15 +4046,10 @@
       });
 
       // Smoothly hide hero bottom image based on scroll progress (reaches 0 by progress 0.050)
-      const heroImageElement = document.querySelector('.hero-image-bottom');
-      if (heroImageElement) {
+      if (_heroImageElement) {
         const scrollOpacity = Math.max(0, 1 - (globalScrollProgress / 0.050));
-        heroImageElement.style.setProperty('--scroll-opacity', scrollOpacity);
-        if (scrollOpacity <= 0) {
-          heroImageElement.style.pointerEvents = 'none';
-        } else {
-          heroImageElement.style.pointerEvents = 'auto';
-        }
+        _heroImageElement.style.setProperty('--scroll-opacity', scrollOpacity);
+        _heroImageElement.style.pointerEvents = scrollOpacity <= 0 ? 'none' : 'auto';
       }
 
       renderer.render(scene, camera);
@@ -3632,7 +4083,7 @@
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         this.analyser = this.audioCtx.createAnalyser();
         this.analyser.fftSize = 64;
-        
+
         this.gainNode = this.audioCtx.createGain();
         this.gainNode.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
 
@@ -3643,18 +4094,18 @@
 
         const baseFreq = this.type === 'engine' ? 28 : 22;
         const numOscs = this.type === 'engine' ? 4 : 5;
-        
+
         for (let i = 0; i < numOscs; i++) {
           const osc = this.audioCtx.createOscillator();
           osc.type = i % 2 === 0 ? 'sawtooth' : 'triangle';
-          
+
           const multiplier = i === 0 ? 1 : (i === 1 ? 1.5 : (i === 2 ? 2.0 : 3.5));
           osc.frequency.setValueAtTime(baseFreq * multiplier, this.audioCtx.currentTime);
           osc.detune.setValueAtTime((Math.random() - 0.5) * 15, this.audioCtx.currentTime);
-          
+
           const oscGain = this.audioCtx.createGain();
           oscGain.gain.setValueAtTime(i === 0 ? 0.35 : 0.15, this.audioCtx.currentTime);
-          
+
           osc.connect(oscGain);
           oscGain.connect(this.filterNode);
           this.oscillators.push(osc);
@@ -3666,7 +4117,7 @@
         for (let i = 0; i < bufferSize; i++) {
           output[i] = Math.random() * 2 - 1;
         }
-        
+
         this.noiseNode = this.audioCtx.createBufferSource();
         this.noiseNode.buffer = noiseBuffer;
         this.noiseNode.loop = true;
@@ -3675,7 +4126,7 @@
         this.noiseFilter.type = 'bandpass';
         this.noiseFilter.frequency.setValueAtTime(this.type === 'engine' ? 120 : 160, this.audioCtx.currentTime);
         this.noiseFilter.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
-        
+
         const noiseGain = this.audioCtx.createGain();
         noiseGain.gain.setValueAtTime(this.type === 'engine' ? 0.04 : 0.16, this.audioCtx.currentTime);
 
@@ -3716,18 +4167,18 @@
 
       stop() {
         if (!this.isPlaying) return;
-        
+
         this.gainNode.gain.cancelScheduledValues(this.audioCtx.currentTime);
         this.gainNode.gain.linearRampToValueAtTime(0.0, this.audioCtx.currentTime + 0.2);
-        
+
         const oscsToStop = this.oscillators;
         const noiseToStop = this.noiseNode;
         const lfoToStop = this.lfo;
-        
+
         setTimeout(() => {
-          oscsToStop.forEach(osc => { try { osc.stop(); } catch(e) {} });
-          try { noiseToStop.stop(); } catch(e) {}
-          try { lfoToStop.stop(); } catch(e) {}
+          oscsToStop.forEach(osc => { try { osc.stop(); } catch (e) { } });
+          try { noiseToStop.stop(); } catch (e) { }
+          try { lfoToStop.stop(); } catch (e) { }
         }, 250);
 
         this.oscillators = [];
@@ -3788,11 +4239,11 @@
             sum += dataArray[i];
           }
           const average = sum / bufferLength;
-          
+
           // Compute amplitude: scale with audio data (range 2.5px to 12.5px)
           amplitude = (average / 255) * 10 + 2.5;
           amplitude *= (1.0 + smoothHover * 0.28); // Maximum amplitude capped at ~16px to prevent clipping
-          
+
           // Phase speed matches LFO frequency (accelerates on rev hover)
           phaseSpeed = generator.lfo ? (generator.lfo.frequency.value * 0.012) : 0.15;
         } else {
@@ -3807,7 +4258,7 @@
         const numWaves = 5;
         for (let l = 0; l < numWaves; l++) {
           ctx.beginPath();
-          
+
           // Apply a glowing neon filter when active
           if (generator.isPlaying) {
             ctx.shadowBlur = (12 - l * 2) * (1.0 + smoothHover * 0.4);
@@ -3815,29 +4266,29 @@
           } else {
             ctx.shadowBlur = 0;
           }
-          
+
           // Foreground lines are thicker, background are thinner
           ctx.lineWidth = l === 0 ? 2.2 : (l === 1 ? 1.4 : (l === 2 ? 0.9 : 0.5));
           ctx.strokeStyle = colors[l % colors.length];
-          
+
           // Offset the phase of each wave layer to create a sliding 3D effect
           const wavePhase = phase + l * (Math.PI / 2.2);
-          
+
           // Frequencies adjust based on layer and hover state (making them look tighter and more aggressive on hover)
           const baseFreq = (0.038 - l * 0.006) * (1.0 + smoothHover * 0.25);
 
           for (let x = 0; x < canvas.width; x++) {
             // Taper waves at left and right edges with a sine envelope
             const envelope = Math.sin((x / canvas.width) * Math.PI);
-            
+
             // Normalized compound wave components (coefficients sum to 1.0, ensuring no boundary clipping)
             const primarySine = Math.sin(x * baseFreq + wavePhase) * 0.65;
             const secondaryHarmonic = Math.sin(x * (baseFreq * 2.2) - wavePhase * 1.3) * (0.22 + smoothHover * 0.08);
             const tertiaryJitter = Math.sin(x * (baseFreq * 4.6) + wavePhase * 2.5) * (0.05 + smoothHover * 0.05);
-            
+
             const waveY = (primarySine + secondaryHarmonic + tertiaryJitter) * amplitude * envelope;
             const y = canvas.height / 2 + waveY;
-            
+
             if (x === 0) {
               ctx.moveTo(x, y);
             } else {
@@ -3847,7 +4298,7 @@
           ctx.stroke();
         }
       }
-      
+
       // Initialize the rendering loop
       renderWave();
 
@@ -3857,10 +4308,13 @@
           playerEl.classList.remove('playing');
           playIcon.style.display = 'block';
           pauseIcon.style.display = 'none';
-          
+
           // Smoothly restore background music volume if playing
           if (window.ambientMusic && window.ambientMusic.isPlaying) {
             window.ambientMusic.fadeTo(0.32, 1.0);
+          }
+          if (window.partyMusic && window.partyMusic.isPlaying) {
+            window.partyMusic.fadeTo(0.42, 1.0);
           }
         } else {
           if (generator === engineSound && exhaustSound.isPlaying) {
@@ -3877,6 +4331,9 @@
           // Duck background music volume during active engine sound previews to prevent mud
           if (window.ambientMusic && window.ambientMusic.isPlaying) {
             window.ambientMusic.fadeTo(0.04, 0.8);
+          }
+          if (window.partyMusic && window.partyMusic.isPlaying) {
+            window.partyMusic.fadeTo(0.05, 0.8);
           }
         }
       });
@@ -3912,7 +4369,8 @@
       });
     }
 
-    // --- 7. AMBIENT BACKGROUND MUSIC GENERATOR (SHOWROOM ENVIRONMENT) ---
+     // --- 7. DUAL BACKGROUND MUSIC GENERATORS ---
+
     class AmbientMusicGenerator {
       constructor() {
         this.audioCtx = null;
@@ -3928,95 +4386,101 @@
         this.mainGain = null;
         this.chordTimeout = null;
         this.currentChordIdx = 0;
-        
-        // Peaceful, blissful showroom chord progression with root drone configurations (Fmaj9, Cmaj9, G6/9, Am11)
+
+        // Peaceful showroom chord progression with root drone configurations (Fmaj9, Cmaj9, G6/9, Am11)
         this.chords = [
-          { root: 87.31, notes: [174.61, 261.63, 329.63, 392.00, 523.25, 659.25] }, // F2 root, F3 C4 E4 G4 C5 E5 (Fmaj9)
-          { root: 130.81, notes: [261.63, 329.63, 392.00, 493.88, 587.33, 783.99] }, // C3 root, C4 E4 G4 B4 D5 G5 (Cmaj9)
-          { root: 98.00, notes: [196.00, 293.66, 392.00, 440.00, 587.33, 739.99] }, // G2 root, G3 D4 G4 A4 D5 F#5 (G6/9)
-          { root: 110.00, notes: [220.00, 329.63, 392.00, 523.25, 587.33, 659.25] }  // A2 root, A3 E4 G4 C5 D5 E5 (Am11)
+          { root: 87.31, notes: [174.61, 261.63, 329.63, 392.00, 523.25, 659.25] },
+          { root: 130.81, notes: [261.63, 329.63, 392.00, 493.88, 587.33, 783.99] },
+          { root: 98.00, notes: [196.00, 293.66, 392.00, 440.00, 587.33, 739.99] },
+          { root: 110.00, notes: [220.00, 329.63, 392.00, 523.25, 587.33, 659.25] }
         ];
       }
 
       init() {
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // High-cut warm filter at 1000Hz to preserve sparkling chime tones while keeping them soft
+
         this.filterNode = this.audioCtx.createBiquadFilter();
         this.filterNode.type = 'lowpass';
         this.filterNode.frequency.setValueAtTime(1000, this.audioCtx.currentTime);
         this.filterNode.Q.setValueAtTime(0.7, this.audioCtx.currentTime);
 
-        // Low-pass warm pad filter for the drone to keep the low-end deep and clean (150Hz)
         this.padFilterNode = this.audioCtx.createBiquadFilter();
         this.padFilterNode.type = 'lowpass';
         this.padFilterNode.frequency.setValueAtTime(150, this.audioCtx.currentTime);
         this.padFilterNode.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
-        
-        // Dual-channel delay lines for spacious ping-pong echo loops
-        this.delayL = this.audioCtx.createDelay(2.0);
-        this.delayL.delayTime.setValueAtTime(0.60, this.audioCtx.currentTime);
-        
-        this.delayR = this.audioCtx.createDelay(2.0);
-        this.delayR.delayTime.setValueAtTime(0.90, this.audioCtx.currentTime);
-        
-        // Feedback gain nodes for cross feedback
+
+        this.delayL = this.audioCtx.createDelay(1.0);
+        this.delayR = this.audioCtx.createDelay(1.0);
         this.feedbackL = this.audioCtx.createGain();
-        this.feedbackL.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
-        
         this.feedbackR = this.audioCtx.createGain();
+        this.panDelayL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        this.panDelayR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+
+        this.delayL.delayTime.setValueAtTime(0.38, this.audioCtx.currentTime);
+        this.delayR.delayTime.setValueAtTime(0.55, this.audioCtx.currentTime);
+        this.feedbackL.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
         this.feedbackR.gain.setValueAtTime(0.35, this.audioCtx.currentTime);
-        
-        // Cross-feedback connection: L delay connects to feedback -> R delay, and vice-versa
+        if (this.panDelayL) this.panDelayL.pan.setValueAtTime(-0.7, this.audioCtx.currentTime);
+        if (this.panDelayR) this.panDelayR.pan.setValueAtTime(0.7, this.audioCtx.currentTime);
+
+        this.bassFilterNode = this.audioCtx.createBiquadFilter();
+        this.bassFilterNode.type = 'lowpass';
+        this.bassFilterNode.frequency.setValueAtTime(130, this.audioCtx.currentTime);
+        this.bassFilterNode.Q.setValueAtTime(1.0, this.audioCtx.currentTime);
+
+        this.bassDelayNode = this.audioCtx.createDelay(0.1);
+        this.bassDelayNode.delayTime.setValueAtTime(0.024, this.audioCtx.currentTime);
+
+        this.bassPanL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        this.bassPanR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        if (this.bassPanL) this.bassPanL.pan.setValueAtTime(-0.80, this.audioCtx.currentTime);
+        if (this.bassPanR) this.bassPanR.pan.setValueAtTime(0.80, this.audioCtx.currentTime);
+
+        this.mainGain = this.audioCtx.createGain();
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 64;
+
+        this.filterNode.connect(this.delayL);
         this.delayL.connect(this.feedbackL);
         this.feedbackL.connect(this.delayR);
-        
         this.delayR.connect(this.feedbackR);
         this.feedbackR.connect(this.delayL);
 
-        // Stereo panners for delay lines
-        this.panDelayL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
-        this.panDelayR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
-        
-        if (this.panDelayL) this.panDelayL.pan.setValueAtTime(-0.85, this.audioCtx.currentTime);
-        if (this.panDelayR) this.panDelayR.pan.setValueAtTime(0.85, this.audioCtx.currentTime);
-        
-        // Master volume control
-        this.mainGain = this.audioCtx.createGain();
-        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
-        
-        // Routing graph
         this.filterNode.connect(this.mainGain);
-        this.filterNode.connect(this.delayL);
-        this.filterNode.connect(this.delayR);
-        
-        if (this.panDelayL && this.panDelayR) {
+
+        if (this.panDelayL) {
           this.delayL.connect(this.panDelayL);
           this.panDelayL.connect(this.mainGain);
+        } else {
+          this.delayL.connect(this.mainGain);
+        }
+        if (this.panDelayR) {
           this.delayR.connect(this.panDelayR);
           this.panDelayR.connect(this.mainGain);
         } else {
-          this.delayL.connect(this.mainGain);
           this.delayR.connect(this.mainGain);
         }
 
         this.padFilterNode.connect(this.mainGain);
-        this.mainGain.connect(this.audioCtx.destination);
+
+        this.mainGain.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
       }
 
       start() {
         if (this.isPlaying) return;
         if (!this.audioCtx) this.init();
         if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-        
+
         this.isPlaying = true;
         this.mainGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
         this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
-        
-        // Slow swell fade-in of background music over 2.5s for maximum elegance
+
         const targetGain = (engineSound.isPlaying || exhaustSound.isPlaying) ? 0.03 : 0.28;
         this.mainGain.gain.linearRampToValueAtTime(targetGain, this.audioCtx.currentTime + 2.5);
-        
+
         this.playNextChord();
       }
 
@@ -4030,34 +4494,31 @@
 
       playNextChord() {
         if (!this.isPlaying) return;
-        
+
         const now = this.audioCtx.currentTime;
         const chord = this.chords[this.currentChordIdx];
-        const duration = 6.0; // Seconds per chord
-        
+        const duration = 6.0;
+
         const chordOscillators = [];
         const chordGains = [];
 
-        // 1. Synthesize soft background drone pad for warmth and bliss
+        // Drone
         const padOsc = this.audioCtx.createOscillator();
         padOsc.type = 'triangle';
         padOsc.frequency.setValueAtTime(chord.root, now);
 
-        // Add slow LFO pitch vibrato to drone for luxury movement
         const vibratoLfo = this.audioCtx.createOscillator();
         vibratoLfo.type = 'sine';
         vibratoLfo.frequency.setValueAtTime(0.25, now);
         const vibratoGain = this.audioCtx.createGain();
         vibratoGain.gain.setValueAtTime(1.5, now);
-        
+
         vibratoLfo.connect(vibratoGain);
         vibratoGain.connect(padOsc.frequency);
 
         const padGain = this.audioCtx.createGain();
         padGain.gain.setValueAtTime(0.0, now);
-        // Slower attack for the background pad
         padGain.gain.linearRampToValueAtTime(0.035, now + 2.0);
-        // Hold, then decay release
         padGain.gain.setValueAtTime(0.035, now + duration - 2.5);
         padGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
@@ -4069,87 +4530,140 @@
 
         chordOscillators.push(padOsc, vibratoLfo);
         chordGains.push(padGain, vibratoGain);
-        
-        // 2. Synthesize arpeggiated surround chimes
-        chord.notes.forEach((freq, idx) => {
-          // Cascade chimes spaced out to create movement
-          const noteDelay = idx * 0.35;
+
+        // Chimes
+        const arpeggioPattern = [0, 1, 2, 3, 4, 5, 2, 3, 4, 1, 0, 2];
+        arpeggioPattern.forEach((noteIdx, seqIdx) => {
+          const freq = chord.notes[noteIdx];
+          const noteDelay = seqIdx * 0.38;
           const playTime = now + noteDelay;
-          
-          // Shimmering chorus effect using twin-detuned oscillators per chime
+
           const osc1 = this.audioCtx.createOscillator();
           const osc2 = this.audioCtx.createOscillator();
-          
           osc1.type = 'sine';
           osc2.type = 'sine';
-          
           osc1.frequency.setValueAtTime(freq, playTime);
           osc2.frequency.setValueAtTime(freq, playTime);
-          
           osc1.detune.setValueAtTime(-4, playTime);
           osc2.detune.setValueAtTime(4, playTime);
-          
+
           const voiceGain = this.audioCtx.createGain();
           voiceGain.gain.setValueAtTime(0.0, playTime);
-          
-          // Soft attack envelope for chime ring-in
-          const targetVol = idx === 0 ? 0.06 : 0.03;
+          const targetVol = noteIdx === 0 ? 0.06 : 0.03;
           voiceGain.gain.linearRampToValueAtTime(targetVol, playTime + 1.2);
-          
-          // Hold, then release
           voiceGain.gain.setValueAtTime(targetVol, playTime + duration - 2.5 - noteDelay);
           voiceGain.gain.exponentialRampToValueAtTime(0.001, playTime + duration - noteDelay);
-          
-          // Stereo panning for note spatial separation
-          const notePan = ((idx % 2 === 0 ? -1 : 1) * (0.3 + (idx * 0.08))).toFixed(2);
+
+          const notePan = ((noteIdx % 2 === 0 ? -1 : 1) * (0.3 + (noteIdx * 0.08))).toFixed(2);
           const voicePanner = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
-          
+
           osc1.connect(voiceGain);
           osc2.connect(voiceGain);
-          
+
           if (voicePanner) {
             voicePanner.pan.setValueAtTime(parseFloat(notePan), playTime);
             voiceGain.connect(voicePanner);
             voicePanner.connect(this.filterNode);
+            chordGains.push(voicePanner);
           } else {
             voiceGain.connect(this.filterNode);
           }
-          
+
           osc1.start(playTime);
           osc2.start(playTime);
-          
+
           chordOscillators.push(osc1, osc2);
           chordGains.push(voiceGain);
-          if (voicePanner) chordGains.push(voicePanner);
         });
-        
+
+        // Soft Bass
+        const bassFreq = chord.root / 2;
+        const leftOsc1 = this.audioCtx.createOscillator();
+        const leftOsc2 = this.audioCtx.createOscillator();
+        leftOsc1.type = 'sine';
+        leftOsc2.type = 'triangle';
+        leftOsc1.frequency.setValueAtTime(bassFreq, now);
+        leftOsc2.frequency.setValueAtTime(bassFreq * 2, now);
+        leftOsc1.detune.setValueAtTime(-8, now);
+        leftOsc2.detune.setValueAtTime(-8, now);
+
+        const rightOsc1 = this.audioCtx.createOscillator();
+        const rightOsc2 = this.audioCtx.createOscillator();
+        rightOsc1.type = 'sine';
+        rightOsc2.type = 'triangle';
+        rightOsc1.frequency.setValueAtTime(bassFreq, now);
+        rightOsc2.frequency.setValueAtTime(bassFreq * 2, now);
+        rightOsc1.detune.setValueAtTime(8, now);
+        rightOsc2.detune.setValueAtTime(8, now);
+
+        const bassGainL = this.audioCtx.createGain();
+        const bassGainR = this.audioCtx.createGain();
+        bassGainL.gain.setValueAtTime(0.0, now);
+        bassGainR.gain.setValueAtTime(0.0, now);
+
+        bassGainL.gain.linearRampToValueAtTime(0.24, now + 0.40);
+        bassGainL.gain.setValueAtTime(0.24, now + 2.4);
+        bassGainL.gain.exponentialRampToValueAtTime(0.001, now + duration - 0.5);
+
+        bassGainR.gain.linearRampToValueAtTime(0.24, now + 0.40);
+        bassGainR.gain.setValueAtTime(0.24, now + 2.4);
+        bassGainR.gain.exponentialRampToValueAtTime(0.001, now + duration - 0.5);
+
+        leftOsc1.connect(this.bassFilterNode);
+        leftOsc2.connect(this.bassFilterNode);
+        this.bassFilterNode.connect(bassGainL);
+        if (this.bassPanL) {
+          bassGainL.connect(this.bassPanL);
+          this.bassPanL.connect(this.mainGain);
+        } else {
+          bassGainL.connect(this.mainGain);
+        }
+
+        rightOsc1.connect(this.bassFilterNode);
+        rightOsc2.connect(this.bassFilterNode);
+        this.bassFilterNode.connect(this.bassDelayNode);
+        this.bassDelayNode.connect(bassGainR);
+        if (this.bassPanR) {
+          bassGainR.connect(this.bassPanR);
+          this.bassPanR.connect(this.mainGain);
+        } else {
+          bassGainR.connect(this.mainGain);
+        }
+
+        leftOsc1.start(now);
+        leftOsc2.start(now);
+        rightOsc1.start(now);
+        rightOsc2.start(now);
+
+        chordOscillators.push(leftOsc1, leftOsc2, rightOsc1, rightOsc2);
+        chordGains.push(bassGainL, bassGainR);
+
         this.currentChordIdx = (this.currentChordIdx + 1) % this.chords.length;
-        
-        // Clean up sound nodes after decay completes
+
         setTimeout(() => {
           chordOscillators.forEach(osc => {
-            try { osc.stop(); } catch(e) {}
-            try { osc.disconnect(); } catch(e) {}
+            try { osc.stop(); } catch (e) {}
+            try { osc.disconnect(); } catch (e) {}
           });
           chordGains.forEach(g => {
-            try { g.disconnect(); } catch(e) {}
+            try { g.disconnect(); } catch (e) {}
           });
         }, duration * 1000 + 2000);
 
-        this.chordTimeout = setTimeout(() => this.playNextChord(), (duration - 1.5) * 1000); // 1.5s crossfade overlap
+        this.chordTimeout = setTimeout(() => this.playNextChord(), (duration - 1.5) * 1000);
       }
 
       stop() {
         if (!this.isPlaying) return;
         this.isPlaying = false;
-        
+
         if (this.chordTimeout) clearTimeout(this.chordTimeout);
-        
+
         const now = this.audioCtx.currentTime;
         this.mainGain.gain.cancelScheduledValues(now);
         this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
-        this.mainGain.gain.linearRampToValueAtTime(0.0, now + 1.5); // Fade out music
-        
+        this.mainGain.gain.linearRampToValueAtTime(0.0, now + 1.5);
+
         setTimeout(() => {
           if (!this.isPlaying && this.audioCtx) {
             this.audioCtx.close();
@@ -4159,8 +4673,423 @@
       }
     }
 
+    class PartyMusicGenerator {
+      constructor() {
+        this.audioCtx = null;
+        this.isPlaying = false;
+        this.analyser = null;
+        this.mainGain = null;
+        this.timerId = null;
+        this.nextStepTime = 0.0;
+        this.currentStep = 0;
+        this.bpm = 124;
+        this.stepDuration = 60 / this.bpm / 4;
+        this.lookAhead = 0.12;
+        this.scheduleInterval = 30;
+
+        this.progression = [
+          {
+            piano: [220.00, 261.63, 329.63, 440.00],
+            strings: [220.00, 329.63],
+            bass: 55.00,
+            guitar: [261.63, 329.63, 440.00, 392.00]
+          },
+          {
+            piano: [174.61, 261.63, 349.23, 440.00],
+            strings: [174.61, 220.00],
+            bass: 43.65,
+            guitar: [261.63, 349.23, 440.00, 392.00]
+          }
+        ];
+      }
+
+      init() {
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 64;
+
+        this.mainGain = this.audioCtx.createGain();
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+
+        this.filterNode = this.audioCtx.createBiquadFilter();
+        this.filterNode.type = 'lowpass';
+        this.filterNode.frequency.setValueAtTime(2200, this.audioCtx.currentTime);
+
+        this.bassFilterNode = this.audioCtx.createBiquadFilter();
+        this.bassFilterNode.type = 'lowpass';
+        this.bassFilterNode.frequency.setValueAtTime(140, this.audioCtx.currentTime);
+
+        this.bassDelayNode = this.audioCtx.createDelay(0.1);
+        this.bassDelayNode.delayTime.setValueAtTime(0.022, this.audioCtx.currentTime);
+
+        this.bassPanL = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        this.bassPanR = this.audioCtx.createStereoPanner ? this.audioCtx.createStereoPanner() : null;
+        if (this.bassPanL) this.bassPanL.pan.setValueAtTime(-0.85, this.audioCtx.currentTime);
+        if (this.bassPanR) this.bassPanR.pan.setValueAtTime(0.85, this.audioCtx.currentTime);
+
+        this.filterNode.connect(this.mainGain);
+
+        this.mainGain.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
+      }
+
+      start() {
+        if (this.isPlaying) return;
+        if (!this.audioCtx) this.init();
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+        this.isPlaying = true;
+        this.mainGain.gain.cancelScheduledValues(this.audioCtx.currentTime);
+        this.mainGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+
+        const targetGain = (engineSound.isPlaying || exhaustSound.isPlaying) ? 0.05 : 0.42;
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, this.audioCtx.currentTime + 1.5);
+
+        this.currentStep = 0;
+        this.nextStepTime = this.audioCtx.currentTime + 0.05;
+        this.timerId = setInterval(() => this.scheduler(), this.scheduleInterval);
+      }
+
+      fadeTo(targetGain, duration = 1.0) {
+        if (!this.isPlaying || !this.audioCtx || !this.mainGain) return;
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(targetGain, now + duration);
+      }
+
+      scheduler() {
+        if (!this.isPlaying) return;
+        while (this.nextStepTime < this.audioCtx.currentTime + this.lookAhead) {
+          this.scheduleStep(this.currentStep, this.nextStepTime);
+          this.nextStepTime += this.stepDuration;
+          this.currentStep = (this.currentStep + 1) % 32;
+        }
+      }
+
+      scheduleStep(step, time) {
+        const measureIdx = Math.floor(step / 16);
+        const localStep = step % 16;
+        const section = this.progression[measureIdx];
+
+        if (localStep === 0 || localStep === 4 || localStep === 8 || localStep === 12) {
+          this.playKick(time);
+        }
+
+        if (localStep === 8) {
+          this.playSnare(time);
+        } else if (localStep === 14 && step === 30) {
+          this.playSnare(time, 0.4);
+        }
+
+        if (localStep === 2 || localStep === 6 || localStep === 10 || localStep === 14) {
+          this.playHat(time, false);
+        }
+        if (localStep === 4 || localStep === 12) {
+          this.playHat(time, true);
+        }
+
+        const bassPattern = [0, 2, 3, 5, 8, 10, 11, 13];
+        if (bassPattern.includes(localStep)) {
+          const dur = this.stepDuration * (localStep === 3 || localStep === 11 ? 1.8 : 0.95);
+          this.playBass(time, section.bass, dur);
+        }
+
+        if (localStep === 0) {
+          this.playPiano(time, section.piano, this.stepDuration * 3.5);
+        } else if (localStep === 6) {
+          this.playPiano(time, section.piano, this.stepDuration * 1.8);
+        } else if (localStep === 10) {
+          this.playPiano(time, section.piano, this.stepDuration * 3.5);
+        }
+
+        if (localStep === 0) {
+          this.playStrings(time, section.strings, this.stepDuration * 16);
+        }
+
+        if (localStep === 2) {
+          this.playGuitar(time, section.guitar[0], this.stepDuration * 2);
+        } else if (localStep === 5) {
+          this.playGuitar(time, section.guitar[1], this.stepDuration * 1.5);
+        } else if (localStep === 7) {
+          this.playGuitar(time, section.guitar[2], this.stepDuration * 2);
+        } else if (localStep === 13) {
+          this.playGuitar(time, section.guitar[3], this.stepDuration * 2);
+        }
+
+        if (localStep === 0) {
+          this.playViolin(time, measureIdx === 0 ? 440.00 : 587.33, this.stepDuration * 3.8);
+        } else if (localStep === 4) {
+          this.playViolin(time, measureIdx === 0 ? 493.88 : 523.25, this.stepDuration * 3.8);
+        } else if (localStep === 8) {
+          this.playViolin(time, measureIdx === 0 ? 523.25 : 440.00, this.stepDuration * 7.5);
+        }
+      }
+
+      playKick(time) {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(this.mainGain);
+        osc.frequency.setValueAtTime(140, time);
+        osc.frequency.exponentialRampToValueAtTime(38, time + 0.22);
+        gain.gain.setValueAtTime(1.1, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+        osc.start(time);
+        osc.stop(time + 0.24);
+      }
+
+      playSnare(time, volScale = 1.0) {
+        const bufferSize = this.audioCtx.sampleRate * 0.18;
+        const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1200, time);
+        const noiseGain = this.audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.24 * volScale, time);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.mainGain);
+
+        const osc = this.audioCtx.createOscillator();
+        const oscGain = this.audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, time);
+        oscGain.gain.setValueAtTime(0.25 * volScale, time);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+        osc.connect(oscGain);
+        oscGain.connect(this.mainGain);
+
+        noise.start(time);
+        noise.stop(time + 0.16);
+        osc.start(time);
+        osc.stop(time + 0.09);
+      }
+
+      playHat(time, isOpen = false) {
+        const bufferSize = this.audioCtx.sampleRate * (isOpen ? 0.22 : 0.06);
+        const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(isOpen ? 7500 : 9000, time);
+        const gain = this.audioCtx.createGain();
+        gain.gain.setValueAtTime(isOpen ? 0.06 : 0.09, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + (isOpen ? 0.20 : 0.05));
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.mainGain);
+        noise.start(time);
+        noise.stop(time + (isOpen ? 0.22 : 0.07));
+      }
+
+      playBass(time, freq, duration) {
+        const osc1 = this.audioCtx.createOscillator();
+        const osc2 = this.audioCtx.createOscillator();
+        osc1.type = 'sawtooth';
+        osc2.type = 'square';
+        osc1.frequency.setValueAtTime(freq, time);
+        osc2.frequency.setValueAtTime(freq * 1.006, time);
+
+        const gainL = this.audioCtx.createGain();
+        const gainR = this.audioCtx.createGain();
+        gainL.gain.setValueAtTime(0.0, time);
+        gainR.gain.setValueAtTime(0.0, time);
+
+        gainL.gain.setValueAtTime(0.0, time);
+        gainL.gain.linearRampToValueAtTime(0.28, time + 0.045);
+        gainL.gain.setValueAtTime(0.28, time + duration - 0.02);
+        gainL.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        gainR.gain.setValueAtTime(0.0, time);
+        gainR.gain.linearRampToValueAtTime(0.28, time + 0.045);
+        gainR.gain.setValueAtTime(0.28, time + duration - 0.02);
+        gainR.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        osc1.connect(this.bassFilterNode);
+        osc2.connect(this.bassFilterNode);
+        this.bassFilterNode.connect(gainL);
+        if (this.bassPanL) {
+          gainL.connect(this.bassPanL);
+          this.bassPanL.connect(this.mainGain);
+        } else {
+          gainL.connect(this.mainGain);
+        }
+
+        this.bassFilterNode.connect(this.bassDelayNode);
+        this.bassDelayNode.connect(gainR);
+        if (this.bassPanR) {
+          gainR.connect(this.bassPanR);
+          this.bassPanR.connect(this.mainGain);
+        } else {
+          gainR.connect(this.mainGain);
+        }
+
+        osc1.start(time);
+        osc2.start(time);
+        osc1.stop(time + duration);
+        osc2.stop(time + duration);
+      }
+
+      playPiano(time, notes, duration) {
+        notes.forEach((freq) => {
+          const osc1 = this.audioCtx.createOscillator();
+          const osc2 = this.audioCtx.createOscillator();
+          osc1.type = 'triangle';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(freq, time);
+          osc2.frequency.setValueAtTime(freq * 2, time);
+          osc1.detune.setValueAtTime(-5, time);
+          osc2.detune.setValueAtTime(5, time);
+
+          const gain = this.audioCtx.createGain();
+          gain.gain.setValueAtTime(0.0, time);
+          gain.gain.linearRampToValueAtTime(0.09, time + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(this.filterNode);
+
+          osc1.start(time);
+          osc2.start(time);
+          osc1.stop(time + duration);
+          osc2.stop(time + duration);
+        });
+      }
+
+      playStrings(time, freqs, duration) {
+        freqs.forEach((freq) => {
+          const osc1 = this.audioCtx.createOscillator();
+          const osc2 = this.audioCtx.createOscillator();
+          osc1.type = 'triangle';
+          osc2.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(freq, time);
+          osc2.frequency.setValueAtTime(freq * 1.008, time);
+
+          const stringsFilter = this.audioCtx.createBiquadFilter();
+          stringsFilter.type = 'lowpass';
+          stringsFilter.frequency.setValueAtTime(900, time);
+
+          const gain = this.audioCtx.createGain();
+          gain.gain.setValueAtTime(0.0, time);
+          gain.gain.linearRampToValueAtTime(0.045, time + 0.40);
+          gain.gain.setValueAtTime(0.045, time + duration - 0.40);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+          osc1.connect(stringsFilter);
+          osc2.connect(stringsFilter);
+          stringsFilter.connect(gain);
+          gain.connect(this.mainGain);
+
+          osc1.start(time);
+          osc2.start(time);
+          osc1.stop(time + duration);
+          osc2.stop(time + duration);
+        });
+      }
+
+      playGuitar(time, freq, duration) {
+        const osc1 = this.audioCtx.createOscillator();
+        const osc2 = this.audioCtx.createOscillator();
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+        osc1.frequency.setValueAtTime(freq, time);
+        osc2.frequency.setValueAtTime(freq * 2, time);
+
+        const guitarFilter = this.audioCtx.createBiquadFilter();
+        guitarFilter.type = 'bandpass';
+        guitarFilter.frequency.setValueAtTime(1400, time);
+        guitarFilter.frequency.exponentialRampToValueAtTime(350, time + 0.12);
+
+        const gain = this.audioCtx.createGain();
+        gain.gain.setValueAtTime(0.0, time);
+        gain.gain.linearRampToValueAtTime(0.12, time + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        osc1.connect(guitarFilter);
+        osc2.connect(guitarFilter);
+        guitarFilter.connect(gain);
+        gain.connect(this.mainGain);
+
+        osc1.start(time);
+        osc2.start(time);
+        osc1.stop(time + duration);
+        osc2.stop(time + duration);
+      }
+
+      playViolin(time, freq, duration) {
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, time);
+
+        const vibratoLfo = this.audioCtx.createOscillator();
+        vibratoLfo.type = 'sine';
+        vibratoLfo.frequency.setValueAtTime(6.0, time);
+        const vibratoGain = this.audioCtx.createGain();
+        vibratoGain.gain.setValueAtTime(3.0, time);
+
+        vibratoLfo.connect(vibratoGain);
+        vibratoGain.connect(osc.frequency);
+
+        const resonanceFilter = this.audioCtx.createBiquadFilter();
+        resonanceFilter.type = 'bandpass';
+        resonanceFilter.frequency.setValueAtTime(1000, time);
+        resonanceFilter.Q.setValueAtTime(1.8, time);
+
+        const gain = this.audioCtx.createGain();
+        gain.gain.setValueAtTime(0.0, time);
+        gain.gain.linearRampToValueAtTime(0.07, time + 0.16);
+        gain.gain.setValueAtTime(0.07, time + duration - 0.16);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+        osc.connect(resonanceFilter);
+        resonanceFilter.connect(gain);
+        gain.connect(this.mainGain);
+
+        vibratoLfo.start(time);
+        osc.start(time);
+        vibratoLfo.stop(time + duration);
+        osc.stop(time + duration);
+      }
+
+      stop() {
+        if (!this.isPlaying) return;
+        this.isPlaying = false;
+
+        if (this.timerId) clearInterval(this.timerId);
+
+        const now = this.audioCtx.currentTime;
+        this.mainGain.gain.cancelScheduledValues(now);
+        this.mainGain.gain.setValueAtTime(this.mainGain.gain.value, now);
+        this.mainGain.gain.linearRampToValueAtTime(0.0, now + 1.2);
+
+        setTimeout(() => {
+          if (!this.isPlaying && this.audioCtx) {
+            this.audioCtx.close();
+            this.audioCtx = null;
+          }
+        }, 1300);
+      }
+    }
+
     const ambientMusic = new AmbientMusicGenerator();
-    window.ambientMusic = ambientMusic; // Attach to window for global coordination
+    window.ambientMusic = ambientMusic;
+
+    const partyMusic = new PartyMusicGenerator();
+    window.partyMusic = partyMusic;
 
     const musicBtn = document.getElementById('music-toggle-btn');
     if (musicBtn) {
@@ -4169,8 +5098,30 @@
           ambientMusic.stop();
           musicBtn.classList.remove('playing');
         } else {
+          if (partyMusic.isPlaying) {
+            partyMusic.stop();
+            const partyBtn = document.getElementById('party-music-toggle-btn');
+            if (partyBtn) partyBtn.classList.remove('playing');
+          }
           ambientMusic.start();
           musicBtn.classList.add('playing');
+        }
+      });
+    }
+
+    const partyBtn = document.getElementById('party-music-toggle-btn');
+    if (partyBtn) {
+      partyBtn.addEventListener('click', () => {
+        if (partyMusic.isPlaying) {
+          partyMusic.stop();
+          partyBtn.classList.remove('playing');
+        } else {
+          if (ambientMusic.isPlaying) {
+            ambientMusic.stop();
+            if (musicBtn) musicBtn.classList.remove('playing');
+          }
+          partyMusic.start();
+          partyBtn.classList.add('playing');
         }
       });
     }
@@ -4183,7 +5134,7 @@
 
     if (mobileToggleBtn && mobileOverlay) {
       const mobileOverlayLinks = mobileOverlay.querySelectorAll('.mobile-menu-links a, .mobile-menu-actions a');
-      
+
       mobileToggleBtn.addEventListener('click', () => {
         const isActive = mobileOverlay.classList.toggle('active');
         if (isActive) {
@@ -4194,7 +5145,7 @@
           if (sideIcon) sideIcon.style.display = 'none';
         }
       });
-      
+
       mobileOverlayLinks.forEach(link => {
         link.addEventListener('click', () => {
           mobileOverlay.classList.remove('active');
